@@ -10,7 +10,7 @@ interface NavSubLinkProps{
 export default function NavSubLink({route,name, isActive}:NavSubLinkProps) {
     return (
         <Link href={route} className={clsx("py-1.5 px-2 rounded-lg transition-colors duration-150",{
-            "bg-white shadow" : isActive,
+            "bg-white shadow-md md:shadow" : isActive,
             "hover:bg-white hover:shadow" : !isActive
         })}>
             {name}

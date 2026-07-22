@@ -27,15 +27,15 @@ class AdminAuthController extends Controller
             ]);
         }
 
-        $request->session()->regenerate();
+        $request->session()->regenerate(); // Tạo session id mới
         return redirect('/admin/dashboard');
     }
 
     // Đăng xuất
     public function logout(Request $request){
         Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        $request->session()->invalidate(); // Hủy sessions id
+        $request->session()->regenerateToken(); // Hủy csrf cũ / tạo csrf mới
         return redirect('/');   
     }
 
@@ -54,7 +54,7 @@ class AdminAuthController extends Controller
         ]);
         $newUser = User::create($validated);
 
-        $request->session()->regenerate();
+        $request->session()->regenerate(); // tạo session id mới
         Auth::login($newUser);
         return redirect('/admin/dashboard');
     }

@@ -1,19 +1,22 @@
 import { Link, usePage } from "@inertiajs/react"
-import { LayoutDashboard, UsersRound, Package, FileText, PackageCheck, ChevronsUpDown, LogOut  } from 'lucide-react';
-import { Auth } from "@/types";
-import { userAvatar } from "@/lib/users";
+import { LayoutDashboard, UsersRound, Package, FileText, PackageCheck, X } from 'lucide-react';
 import Logo from "@/components/ui/Logo"
 import NavLink from "./NavLink";
 import NavSubLink from "./NavSubLink";
+import UserSetting from "./UserSetting";
 
-export default function SidebarApp() {
+export default function Sidebar() {
 
     const { url } = usePage();
-    const { user } = usePage<{ auth: Auth }>().props.auth;
 
     return (
-        <div className="w-[17%] min-h-screen fixed top-4 flex flex-col justify-between">
-            <div>
+        <div className="w-[80%] md:w-[17%] bg-white md:bg-transparent min-h-screen fixed md:top-4 p-4 md:p-0 inline-flex flex-col justify-between">
+            <div className="relative">
+                {/* close sidebar on mobile */}
+                <div className="absolute block md:hidden right-4 top-4 p-0.5 rounded-md">
+                    <X strokeWidth={1.5} className="text-gray-400"/>
+                </div>
+
                 {/* Logo */}
                 <Link href="/admin/dashboard">
                     <Logo />
@@ -21,7 +24,7 @@ export default function SidebarApp() {
                 </Link>
 
                 {/* nav */}
-                <div className="mt-4">
+                <div className="mt-3 md:mt-2 pr-3 md:pr-0 border-t pb-2 md:pb-0 md:border-0 border-gray-200 overflow-y-scroll overflow-x-hidden h-full md:overflow-y-hidden">
                     {/* Dashboard */}
                     <div>
                         <p className="my-2 text-xs font-medium text-gray-500">Tổng quan</p>
@@ -63,33 +66,7 @@ export default function SidebarApp() {
             </div>
 
             {/* user setting */}
-            <div className="flex justify-between items-center gap-2 mb-7 hover:bg-white hover:shadow p-2 rounded-xl transition-colors duration-150 relative">
-                <div className="flex items-center gap-2">
-                    <div className="w-10 h-10 rounded-xl bg-blue-600 text-white font-medium flex items-center justify-center">
-                        {userAvatar(user.name)}
-                    </div>
-                    <div>{user.name}</div>
-                </div>
-                <ChevronsUpDown strokeWidth={1.75} size={17} />
-
-                <div className="absolute -top-25 right-0 bg-white border border-gray-200 shadow w-full rounded-xl">
-                    <div className="flex items-center gap-2 p-2 text-xs">
-                        <div className="w-10 h-10 rounded-xl bg-blue-600 text-white font-medium flex items-center justify-center">
-                            {userAvatar(user.name)}
-                        </div>
-                        <div className="flex flex-col">
-                            <div>{user.name}</div>
-                            <div className="text-gray-500">{user.email}</div>
-                        </div>
-                    </div>
-
-                    <hr className="border-gray-300" />
-                    <Link href="/admin/logout" method="post" className="py-2 px-2.5 inline-flex gap-2 items-center w-full">
-                        <LogOut size={15} className="text-gray-500"/> 
-                        <div>Đăng xuất</div>   
-                    </Link>
-                </div>
-            </div>
+            <UserSetting/>
         </div>
     )
 }
