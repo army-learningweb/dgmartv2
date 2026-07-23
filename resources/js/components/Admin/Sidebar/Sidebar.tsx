@@ -10,7 +10,7 @@ export default function Sidebar() {
     const { url } = usePage();
 
     return (
-        <div className="w-[80%] md:w-[17%] bg-white md:bg-transparent min-h-screen fixed md:top-4 p-4 md:p-0 inline-flex flex-col justify-between">
+        <div className="w-[80%] md:w-[17%] bg-white md:bg-transparent min-h-screen fixed md:top-4 p-4 md:p-0 md:inline-flex flex-col justify-between hidden">
             <div className="relative">
                 {/* close sidebar on mobile */}
                 <div className="absolute block md:hidden right-4 top-4 p-0.5 rounded-md">
@@ -45,22 +45,15 @@ export default function Sidebar() {
                             <NavSubLink isActive={url === "/admin/posts"} route="/admin/posts" name="Danh sách bài viết" />
                             <NavSubLink isActive={url === "/admin/posts/categories"} route="/" name="Danh mục bài viết" />
                         </NavLink>
-                    </div>
 
-                    {/* Sales */}
-                    <div>
-                        <p className="my-2 text-xs font-medium text-gray-500">Quản lí bán hàng</p>
-                        <NavLink route="/admin/dashboard" name="Đơn hàng" isActive={url === "/admin/sales"} icon={<PackageCheck strokeWidth={1.75} size={17} />} />
-                    </div>
-
-                    {/* User */}
-                    <div className="space-y-1">
-                        <p className="my-2 text-xs font-medium text-gray-500">Quản lí thành viên</p>
+                        {/* User */}
                         <NavLink urlActiveOpen={url.startsWith("/admin/users")} name="Thành viên" icon={<UsersRound strokeWidth={1.75} size={17} />}>
                             <NavSubLink isActive={url === "/admin/users"} route="/admin/users" name="Danh sách thành viên" />
                             <NavSubLink isActive={url === "/admin/users/permissions"} route="/" name="Quản lí quyền hạn" />
                             <NavSubLink isActive={url === "/admin/users/roles"} route="/" name="Quản lí trò" />
                         </NavLink>
+
+                        <NavLink route="/admin/dashboard" name="Đơn hàng" isActive={url === "/admin/sales"} icon={<PackageCheck strokeWidth={1.75} size={17} />} />
                     </div>
                 </div>
             </div>

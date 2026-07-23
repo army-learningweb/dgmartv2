@@ -11,16 +11,42 @@ export type PaginatedData<T> = {
 
 // User
 export type User = {
-    id: number;
+    id: string;
     name: string;
     email: string;
+    tel: string;
+    status: 'active' | 'inactive';
     email_verified_at: string | null;
     remember_token: string | null;
     created_at: string;
     updated_at: string;
 };
 
-// User + Phân trang
+// Danh sách User + Phân trang
 export type UsersType = PaginatedData<
-    Pick<User, 'id' | 'name' | 'email' | 'created_at'>
+    Pick<User, 'id' | 'name' | 'email' | 'tel' | 'status' | 'created_at'>
 >;
+
+// Thêm User
+export type CreateUserType = {
+    id?: string;
+    name: string;
+    email: string;
+    tel: string;
+    password: string;
+    password_confirmation: string;
+};
+
+// Cập nhật User
+export type EditUserType = {
+    id: string;
+    name: string;
+    email: string;
+    tel: string;
+    password?: string;
+    password_confirmation?: string;
+    status?: 'active' | 'inactive';
+};
+
+// Xóa User
+export type DeleteUserType = {};

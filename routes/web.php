@@ -22,6 +22,10 @@ Route::middleware(['auth:sanctum'])->group( function(){
 
     //USER
     Route::get('/admin/users', [AdminUserController::class, 'read']);
+    Route::post('/admin/users/store', [AdminUserController::class, 'store']);
+    Route::patch('/admin/users/{user}/update', [AdminUserController::class, 'update']);
+    Route::patch('/admin/users/{user}/updateStatus', [AdminUserController::class, 'updateStatus']);
+    Route::delete('/admin/users/{user}/delete', [AdminUserController::class, 'delete']);
 
     //PRODUCT
     Route::get('/admin/products', [AdminProductController::class, 'read']);
