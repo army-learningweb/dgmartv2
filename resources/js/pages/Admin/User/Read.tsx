@@ -1,177 +1,301 @@
-import { Head, useForm, usePage } from "@inertiajs/react"
-import { Ellipsis, Pen, Trash } from 'lucide-react';
-import { useState } from "react";
-import toast from "react-hot-toast";
+import { Head, useForm, usePage } from '@inertiajs/react';
+import { Pen, Trash } from 'lucide-react';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
 
-import Button from "@/components/ui/Button"
-import UserAvatar from "@/components/ui/UserAvatar";
-import Pagination from "@/components/Admin/Pagination/Pagination";
-import ModalCreate from "@/components/Admin/Modal/ModalCreate";
-import ModalEdit from "@/components/Admin/Modal/ModalEdit";
-import Input from "@/components/ui/Input";
-import Badge from "@/components/ui/Badge";
+import Button from '@/components/ui/Button';
+import UserAvatar from '@/components/ui/UserAvatar';
+import Pagination from '@/components/Admin/Pagination/Pagination';
+import ModalCreate from '@/components/Admin/Modal/ModalCreate';
+import ModalEdit from '@/components/Admin/Modal/ModalEdit';
+import Input from '@/components/ui/Input';
+import SearchBar from '@/components/Admin/TableManager/SearchBar';
+import FilterTab from '@/components/Admin/TableManager/FilterTab';
+import SwitchStatus from '@/components/Admin/TableManager/SwitchStatus';
 
-import { UsersType } from "@/types/data";
-import { CreateUserType } from "@/types/data";
-import { EditUserType } from "@/types/data";
-import { Auth } from "@/types";
-import clsx from "clsx";
+import { useSearch } from '@/hooks/use-search';
+import { useFilter } from '@/hooks/use-filter';
+import { useUpdateStatus } from '@/hooks/use-updateStatus';
 
-export default function Read({ users }: { users: UsersType }) {
+import { UsersReadType } from '@/types/data';
+import { CreateUserType } from '@/types/data';
+import { EditUserType } from '@/types/data';
+import { Auth } from '@/types';
+import clsx from 'clsx';
 
-    const { data, setData, post, patch, delete: destroy, errors, processing, reset, clearErrors } = useForm<CreateUserType>({
-        id: "",
-        name: "",
-        email: "",
-        tel: "",
-        password: "",
-        password_confirmation: ""
+export default function Read({
+    users,
+    search,
+    filter,
+    total,
+    active,
+    inactive,
+}: UsersReadType) {
+    const {
+        data,
+        setData,
+        post,
+        patch,
+        delete: destroy,
+        errors,
+        processing,
+        reset,
+        clearErrors,
+    } = useForm<CreateUserType>({
+        id: '',
+        name: '',
+        email: '',
+        tel: '',
+        password: '',
+        password_confirmation: '',
     });
 
     const { user } = usePage<{ auth: Auth }>().props.auth;
-
     const [openModalCreate, setOpenModalCreate] = useState(false);
     const [openModalEdit, setOpenModalEdit] = useState(false);
     const [idUpdate, setIdUpdate] = useState<null | string>(null);
+    const [queryFilter, setQueryFilter] = useState<null | string>(
+        filter ?? null,
+    );
+    const [querySearch, setQuerySearch] = useState<string>(search ?? '');
+    const { handleQueryFilter } = useFilter({ querySearch, setQueryFilter });
+    const { isLoadingSearch, handleQuerySearch, handleClearSearch } = useSearch(
+        { queryFilter, setQuerySearch },
+    );
+    const { handleUpdateStatus } = useUpdateStatus();
 
+    // Đóng
     const handleCloseModalCreate = () => {
         setOpenModalCreate(false);
         reset();
         setTimeout(() => {
             clearErrors();
         }, 300);
+    };
 
-    }
-
-    const handleCreate = (e: React.SubmitEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        post("/admin/users/store", {
-            onError: () => {
-                reset('password');
-                reset("password_confirmation");
-            },
-            onSuccess: () => {
-                setOpenModalCreate(false);
-                reset();
-                clearErrors();
-                toast.success("Thêm mới thành công");
-
-            }
-        })
-    }
-
+    // Mở modal edit
     const handleOpenModalEdit = (user: EditUserType) => {
         setData({
             id: user.id,
             name: user.name,
             tel: user.tel,
             email: user.email,
-            password: "",
-            password_confirmation: ""
-        })
-        setIdUpdate(user.id)
+            password: '',
+            password_confirmation: '',
+        });
+        setIdUpdate(user.id);
         setOpenModalEdit(true);
+    };
 
-    }
-
+    // Đóng modal edit
     const handleCloseModalEdit = () => {
         setOpenModalEdit(false);
         reset();
         setTimeout(() => {
             clearErrors();
         }, 300);
+    };
 
-    }
+    // Thêm
+    const handleCreate = (e: React.SubmitEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        post('/admin/users/store', {
+            onError: () => {
+                reset('password');
+                reset('password_confirmation');
+            },
+            onSuccess: () => {
+                setOpenModalCreate(false);
+                reset();
+                clearErrors();
+                toast.success('Thêm mới thành công');
+            },
+        });
+    };
 
+    // Sửa
     const handleEdit = (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         patch(`/admin/users/${idUpdate}/update`, {
             onError: () => {
                 reset('password');
-                reset("password_confirmation");
+                reset('password_confirmation');
             },
             onSuccess: () => {
                 setOpenModalEdit(false);
                 reset();
                 clearErrors();
-                toast.success("Cập nhật thành công");
-            }
-        })
-    }
+                toast.success('Cập nhật thành công');
+            },
+        });
+    };
 
+    // Xóa
     const handleDelete = (id: string) => {
-        if (confirm("Bạn có chắc muốn xóa thành viên này ?")) {
+        if (confirm('Bạn có chắc muốn xóa thành viên này ?')) {
             let toastID: string;
             destroy(`/admin/users/${id}/delete`, {
                 onStart: () => {
-                    toastID = toast.loading("Đang xóa...");
+                    toastID = toast.loading('Đang xóa...');
                 },
                 onSuccess: () => {
-                    toast.success("Xóa thành công", { id: toastID });
-                }
-            })
+                    toast.success('Xóa thành công', { id: toastID });
+                },
+            });
         }
-    }
-
-    const handleUpdateStatus = (id: string) => {
-        
-    }
+    };
 
     return (
         <>
             <Head title="Thành viên" />
 
             {/* Modal */}
-            <ModalCreate onClose={handleCloseModalCreate} isOpen={openModalCreate}
+            <ModalCreate
+                onClose={handleCloseModalCreate}
+                isOpen={openModalCreate}
                 customSize="w-[90%] md:w-[27%] min-h-[50%]"
                 title="Thêm mới thành viên"
                 labelSubmit="Thêm mới"
                 formSubmitId="createUser"
-                processing={processing}>
+                processing={processing}
+            >
                 <form onSubmit={handleCreate} id="createUser">
                     <div>
-                        <Input type="text" name="name" label="Họ và tên" error={errors.name} value={data.name} onChange={(e) => setData("name", e.target.value)} autoComplete="on" />
+                        <Input
+                            type="text"
+                            name="name"
+                            label="Họ và tên"
+                            error={errors.name}
+                            value={data.name}
+                            onChange={(e) => setData('name', e.target.value)}
+                            autoComplete="on"
+                        />
                     </div>
 
                     <div className="mt-2">
-                        <Input type="text" name="email" label="Email" error={errors.email} value={data.email} onChange={(e) => setData("email", e.target.value)} autoComplete="username" />
+                        <Input
+                            type="tel"
+                            name="tel"
+                            label="Số điện thoại"
+                            error={errors.tel}
+                            value={data.tel}
+                            onChange={(e) => setData('tel', e.target.value)}
+                            autoComplete="on"
+                        />
                     </div>
 
                     <div className="mt-2">
-                        <Input type="password" name="password" label="Mật khẩu" error={errors.password} value={data.password} onChange={(e) => setData("password", e.target.value)} autoComplete="current-password" />
+                        <Input
+                            type="text"
+                            name="email"
+                            label="Email"
+                            error={errors.email}
+                            value={data.email}
+                            onChange={(e) => setData('email', e.target.value)}
+                            autoComplete="username"
+                        />
                     </div>
 
                     <div className="mt-2">
-                        <Input type="password" name="password_confirmation" label="Xác nhận mật khẩu" value={data.password_confirmation} onChange={(e) => setData("password_confirmation", e.target.value)} autoComplete="new-password" />
+                        <Input
+                            type="password"
+                            name="password"
+                            label="Mật khẩu"
+                            error={errors.password}
+                            value={data.password}
+                            onChange={(e) =>
+                                setData('password', e.target.value)
+                            }
+                            autoComplete="current-password"
+                        />
+                    </div>
+
+                    <div className="mt-2">
+                        <Input
+                            type="password"
+                            name="password_confirmation"
+                            label="Xác nhận mật khẩu"
+                            value={data.password_confirmation}
+                            onChange={(e) =>
+                                setData('password_confirmation', e.target.value)
+                            }
+                            autoComplete="new-password"
+                        />
                     </div>
                 </form>
             </ModalCreate>
 
-            <ModalEdit onClose={handleCloseModalEdit} isOpen={openModalEdit}
+            <ModalEdit
+                onClose={handleCloseModalEdit}
+                isOpen={openModalEdit}
                 customSize="w-[90%] md:w-[27%] min-h-[50%]"
                 title="Cập nhật thông tin"
                 labelSubmit="Cập nhật"
                 formSubmitId="editUser"
-                processing={processing}>
+                processing={processing}
+            >
                 <form onSubmit={handleEdit} id="editUser">
                     <div>
-                        <Input type="text" name="name" label="Họ và tên" error={errors.name} value={data.name} onChange={(e) => setData("name", e.target.value)} autoComplete="on" />
+                        <Input
+                            type="text"
+                            name="name"
+                            label="Họ và tên"
+                            error={errors.name}
+                            value={data.name}
+                            onChange={(e) => setData('name', e.target.value)}
+                            autoComplete="on"
+                        />
                     </div>
 
                     <div className="mt-2">
-                        <Input type="tel" name="tel" label="Số điện thoại" error={errors.tel} value={data.tel} onChange={(e) => setData("tel", e.target.value)} autoComplete="on" />
+                        <Input
+                            type="tel"
+                            name="tel"
+                            label="Số điện thoại"
+                            error={errors.tel}
+                            value={data.tel}
+                            onChange={(e) => setData('tel', e.target.value)}
+                            autoComplete="on"
+                        />
                     </div>
 
                     <div className="mt-2">
-                        <Input type="text" name="email" label="Email" error={errors.email} value={data.email} onChange={(e) => setData("email", e.target.value)} autoComplete="username" />
+                        <Input
+                            type="text"
+                            name="email"
+                            label="Email"
+                            error={errors.email}
+                            value={data.email}
+                            onChange={(e) => setData('email', e.target.value)}
+                            autoComplete="username"
+                        />
                     </div>
 
                     <div className="mt-2">
-                        <Input type="password" name="password" label="Mật khẩu mới" error={errors.password} value={data.password} onChange={(e) => setData("password", e.target.value)} autoComplete="current-password" />
+                        <Input
+                            type="password"
+                            name="password"
+                            label="Mật khẩu mới"
+                            error={errors.password}
+                            value={data.password}
+                            onChange={(e) =>
+                                setData('password', e.target.value)
+                            }
+                            autoComplete="current-password"
+                        />
                     </div>
 
                     <div className="mt-2">
-                        <Input type="password" name="password_confirmation" label="Xác nhận mật khẩu" value={data.password_confirmation} onChange={(e) => setData("password_confirmation", e.target.value)} autoComplete="new-password" />
+                        <Input
+                            type="password"
+                            name="password_confirmation"
+                            label="Xác nhận mật khẩu"
+                            value={data.password_confirmation}
+                            onChange={(e) =>
+                                setData('password_confirmation', e.target.value)
+                            }
+                            autoComplete="new-password"
+                        />
                     </div>
                 </form>
             </ModalEdit>
@@ -179,75 +303,162 @@ export default function Read({ users }: { users: UsersType }) {
             {/* data */}
             <section>
                 {/* title */}
-                <div className="flex justify-between items-center">
-                    <h1 className="font-medium text-lg tracking-tight mt-px">Danh sách thành viên</h1>
-                    <Button onClick={() => setOpenModalCreate(true)} animatePress={true} size="small" variant="outline">+ Thêm mới thành viên</Button>
+                <div className="flex items-center justify-between">
+                    <h1 className="mt-px text-lg font-medium">
+                        Danh sách thành viên
+                    </h1>
+                    <Button
+                        onClick={() => setOpenModalCreate(true)}
+                        animatePress={true}
+                        size="small"
+                    >
+                        + Thêm mới thành viên
+                    </Button>
                 </div>
-                <hr className="border-gray-100 my-3" />
+
+                {/* filter & search */}
+                <div className="mt-3 flex items-center justify-between">
+                    {/* search */}
+                    <SearchBar
+                        onSearch={handleQuerySearch}
+                        onClear={handleClearSearch}
+                        querySearch={querySearch}
+                        loadingSearch={isLoadingSearch}
+                        resultCount={users.data.length}
+                    />
+
+                    {/* stats */}
+                    <div className="hidden gap-1 rounded-xl bg-gray-100/70 p-1 tracking-tight md:grid md:grid-cols-3">
+                        <FilterTab
+                            onFilter={() => handleQueryFilter(null)}
+                            isActive={queryFilter === null}
+                            countData={total}
+                            label="Tất cả"
+                        />
+                        <FilterTab
+                            onFilter={() => handleQueryFilter('active')}
+                            isActive={queryFilter === 'active'}
+                            countData={active}
+                            label="Hoạt động"
+                        />
+                        <FilterTab
+                            onFilter={() => handleQueryFilter('inactive')}
+                            isActive={queryFilter === 'inactive'}
+                            countData={inactive}
+                            label="Vô hiệu hóa"
+                        />
+                    </div>
+                </div>
+
                 {/* data */}
-                <div className="border border-gray-200 rounded-xl overflow-hidden">
+                <div className="mt-3 overflow-hidden rounded-xl border border-gray-200">
                     {/* desktop */}
-                    <table className="w-full hidden md:table">
-                        <thead className="font-medium border-b border-gray-200 bg-gray-100">
+                    <table className="hidden w-full md:table">
+                        <thead className="border-b border-gray-200 bg-gray-100 font-medium text-gray-800">
                             <tr>
-                                <td className="py-2 px-4">Thành viên</td>
-                                <td className="py-2 px-4">Email & Số điện thoại</td>
-                                <td className="py-2 px-4">Ngày tạo</td>
-                                <td className="py-2 px-4">Trạng thái</td>
-                                <td className="py-2 px-4">Tùy chỉnh</td>
+                                <td className="px-4 py-2">Thành viên</td>
+                                <td className="px-4 py-2">
+                                    Email & Số điện thoại
+                                </td>
+                                <td className="px-4 py-2">Ngày tạo</td>
+                                <td className="px-4 py-2">Cập nhật</td>
+                                <td className="px-4 py-2">Trạng thái</td>
+                                <td className="px-4 py-2">Tùy chỉnh</td>
                             </tr>
                         </thead>
                         <tbody>
-                            {users.data.map(item => (
-                                <tr key={item.id} className="border-b border-gray-200 last-of-type:border-0 transition-alls duration-150">
-                                    <td className="py-3 px-4">
+                            {users.data.map((item) => (
+                                <tr
+                                    key={item.id}
+                                    className="transition-alls border-b border-gray-200 duration-150 last-of-type:border-0"
+                                >
+                                    {/* user */}
+                                    <td className="px-4 py-3">
                                         <div className="flex items-center gap-3">
                                             <UserAvatar name={item.name} />
                                             <div className="flex flex-col gap-1">
-                                                <div>{item.name}</div>
-                                                <div className="text-gray-500 text-xs px-2 py-0.5 bg-gray-200 w-fit rounded-md font-medium">Admin</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="py-3 px-4">
-                                        <div className="flex flex-col gap-1">
-                                            <div>{item.email}</div>
-                                            <div className="text-gray-500">{item.tel}</div>
-                                        </div>
-                                    </td>
-                                    <td className="py-3 px-4">
-                                        {item.created_at}
-                                    </td>
-                                    <td className="py-3 px-4">
-                                        <div className="flex items-center">
-                                            <div className="w-[45%]">
-                                                <Badge status={item.status} />
-                                            </div>
-
-                                            <div onClick={() => handleUpdateStatus(item.id)} className="w-10 cursor-pointer">
-                                                <div className={clsx("bg-gray-100 p-0.5 rounded-xl", {
-                                                    "bg-gray-200": item.status === "inactive",
-                                                    "bg-green-600": item.status === "active"
-                                                })}>
-                                                    <div className={clsx("w-3.75 h-3.75 rounded-full bg-white shadow border border-gray-200 transition-transform duration-150", {
-                                                        "translate-x-0": item.status === "inactive",
-                                                        "translate-x-5.25": item.status === "active"
-                                                    })}></div>
+                                                <div className="w-30 truncate">
+                                                    {item.name}
+                                                </div>
+                                                <div className="w-fit rounded-md bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-500">
+                                                    Admin
                                                 </div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="py-3 px-4">
-                                        <div className={clsx("flex gap-2", {
-                                            "opacity-50 pointer-events-none": item.id == String(user.id)
-                                        })}>
-                                            <Button onClick={() => handleOpenModalEdit(item)} variant="outline" size="small" animatePress={true}>
-                                                <Pen size={13} className="text-gray-400" />
+
+                                    {/* email & tel */}
+                                    <td className="px-4 py-3">
+                                        <div className="flex flex-col gap-1">
+                                            <div className="w-40 truncate">
+                                                {item.email}
+                                            </div>
+                                            <div className="text-gray-500">
+                                                {item.tel}
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    {/* create at */}
+                                    <td className="px-4 py-3">
+                                        {item.created_at}
+                                    </td>
+
+                                    {/* update at */}
+                                    <td className="px-4 py-3">
+                                        {item.updated_at}
+                                    </td>
+
+                                    {/* status */}
+                                    <td className="px-4 py-3">
+                                        <SwitchStatus
+                                            status={item.status}
+                                            onUpdate={() =>
+                                                handleUpdateStatus(
+                                                    `/admin/users/${item.id}/updateStatus`,
+                                                    item.status == 'active'
+                                                        ? 'inactive'
+                                                        : 'active',
+                                                )
+                                            }
+                                        />
+                                    </td>
+
+                                    {/* setting */}
+                                    <td className="px-4 py-3">
+                                        <div
+                                            className={clsx('flex gap-2', {
+                                                'pointer-events-none opacity-50':
+                                                    item.id == String(user.id),
+                                            })}
+                                        >
+                                            <Button
+                                                onClick={() =>
+                                                    handleOpenModalEdit(item)
+                                                }
+                                                variant="outline"
+                                                size="small"
+                                                animatePress={true}
+                                            >
+                                                <Pen
+                                                    size={13}
+                                                    className="text-gray-400"
+                                                />
                                                 <span>Cập nhật</span>
                                             </Button>
 
-                                            <Button onClick={() => handleDelete(item.id)} variant="outline" size="small" animatePress={true}>
-                                                <Trash size={13} className="text-gray-400" />
+                                            <Button
+                                                onClick={() =>
+                                                    handleDelete(item.id)
+                                                }
+                                                variant="outline"
+                                                size="small"
+                                                animatePress={true}
+                                            >
+                                                <Trash
+                                                    size={13}
+                                                    className="text-gray-400"
+                                                />
                                                 <span>Xóa</span>
                                             </Button>
                                         </div>
@@ -256,27 +467,77 @@ export default function Read({ users }: { users: UsersType }) {
                             ))}
                         </tbody>
                     </table>
+
                     {/* mobile */}
-                    <div className="inline-flex flex-col gap-2 md:hidden w-full">
-                        {users.data.map(user => (
-                            <div key={user.id} className="border-b border-gray-200 p-3">
+                    <div className="inline-flex w-full flex-col gap-1 md:hidden">
+                        {users.data.map((item) => (
+                            <div
+                                key={item.id}
+                                className="border-b border-gray-200 p-3"
+                            >
                                 <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <UserAvatar name={user.name} />
+                                    <div className="relative flex items-center gap-3">
+                                        {item.status === "active" && (
+                                            <div className="absolute -bottom-0.5 left-8 h-3 w-3 rounded-full bg-green-600"></div>
+                                        )}
+                                        {item.status === "inactive" && (
+                                            <div className="absolute -bottom-0.5 left-8 h-3 w-3 rounded-full bg-red-600"></div>
+                                        )}  
+                                        <UserAvatar name={item.name} />
                                         <div className="flex flex-col">
-                                            <div>{user.name}</div>
-                                            <div className="text-gray-500">{user.email}</div>
+                                            <div className="w-30 truncate">
+                                                {item.name}
+                                            </div>
+                                            <div className="w-30 truncate text-gray-500">
+                                                {item.email}
+                                            </div>
                                         </div>
                                     </div>
-                                    <div onClick={() => handleOpenModalEdit(user)}
-                                        className="p-2 border border-gray-200 bg-white rounded-lg w-fit active:translate-y-0.5 transition-transform duration-150">
-                                        <Ellipsis size={18} />
+                                    <div
+                                        className={clsx(
+                                            'flex flex-col gap-2 md:flex-row',
+                                            {
+                                                'pointer-events-none opacity-50':
+                                                    item.id == String(user.id),
+                                            },
+                                        )}
+                                    >
+                                        <Button
+                                            onClick={() =>
+                                                handleOpenModalEdit(item)
+                                            }
+                                            variant="outline"
+                                            size="small"
+                                            animatePress={true}
+                                        >
+                                            <Pen
+                                                size={13}
+                                                className="text-gray-400"
+                                            />
+                                            <span>Cập nhật</span>
+                                        </Button>
+
+                                        <Button
+                                            onClick={() =>
+                                                handleDelete(item.id)
+                                            }
+                                            variant="outline"
+                                            size="small"
+                                            animatePress={true}
+                                        >
+                                            <Trash
+                                                size={13}
+                                                className="text-gray-400"
+                                            />
+                                            <span>Xóa</span>
+                                        </Button>
                                     </div>
                                 </div>
                             </div>
                         ))}
                     </div>
                 </div>
+
                 {/* pagination */}
                 <Pagination
                     firstUrl={users.first_page_url}
@@ -287,7 +548,6 @@ export default function Read({ users }: { users: UsersType }) {
                     lastPage={users.last_page}
                 />
             </section>
-
         </>
-    )
+    );
 }

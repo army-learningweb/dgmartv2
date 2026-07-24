@@ -14,7 +14,7 @@ export default function Pagination({ firstUrl, lastUrl, prevUrl, nextUrl, curren
     return (
         <div className="flex gap-1 justify-end mt-4">
             <div className="flex gap-5 items-center">
-                <div className="font-medium ps-1">
+                <div className="font-medium text-gray-800 ps-1">
                     Trang {currentPage} / {lastPage}
                 </div>
                 <div className="flex gap-1">

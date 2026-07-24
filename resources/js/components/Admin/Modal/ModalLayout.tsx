@@ -19,7 +19,7 @@ export default function ModalLayout({ customSize, title, labelSubmit, children, 
             "pointer-events-none opacity-0": !isOpen,
             "pointer-events-auto opacity-100": isOpen
         })}>
-            <div className={clsx(`${customSize} bg-gray-100 rounded-3xl p-1.5 transition-tranform duration-150`,{
+            <div className={clsx(`${customSize} bg-gray-100 rounded-3xl p-1.5 transition-tranform duration-150 shadow-md`,{
                 "pointer-events-none opacity-0 scale-95" :!isOpen,
                 "pointer-events-auto opacity-100 scale-100" : isOpen
             })}>

@@ -22,10 +22,25 @@ export type User = {
     updated_at: string;
 };
 
-// Danh sách User + Phân trang
-export type UsersType = PaginatedData<
-    Pick<User, 'id' | 'name' | 'email' | 'tel' | 'status' | 'created_at'>
->;
+export type UsersReadType = {
+    users: PaginatedData<
+        Pick<
+            User,
+            | 'id'
+            | 'name'
+            | 'email'
+            | 'tel'
+            | 'status'
+            | 'created_at'
+            | 'updated_at'
+        >
+    >;
+    search: string | null;
+    filter: 'active' | 'inactive' | null;
+    total: string;
+    active: string;
+    inactive: string;
+};
 
 // Thêm User
 export type CreateUserType = {

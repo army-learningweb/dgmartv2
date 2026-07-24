@@ -15,6 +15,7 @@ return [
     'attributes' => [
         'email' => 'Email',
         'password' => 'Mật khẩu',
-        'name' => 'Họ và tên'
+        'name' => 'Họ và tên',
+        'tel' => 'Số điện thoại'
     ]
 ];

@@ -12,8 +12,33 @@ class AdminUserController extends Controller
     // Đọc
     public function read(Request $request)
     {
-        $users = User::select(["id", "name", "email", "tel", "status", "created_at"])->paginate(6);
-        return Inertia::render("Admin/User/Read", ["users" => $users]);
+        $users = User::query()
+            ->when($request->input("search"), function ($query, $value) {
+                $query->where(function ($q) use ($value) {
+                    $q->where("name", "like", "%{$value}%")
+                        ->orWhere("email", "like", "%{$value}%")
+                        ->orWhere("tel", "like", "%{$value}%");
+                });
+            })
+            ->when($request->input('filter'), function ($query, $value) {
+                $query->where('status', $value);
+            })
+            ->select(["id", "name", "email", "tel", "status", "created_at", "updated_at"])
+            ->paginate(7)
+            ->withQueryString();
+
+        $total = User::count();
+        $active = User::where('status','active')->count();
+        $inactive = User::where('status','inactive')->count();
+
+        return Inertia::render("Admin/User/Read", [
+            "users" => $users,
+            "search" => $request->input("search"),
+            "filter" => $request->input("filter"),
+            "total" => $total,
+            "active" => $active,
+            "inactive" => $inactive,
+        ]);
     }
 
     // Thêm
@@ -38,14 +63,25 @@ class AdminUserController extends Controller
             "password" => ["sometimes", "nullable", "min:8", "max:50", "confirmed", "regex:/^[\p{L}\p{N}\s!@#$%^&*]+$/u"],
         ]);
 
+        $validated['updated_at'] = now();
+
         if (!$request->input("password")) unset($validated['password']);
         User::find($user->id)->update($validated);
     }
 
     // Xóa
-    public function delete(User $user){
-        if($user->id === 1) return;
+    public function delete(User $user)
+    {
+        if ($user->id === 1) return;
         $user->delete();
-        
+    }
+
+    // Cập nhật trạng thái
+    public function updateStatus(Request $request, User $user)
+    {
+        $user->update([
+            'status' => $request->input('status'),
+            'updated_at' => now()
+        ]);
     }
 }

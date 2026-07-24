@@ -22,13 +22,13 @@ export default function Button({ variant = 'primary', size = 'medium', animatePr
 
     //
     const sizes = {
-        medium: 'text-md',
+        medium: 'text-[14px]',
         small: 'text-xs',
         large: 'text-lg'
     }
 
     return (
-        <button type={type} disabled={disabled || processing} className={clsx(`px-3 py-1.5 rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1 ${className} ${variants[variant]} ${sizes[size]} `, {
+        <button type={type} disabled={disabled || processing} className={clsx(`px-3 py-1.5 rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1 tracking-tight ${className} ${variants[variant]} ${sizes[size]} `, {
             "active:translate-y-0.5" : animatePress
         })} {...props}>
             {!processing && children}

@@ -22,7 +22,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  */
 
-#[Fillable(['name', 'email', 'password', 'tel'])]
+#[Fillable(['name', 'email', 'password', 'tel', 'status', 'updated_at'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -39,7 +39,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'created_at' => 'datetime:d/m/Y'
+            'created_at' => 'datetime:d/m/Y',
+            'updated_at' => 'datetime:d/m/Y'
         ];
     }
 }
