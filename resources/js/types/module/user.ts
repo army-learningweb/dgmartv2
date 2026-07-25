@@ -1,15 +1,6 @@
-// Phân trang
-export type PaginatedData<T> = {
-    current_page: number;
-    last_page: number;
-    first_page_url: string;
-    last_page_url: string;
-    next_page_url: string;
-    prev_page_url: string;
-    data: T[];
-};
+import { PaginatedData } from "./global";
 
-// User
+// Đọc
 export type User = {
     id: string;
     name: string;
@@ -48,8 +39,12 @@ export type CreateUserType = {
     name: string;
     email: string;
     tel: string;
+    status: 'active' | 'inactive';
     password: string;
     password_confirmation: string;
+    user_on_page: number,
+    last_page: number,
+    current_page:number,
 };
 
 // Cập nhật User

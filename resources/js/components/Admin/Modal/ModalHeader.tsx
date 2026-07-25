@@ -8,9 +8,9 @@ interface ModalHeaderProps {
 export default function ModalHeader({ title, onClose }: ModalHeaderProps) {
     return (
         <header className="flex justify-between items-center">
-            <div className="font-medium text-[18px]">{title}</div>
-            <div className="p-1" onClick={onClose}>
-                <X size={20} className="text-gray-400 hover:text-gray-600 transition-colors duration-150" />
+            <div className="font-medium text-[18px] tracking-tight">{title}</div>
+            <div className="p-1 hover:bg-gray-100 rounded-md transition-colors duration-150" onClick={onClose}>
+                <X size={20} className="text-gray-800 transition-colors duration-150" />
             </div>
         </header>
     )

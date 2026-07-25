@@ -2,8 +2,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminPermissionController;
 use App\Http\Controllers\AdminPostController;
 use App\Http\Controllers\AdminProductController;
+use App\Http\Controllers\AdminRoleController;
 use App\Http\Controllers\AdminUserController;
 
 Route::inertia('/', 'welcome')->name('home');
@@ -24,8 +26,19 @@ Route::middleware(['auth:sanctum'])->group( function(){
     Route::get('/admin/users', [AdminUserController::class, 'read']);
     Route::post('/admin/users/store', [AdminUserController::class, 'store']);
     Route::patch('/admin/users/{user}/update', [AdminUserController::class, 'update']);
-    Route::patch('/admin/users/{user}/updateStatus', [AdminUserController::class, 'updateStatus']);
     Route::delete('/admin/users/{user}/delete', [AdminUserController::class, 'delete']);
+
+    //PERMISSION
+    Route::get('/admin/users/permissions', [AdminPermissionController::class, 'read']);
+    Route::post('/admin/users/permissions/store', [AdminPermissionController::class, 'store']);
+    Route::patch('/admin/users/permissions/{permission}/update', [AdminPermissionController::class, 'update']);
+    Route::delete('/admin/users/permissions/{permission}/delete', [AdminPermissionController::class, 'delete']);
+
+    //ROLE
+    Route::get('/admin/users/roles', [AdminRoleController::class, 'read']);
+    Route::post('/admin/users/roles/store', [AdminRoleController::class, 'store']);
+    Route::patch('/admin/users/roles/{role}/update', [AdminRoleController::class, 'update']);
+    Route::delete('/admin/users/roles/{role}/delete', [AdminRoleController::class, 'delete']);
 
     //PRODUCT
     Route::get('/admin/products', [AdminProductController::class, 'read']);

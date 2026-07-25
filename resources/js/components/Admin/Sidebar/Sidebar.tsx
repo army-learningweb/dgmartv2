@@ -14,7 +14,7 @@ export default function Sidebar() {
             <div className="relative">
                 {/* close sidebar on mobile */}
                 <div className="absolute block md:hidden right-4 top-4 p-0.5 rounded-md">
-                    <X strokeWidth={1.5} className="text-gray-400"/>
+                    <X strokeWidth={1.5} className="text-gray-400" />
                 </div>
 
                 {/* Logo */}
@@ -49,8 +49,8 @@ export default function Sidebar() {
                         {/* User */}
                         <NavLink urlActiveOpen={url.startsWith("/admin/users")} name="Thành viên" icon={<UsersRound strokeWidth={1.75} size={17} />}>
                             <NavSubLink isActive={url === "/admin/users"} route="/admin/users" name="Danh sách thành viên" />
-                            <NavSubLink isActive={url === "/admin/users/permissions"} route="/" name="Quản lí quyền hạn" />
-                            <NavSubLink isActive={url === "/admin/users/roles"} route="/" name="Quản lí trò" />
+                            <NavSubLink isActive={url.startsWith("/admin/users/permissions")} route="/admin/users/permissions" name="Quản lí quyền" />
+                            <NavSubLink isActive={url.startsWith("/admin/users/roles")} route="/admin/users/roles" name="Quản lí vai trò" />
                         </NavLink>
 
                         <NavLink route="/admin/dashboard" name="Đơn hàng" isActive={url === "/admin/sales"} icon={<PackageCheck strokeWidth={1.75} size={17} />} />
@@ -59,7 +59,7 @@ export default function Sidebar() {
             </div>
 
             {/* user setting */}
-            <UserSetting/>
+            <UserSetting />
         </div>
     )
 }

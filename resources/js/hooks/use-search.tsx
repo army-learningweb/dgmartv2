@@ -9,7 +9,7 @@ interface useSearchProps {
 export const useSearch = ({setQuerySearch, queryFilter} : useSearchProps) => {
     const [isLoadingSearch, setIsLoadingSearch] = useState<boolean>(false);
     const queryRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
+    
     const handleQuerySearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setQuerySearch(e.target.value.toLowerCase());
         setIsLoadingSearch(true);
@@ -19,10 +19,10 @@ export const useSearch = ({setQuerySearch, queryFilter} : useSearchProps) => {
             router.get("/admin/users", {
                 ...(query !== "" ? { search: query } : {}),
                 ...(queryFilter !== null ? { filter: queryFilter } : {})
-            }, {
-                preserveState: true
+            },{
+                preserveState: true,
+                onFinish: () => setIsLoadingSearch(false)
             })
-            setIsLoadingSearch(false);
         }, 350)
     }
 

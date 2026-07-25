@@ -16,7 +16,6 @@ class AdminUserController extends Controller
             ->when($request->input("search"), function ($query, $value) {
                 $query->where(function ($q) use ($value) {
                     $q->where("name", "like", "%{$value}%")
-                        ->orWhere("email", "like", "%{$value}%")
                         ->orWhere("tel", "like", "%{$value}%");
                 });
             })
@@ -47,10 +46,20 @@ class AdminUserController extends Controller
         $validated = $request->validate([
             "name" => ["required", "min:2", "max:100", "regex:/^[\p{L}\s]+$/u"],
             "tel" => ["required", "regex:/^(032|033|034|035|036|037|038|039|096|097|098|086|083|084|085|081|082|088|091|094|070|079|077|076|078|090|093|089|056|058|092|059|099)[0-9]{7}$/"],
-            "email" => ["required", "email"],
+            "email" => ["required", "email", "unique:users"],
             "password" => ["required", "min:8", "max:50", "confirmed", "regex:/^[\p{L}\p{N}\s!@#$%^&*]+$/u"],
+            "status" => ["required"]
         ]);
         User::create($validated);
+        if($request->input("user_on_page") === 7){
+            if($request->input("last_page") === 1){
+                $next_page = $request->input("last_page") + 1;
+                return redirect("/admin/users?page={$next_page}");
+            }else{
+                return redirect("/admin/users?page={$request->input('last_page')}");
+            }
+        }
+        return redirect("/admin/users?page={$request->input('current_page')}");
     }
 
     // Sửa
@@ -59,29 +68,25 @@ class AdminUserController extends Controller
         $validated = $request->validate([
             "name" => ["required", "min:2", "max:100", "regex:/^[\p{L}\s]+$/u"],
             "tel" => ["required", "regex:/^(032|033|034|035|036|037|038|039|096|097|098|086|083|084|085|081|082|088|091|094|070|079|077|076|078|090|093|089|056|058|092|059|099)[0-9]{7}$/"],
-            "email" => ["required", "email"],
+            "email" => ["required", "email", "unique:users,id,".$user->id],
             "password" => ["sometimes", "nullable", "min:8", "max:50", "confirmed", "regex:/^[\p{L}\p{N}\s!@#$%^&*]+$/u"],
+            "status" => ["required"]
         ]);
 
         $validated['updated_at'] = now();
-
         if (!$request->input("password")) unset($validated['password']);
-        User::find($user->id)->update($validated);
+        $user->update($validated);
     }
 
     // Xóa
-    public function delete(User $user)
+    public function delete(Request $request, User $user)
     {
         if ($user->id === 1) return;
         $user->delete();
-    }
-
-    // Cập nhật trạng thái
-    public function updateStatus(Request $request, User $user)
-    {
-        $user->update([
-            'status' => $request->input('status'),
-            'updated_at' => now()
-        ]);
+        if($request->input('user_on_page') === 1){
+            $prev_page = $request->input('current_page') - 1;
+            return redirect("/admin/users?page={$prev_page}");
+        }
+        return redirect("/admin/users?page={$request->input('current_page')}");
     }
 }

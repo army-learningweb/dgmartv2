@@ -10,12 +10,12 @@ interface ModaFooterProps{
 export default function ModalFooter({labelSubmit, formSubmitId, processing, onClose} : ModaFooterProps) {
     return (
         <footer className="flex items-center justify-end gap-2 mt-3">
-            <Button onClick={onClose} size="small" variant="outline">Đóng</Button>
+            <Button onClick={onClose} variant="outline" className="text-[12.5px]!">Đóng</Button>
             <Button form={formSubmitId} 
             type="submit" 
-            size="small"
             processing={processing}
             processingLabel="Đang xử lí..."
+            className="text-[12.5px]!"
             >
                 {labelSubmit}
             </Button>
