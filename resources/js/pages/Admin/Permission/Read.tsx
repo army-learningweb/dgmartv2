@@ -2,7 +2,7 @@ import { Head, useForm, router } from '@inertiajs/react';
 import { Pen, Trash, Plus } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import React from 'react';
+import { Fragment } from 'react';
 
 import Button from '@/components/ui/Button';
 import ModalCreate from '@/components/Admin/Modal/ModalCreate';
@@ -211,18 +211,18 @@ export default function Read({ permissions, total }: ReadPermissionType) {
                             </thead>
                             <tbody>
                                 {Object.entries(permissions).map(([module, items]) => (
-                                    <React.Fragment key={module}>
+                                    <Fragment key={module}>
                                         <tr className='font-semibold'>
                                             <td className='py-4 px-3'>
-                                                <div className='bg-blue-50 text-blue-700 p-0.75 px-2 rounded-md w-fit'>{module}</div>
+                                                <div className='bg-blue-50 text-blue-700 p-0.75 px-2 rounded-md w-fit'>Module {module}</div>
                                             </td>
                                         </tr>
                                         {items.map(item => (
                                             <tr key={item.id} className='border-b border-gray-200'>
-                                                <td className='px-5 py-2'>{item.name}</td>
-                                                <td className='px-5 py-2'>{item.desc}</td>
-                                                <td className='px-5 py-2'>{item.created_at}</td>
-                                                <td className='px-5 py-2'>{item.updated_at}</td>
+                                                <td className='px-5 py-2 w-60 truncate'>{item.name}</td>
+                                                <td className='px-5 py-2 w-65 truncate'>{item.desc}</td>
+                                                <td className='px-5 py-2 w-60 truncate'>{item.created_at}</td>
+                                                <td className='px-5 py-2 w-55 truncate'>{item.updated_at}</td>
                                                 <td className='px-5 py-2'>
                                                     <div className="flex h-6.75 gap-2">
                                                         <Button onClick={() => handleOpenModalEdit(item)} variant="outline" size="small" animatePress={true}>
@@ -237,10 +237,38 @@ export default function Read({ permissions, total }: ReadPermissionType) {
                                                 </td>
                                             </tr>
                                         ))}
-                                    </React.Fragment>
+                                    </Fragment>
                                 ))}
                             </tbody>
                         </table>
+
+                        {/* modile */}
+                        <div className='block md:hidden p-3'>
+                            {Object.entries(permissions).map(([module, items]) => (
+                                <Fragment key={module}>
+                                    <div className='px-2 py-1 bg-blue-50 text-blue-700 rounded-md my-3 first:mt-0 font-medium w-fit'>Module {module}</div>
+                                    {items.map(item => (
+                                        <div key={item.id} className='px-1 mt-3 flex justify-between border-b border-gray-200 h-20'>
+                                            <div className='mt-3'>
+                                                <div className='w-30 truncate'>{item.name}</div>
+                                                <div className='text-gray-500 w-30 truncate'>({item.desc})</div>
+                                            </div>
+
+                                            <div className="flex flex-col h-6.75 gap-2">
+                                                <Button onClick={() => handleOpenModalEdit(item)} variant="outline" size="small" animatePress={true}>
+                                                    <Pen size={13} className="text-gray-400" />
+                                                    <span>Cập nhật</span>
+                                                </Button>
+                                                <Button onClick={() => handleDelete(item.id)} variant="outline" size="small" animatePress={true}>
+                                                    <Trash size={13} className="text-gray-400" />
+                                                    <span>Xóa</span>
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </Fragment>
+                            ))}
+                        </div>
                     </div>
                 )}
 

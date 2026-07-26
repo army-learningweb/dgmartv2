@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\User;
+use App\Models\Role;
 
 class AdminUserController extends Controller
 {
@@ -12,7 +13,7 @@ class AdminUserController extends Controller
     // Đọc
     public function read(Request $request)
     {
-        $users = User::query()
+        $users = User::query()->with('role:id,name')
             ->when($request->input("search"), function ($query, $value) {
                 $query->where(function ($q) use ($value) {
                     $q->where("name", "like", "%{$value}%")
@@ -22,7 +23,7 @@ class AdminUserController extends Controller
             ->when($request->input('filter'), function ($query, $value) {
                 $query->where('status', $value);
             })
-            ->select(["id", "name", "email", "tel", "status", "created_at", "updated_at"])
+            ->select(["id", "name", "email", "tel", "status", "role_id", "created_at", "updated_at"])
             ->paginate(7)
             ->withQueryString();
 
@@ -30,6 +31,7 @@ class AdminUserController extends Controller
         $active = User::where('status','active')->count();
         $inactive = User::where('status','inactive')->count();
 
+        $roles = Role::get(['id','name']);
         return Inertia::render("Admin/User/Read", [
             "users" => $users,
             "search" => $request->input("search"),
@@ -37,6 +39,7 @@ class AdminUserController extends Controller
             "total" => $total,
             "active" => $active,
             "inactive" => $inactive,
+            "roles" => $roles
         ]);
     }
 
@@ -50,6 +53,8 @@ class AdminUserController extends Controller
             "password" => ["required", "min:8", "max:50", "confirmed", "regex:/^[\p{L}\p{N}\s!@#$%^&*]+$/u"],
             "status" => ["required"]
         ]);
+
+        $validated['role_id'] = $request->input('role_id') ?? null;
         User::create($validated);
         if($request->input("user_on_page") === 7){
             if($request->input("last_page") === 1){
@@ -72,8 +77,10 @@ class AdminUserController extends Controller
             "password" => ["sometimes", "nullable", "min:8", "max:50", "confirmed", "regex:/^[\p{L}\p{N}\s!@#$%^&*]+$/u"],
             "status" => ["required"]
         ]);
-
+        
         $validated['updated_at'] = now();
+        $validated['role_id'] = $request->input('role_id') ?? null;
+        
         if (!$request->input("password")) unset($validated['password']);
         $user->update($validated);
     }

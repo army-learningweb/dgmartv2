@@ -22,7 +22,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  */
 
-#[Fillable(['name', 'email', 'password', 'tel', 'status', 'updated_at'])]
+#[Fillable(['name', 'email', 'password', 'tel', 'status', 'updated_at', 'role_id'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -42,5 +42,9 @@ class User extends Authenticatable
             'created_at' => 'datetime:d/m/Y',
             'updated_at' => 'datetime:d/m/Y'
         ];
+    }
+
+    public function role(){
+        return $this->belongsTo(Role::class);
     }
 }

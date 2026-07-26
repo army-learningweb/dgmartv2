@@ -15,7 +15,7 @@ const Textarea = ({ name, label, error, showError = true, ...props }: TextareaPr
             </label>
 
             {/* field */}
-            <textarea name={name} id={name} className={clsx("mt-2 border border-gray-200 w-full px-2 py-1.75 rounded-lg focus:outline-0 transition-colors duration-150 h-20", {
+            <textarea name={name} id={name} className={clsx("mt-2 border border-gray-200 w-full px-2 py-1.75 rounded-lg focus:outline-0 transition-colors duration-150 h-20 resize-none", {
                 "ring-3 ring-red-600/20 border-red-600 focus:ring-red-600/20 focus:border-red-600": error,
                 "focus:ring-3 focus:ring-gray-300/70 focus:ring-offset-blue-50 focus:border-gray-400/70 ": !error
             })} {...props}>

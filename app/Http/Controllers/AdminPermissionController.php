@@ -21,9 +21,9 @@ class AdminPermissionController extends Controller
     // Thêm
     public function store(Request $request){
         $validated = $request->validate([
-            "name" => ["required", "min:2", "max:100", "regex:/^[A-Z][a-zA-Z\s]+$/" ,"unique:permissions"],
+            "name" => ["required", "min:2", "max:100", "regex:/^[A-Z][a-zA-Z\s]+$/"],
             "desc" => ["required", "min:2", "max:100", "regex:/^[\p{L}\s]+$/u"],
-            "module" => ["required", "min:2", "max:100", "regex:/^[A-Z][a-zA-Z\s]+$/" ,"unique:permissions"],
+            "module" => ["required", "min:2", "max:100", "regex:/^[A-Z][a-zA-Z\s]+$/"],
         ],
         [
             "name.regex" => "Chữ cái đầu viết hoa, không chứa dấu và kí tự",

@@ -1,5 +1,11 @@
 import { PaginatedData } from "./global";
 
+// Role
+export type Role = {
+    id: number
+    name: string
+}
+
 // Đọc
 export type User = {
     id: string;
@@ -11,6 +17,8 @@ export type User = {
     remember_token: string | null;
     created_at: string;
     updated_at: string;
+    role_id: string | undefined;
+    role: Role
 };
 
 export type UsersReadType = {
@@ -24,6 +32,8 @@ export type UsersReadType = {
             | 'status'
             | 'created_at'
             | 'updated_at'
+            | 'role_id'
+            | 'role'
         >
     >;
     search: string | null;
@@ -31,6 +41,7 @@ export type UsersReadType = {
     total: string;
     active: string;
     inactive: string;
+    roles: Role[]
 };
 
 // Thêm User
@@ -40,6 +51,7 @@ export type CreateUserType = {
     email: string;
     tel: string;
     status: 'active' | 'inactive';
+    role_id: string | undefined;
     password: string;
     password_confirmation: string;
     user_on_page: number,
@@ -53,10 +65,9 @@ export type EditUserType = {
     name: string;
     email: string;
     tel: string;
+    status: 'active' | 'inactive';
+    role_id: string | undefined;
     password?: string;
     password_confirmation?: string;
-    status?: 'active' | 'inactive';
 };
 
-// Xóa User
-export type DeleteUserType = {};

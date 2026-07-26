@@ -3,7 +3,7 @@ import { ChevronsUpDown, LogOut } from 'lucide-react';
 import { usePage, Link } from "@inertiajs/react";
 import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
-import UserAvatar from "@/components/ui/UserAvatar";
+import UserAvatar from "@/components/Admin/TableManager/UserAvatar";
 import { Auth } from "@/types";
 export default function UserSetting() {
 

@@ -1,3 +1,5 @@
+import { Permission } from "./permission";
+
 export type Role = {
     id: string;
     name: string;
@@ -8,14 +10,20 @@ export type Role = {
 
 export type ReadRoleType = {
     roles: Role[];
+    permissions: Record<string,Permission[]>
     total: string;
 };
 
-export type CreateRoleType = Pick<
-    Role,
-    'id' | 'name' | 'desc'
->;
-export type EditRoleType = Pick<
-    Role,
-    'id' | 'name' | 'desc'
->;
+export type CreateRoleType = {
+    id: string;
+    name: string;
+    desc: string;
+    permissions: string[];
+}
+
+export type EditRoleType = {
+    id: string;
+    name: string;
+    desc: string;
+    permissions?: string[];
+}

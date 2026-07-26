@@ -1,7 +1,9 @@
 import { Head, useForm, router } from "@inertiajs/react"
 import { Plus, Pen, Trash } from "lucide-react"
 import { useState } from "react"
+import React from "react"
 import toast from "react-hot-toast"
+import axios from "axios"
 
 import Button from "@/components/ui/Button"
 import ModalCreate from "@/components/Admin/Modal/ModalCreate"
@@ -9,17 +11,18 @@ import ModalEdit from "@/components/Admin/Modal/ModalEdit"
 import Input from "@/components/ui/Input"
 import Textarea from "@/components/ui/Textarea"
 import FilterTab from "@/components/Admin/TableManager/FilterTab"
+import EmptyData from "@/components/Admin/Empty/EmptyData"
 
 import { ReadRoleType } from '@/types/module/role';
 import { CreateRoleType } from '@/types/module/role';
 import { EditRoleType } from '@/types/module/role';
 
-export default function Read({ roles, total }: ReadRoleType) {
-
+export default function Read({ roles, permissions, total }: ReadRoleType) {
     const { data, setData, post, patch, errors, processing, reset, clearErrors, } = useForm<CreateRoleType>({
         id: '',
         name: '',
         desc: '',
+        permissions: []
     });
 
     const [openModalCreate, setOpenModalCreate] = useState(false);
@@ -41,11 +44,13 @@ export default function Read({ roles, total }: ReadRoleType) {
     };
 
     // Mở modal edit
-    const handleOpenModalEdit = (role: EditRoleType) => {
+    const handleOpenModalEdit = async (role: EditRoleType) => {
+        const res = await axios.get(`/admin/users/roles/${role.id}/getPermissions`);
         setData({
             id: role.id,
             name: role.name,
             desc: role.desc,
+            permissions: [...res.data]
         });
         setIdUpdate(role.id);
         setOpenModalEdit(true);
@@ -103,7 +108,6 @@ export default function Read({ roles, total }: ReadRoleType) {
         }
     };
 
-
     return (
         <>
             <Head title="Vai trò" />
@@ -112,21 +116,56 @@ export default function Read({ roles, total }: ReadRoleType) {
             <ModalCreate
                 onClose={handleCloseModalCreate}
                 isOpen={openModalCreate}
-                customSize="w-[90%] md:w-[30%] min-h-[40%]"
+                customSize="w-[90%] md:w-[40%] min-h-[50%]"
                 title="Thêm mới vai trò"
                 labelSubmit="Thêm mới"
                 formSubmitId="createRole"
                 processing={processing}
             >
                 <form onSubmit={handleCreate} id="createRole">
-                    <div className='mt-2'>
+                    <div className='mt-1'>
                         <Input type="text" name="name" label="Tên vai trò" error={errors.name} value={data.name} onChange={(e) => setData('name', e.target.value)} autoComplete="on" />
                         <p className='mt-1 text-gray-500'>VD: Admin,Post Manager...</p>
                     </div>
 
                     <div className='mt-2'>
                         <Textarea name="desc" label="Mô tả" error={errors.desc} value={data.desc} onChange={(e) => setData('desc', e.target.value)} autoComplete="on" />
-                        <p className='mt-1 text-gray-500'>VD: Quản lí toàn bộ hệ thống</p>
+                        <p className='mt-0.5 text-gray-500'>VD: Quản lí toàn bộ hệ thống</p>
+                    </div>
+
+                    <hr className="my-3 border-gray-100" />
+                    <div className="mt-2">
+                        <div className="flex gap-2">
+                            <p className="font-semibold text-gray-800 ">Chọn quyền </p>
+                            <p className="text-gray-500">(Vai trò này có quyền gì?)</p>
+                        </div>
+                        {errors.permissions && <div className="text-red-600 my-1">{errors.permissions}</div>}
+                        <div className="max-h-48 overflow-y-auto pb-2">
+                            {Object.values(permissions)?.length > 0 && (
+                                <>
+                                    {Object.entries(permissions).map(([module, items]) => (
+                                        <div key={module} className="border border-gray-200 py-1 px-4 mt-2 rounded-lg" >
+                                            <div className="py-1 px-2 bg-blue-100 text-blue-700 w-fit rounded-md mt-1 text-xs font-medium">
+                                                {module}
+                                            </div>
+                                            <div className="py-1 grid grid-cols-4 mt-2">
+                                                {items.map(item => (
+                                                    <div key={item.id} className="flex gap-1">
+                                                        <input checked={data.permissions.includes(item.id)} onChange={(e) => {
+                                                            setData("permissions", e.target.checked
+                                                                ? [...data.permissions, item.id]
+                                                                : data.permissions.filter(id => id !== item.id)
+                                                            )
+                                                        }} type="checkbox" name="permissions" id={item.id} className="border-gray-200 bg-white" />
+                                                        <label htmlFor={item.id} className="select-none">{item.name}</label>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </>
+                            )}
+                        </div>
                     </div>
                 </form>
             </ModalCreate>
@@ -134,21 +173,56 @@ export default function Read({ roles, total }: ReadRoleType) {
             <ModalEdit
                 onClose={handleCloseModalEdit}
                 isOpen={openModalEdit}
-                customSize="w-[90%] md:w-[30%] min-h-[50%]"
+                customSize="w-[90%] md:w-[40%] min-h-[50%]"
                 title="Cập nhật thông tin"
                 labelSubmit="Cập nhật"
                 formSubmitId="editRole"
                 processing={processing}
             >
                 <form onSubmit={handleEdit} id="editRole">
-                   <div className='mt-2'>
+                    <div className='mt-1'>
                         <Input type="text" name="name" label="Tên vai trò" error={errors.name} value={data.name} onChange={(e) => setData('name', e.target.value)} autoComplete="on" />
                         <p className='mt-1 text-gray-500'>VD: Admin,Post Manager...</p>
                     </div>
 
                     <div className='mt-2'>
                         <Textarea name="desc" label="Mô tả" error={errors.desc} value={data.desc} onChange={(e) => setData('desc', e.target.value)} autoComplete="on" />
-                        <p className='mt-1 text-gray-500'>VD: Quản lí toàn bộ hệ thống</p>
+                        <p className='mt-0.5 text-gray-500'>VD: Quản lí toàn bộ hệ thống</p>
+                    </div>
+
+                    <hr className="my-3 border-gray-100" />
+                    <div className="mt-2">
+                        <div className="flex gap-2">
+                            <p className="font-semibold text-gray-800 ">Chọn quyền </p>
+                            <p className="text-gray-500">(Vai trò này có quyền gì?)</p>
+                        </div>
+                        {errors.permissions && <div className="text-red-600 my-1">{errors.permissions}</div>}
+                        <div className="max-h-48 overflow-y-auto pb-2">
+                            {Object.values(permissions)?.length > 0 && (
+                                <>
+                                    {Object.entries(permissions).map(([module, items]) => (
+                                        <div key={module} className="border border-gray-200 py-1 px-4 mt-2 rounded-lg" >
+                                            <div className="py-1 px-2 bg-blue-100 text-blue-700 w-fit rounded-md mt-1 text-xs font-medium">
+                                                {module}
+                                            </div>
+                                            <div className="py-1 grid grid-cols-4 mt-2">
+                                                {items.map(item => (
+                                                    <div key={item.id} className="flex gap-1">
+                                                        <input checked={data.permissions.includes(item.id)} onChange={(e) => {
+                                                            setData("permissions", e.target.checked
+                                                                ? [...data.permissions, item.id]
+                                                                : data.permissions.filter(id => id !== item.id)
+                                                            )
+                                                        }} type="checkbox" name="permissions" id={item.id} className="border-gray-200 bg-white" />
+                                                        <label htmlFor={item.id} className="select-none">{item.name}</label>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </>
+                            )}
+                        </div>
                     </div>
                 </form>
             </ModalEdit>
@@ -197,11 +271,11 @@ export default function Read({ roles, total }: ReadRoleType) {
                             </thead>
                             <tbody>
                                 {roles.map(item => (
-                                    <tr className="border-b border-gray-200 last-of-type:border-0">
-                                        <td className="px-5 py-3">{item.name}</td>
-                                        <td className="px-5 py-3">{item.desc}</td>
-                                        <td className="px-5 py-3">{item.created_at}</td>
-                                        <td className="px-5 py-3">{item.updated_at}</td>
+                                    <tr key={item.id} className="border-b border-gray-200 last-of-type:border-0">
+                                        <td className="px-5 py-3 w-60 truncate">{item.name}</td>
+                                        <td className="px-5 py-3 w-65 truncate">{item.desc}</td>
+                                        <td className="px-5 py-3 w-60 truncate">{item.created_at}</td>
+                                        <td className="px-5 py-3 w-60 truncate">{item.updated_at}</td>
                                         <td className="px-5 py-3">
                                             <div className="flex h-6.75 gap-2">
                                                 <Button onClick={() => handleOpenModalEdit(item)} variant="outline" size="small" animatePress={true}>
@@ -218,7 +292,44 @@ export default function Read({ roles, total }: ReadRoleType) {
                                 ))}
                             </tbody>
                         </table>
+
+                        <div className="md:hidden inline-flex flex-col gap-2 w-full">
+                            {roles.map(item => (
+                                <div className="border-b border-gray-200 p-3 w-full flex justify-between h-22">
+                                    <div className="mt-3">
+                                        <p className="w-30 truncate">{item.name}</p>
+                                        <p className="text-gray-500 w-40 truncate">{item.desc}</p>
+                                    </div>
+
+                                    <div className="flex flex-col h-6.75 gap-2">
+                                        <Button onClick={() => handleOpenModalEdit(item)} variant="outline" size="small" animatePress={true}>
+                                            <Pen size={13} className="text-gray-400" />
+                                            <span>Cập nhật</span>
+                                        </Button>
+                                        <Button onClick={() => handleDelete(item.id)} variant="outline" size="small" animatePress={true}>
+                                            <Trash size={13} className="text-gray-400" />
+                                            <span>Xóa</span>
+                                        </Button>
+                                    </div>
+                                </div>
+
+                            ))}
+                        </div>
                     </div>
+                )}
+
+                {/* empty */}
+                {roles?.length === 0 && (
+                    <EmptyData>
+                        <Button
+                            onClick={handleOpenModalCreate}
+                            animatePress={true}
+                            size="small"
+                        >
+                            <Plus size={15} />
+                            <span>Thêm mới vai trò</span>
+                        </Button>
+                    </EmptyData>
                 )}
             </section>
         </>

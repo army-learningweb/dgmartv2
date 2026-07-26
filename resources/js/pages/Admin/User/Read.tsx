@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import clsx from 'clsx';
 
 import Button from '@/components/ui/Button';
-import UserAvatar from '@/components/ui/UserAvatar';
+import UserAvatar from '@/components/Admin/TableManager/UserAvatar';
 import Pagination from '@/components/Admin/Pagination/Pagination';
 import ModalCreate from '@/components/Admin/Modal/ModalCreate';
 import ModalEdit from '@/components/Admin/Modal/ModalEdit';
@@ -15,6 +15,7 @@ import FilterTab from '@/components/Admin/TableManager/FilterTab';
 import EmptyData from '@/components/Admin/Empty/EmptyData';
 import Badge from '@/components/ui/Badge';
 import Select from '@/components/ui/Select';
+import RoleBadge from '@/components/Admin/TableManager/RoleBadge';
 
 import { useSearch } from '@/hooks/use-search';
 import { useFilter } from '@/hooks/use-filter';
@@ -25,13 +26,14 @@ import { EditUserType } from '@/types/module/user';
 import { Auth } from '@/types';
 
 
-export default function Read({ users, search, filter, total, active, inactive, }: UsersReadType) {
+export default function Read({ users, search, filter, total, active, inactive, roles }: UsersReadType) {
     const { data, setData, post, patch, errors, processing, reset, clearErrors, } = useForm<CreateUserType>({
         id: '',
         name: '',
         email: '',
         tel: '',
         status: 'active',
+        role_id: '',
         password: '',
         password_confirmation: '',
         user_on_page: users?.data?.length,
@@ -43,7 +45,7 @@ export default function Read({ users, search, filter, total, active, inactive, }
     const [openModalCreate, setOpenModalCreate] = useState(false);
     const [openModalEdit, setOpenModalEdit] = useState(false);
     const [idUpdate, setIdUpdate] = useState<null | string>(null);
-    
+
     const [queryFilter, setQueryFilter] = useState<null | string>(filter ?? null);
     const [querySearch, setQuerySearch] = useState<string>(search ?? '');
     const { handleQueryFilter } = useFilter({ querySearch, setQueryFilter });
@@ -65,17 +67,21 @@ export default function Read({ users, search, filter, total, active, inactive, }
 
     // Mở modal edit
     const handleOpenModalEdit = (user: EditUserType) => {
+        console.log(user);
         setData({
             id: user.id,
             name: user.name,
             tel: user.tel,
             email: user.email,
             status: user.status,
+            role_id: user.role_id ?? "",
             password: '',
             password_confirmation: '',
         });
         setIdUpdate(user.id);
         setOpenModalEdit(true);
+
+        
     };
 
     // Đóng modal edit
@@ -195,8 +201,24 @@ export default function Read({ users, search, filter, total, active, inactive, }
                         </div>
                     </div>
 
+                    <div className='mt-2'>
+                        <Select onChange={(e) => setData("role_id", e.target.value)} label="Phân vai trò" name="role_id" error={errors.role_id} value={data.role_id}>
+                            <option value="">-Chọn vai trò-</option>
+                            {roles.map(role => (
+                                <option key={role.id} value={role.id}>{role.name}</option>
+                            ))}
+                        </Select>
+                        <p className='mt-2 text-gray-500'>(Không bắt buộc)</p>
+                    </div>
+
                     <div className="mt-2">
-                        <Select onSetData={(e) => setData("status", e.target.value as 'active' | 'inactive')} />
+                        <Select 
+                            label="Trạng thái" 
+                            name="status" 
+                            onSetData={(e) => setData("status", e.target.value as 'active' | 'inactive')}>
+                                <option value="active">Hoạt động</option>
+                                <option value="inactive">Vô hiệu hóa</option>
+                        </Select>
                     </div>
 
                 </form>
@@ -251,8 +273,30 @@ export default function Read({ users, search, filter, total, active, inactive, }
                         </div>
                     </div>
 
+                     <div className='mt-2'>
+                        <Select 
+                            onChange={(e) => setData("role_id", e.target.value)} 
+                            label="Phân vai trò" 
+                            name="role_id" 
+                            error={errors.role_id} 
+                            value={data.role_id}>
+                                <option value="">-Chọn vai trò-</option>
+                                {roles.map(role => (
+                                    <option key={role.id} value={role.id}>{role.name}</option>
+                                ))}
+                        </Select>
+                        <p className='mt-2 text-gray-500'>(Không bắt buộc)</p>
+                    </div>
+
                     <div className="mt-2">
-                        <Select onSetData={(e) => setData("status", e.target.value as 'active' | 'inactive')} />
+                        <Select  
+                            label="Trạng thái" 
+                            name="status" 
+                            value={data.status}
+                            onSetData={(e) => setData("status", e.target.value as 'active' | 'inactive')}>
+                                <option value="active">Hoạt động</option>
+                                <option value="inactive">Vô hiệu hóa</option>
+                        </Select>
                     </div>
                 </form>
             </ModalEdit>
@@ -331,12 +375,17 @@ export default function Read({ users, search, filter, total, active, inactive, }
                                             <div className="flex items-center gap-3">
                                                 <UserAvatar name={item.name} />
                                                 <div className="flex flex-col gap-0.75">
-                                                    <div className="w-30 truncate">
+                                                    <div className="w-35 truncate">
                                                         {item.name}
                                                     </div>
-                                                    <div className="w-fit rounded-md bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-500">
-                                                        Admin
-                                                    </div>
+
+                                                    {item.role && (
+                                                        <RoleBadge name={item.role.name} />
+                                                    )}
+
+                                                    {!item.role && (
+                                                        <div className='text-gray-500 text-xs'>Chưa phân vai trò !</div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </td>
@@ -344,7 +393,7 @@ export default function Read({ users, search, filter, total, active, inactive, }
                                         {/* email & tel */}
                                         <td className="px-4 py-3">
                                             <div className="flex flex-col gap-0.5">
-                                                <div className="w-40 truncate">
+                                                <div className="w-50 truncate">
                                                     {item.email}
                                                 </div>
                                                 <div className="text-gray-500">
@@ -355,17 +404,21 @@ export default function Read({ users, search, filter, total, active, inactive, }
 
                                         {/* create at */}
                                         <td className="px-4 py-3">
-                                            {item.created_at}
+                                            <div className='w-30 truncate'>
+                                                {item.created_at}
+                                            </div>
                                         </td>
 
                                         {/* update at */}
                                         <td className="px-4 py-3">
-                                            {item.updated_at}
+                                            <div className='w-30 truncate'>
+                                                {item.updated_at}
+                                            </div>
                                         </td>
 
                                         {/* status */}
                                         <td className="px-4 py-3">
-                                            <div className="w-20">
+                                            <div className="w-25">
                                                 <Badge status={item.status} />
                                             </div>
                                         </td>
@@ -430,7 +483,7 @@ export default function Read({ users, search, filter, total, active, inactive, }
 
                 {/* empty */}
                 {users.data?.length === 0 && (
-                    <EmptyData showFallBack={true}/>
+                    <EmptyData showFallBack={true} />
                 )}
 
                 {/* pagination */}

@@ -8,7 +8,7 @@ interface EmptyDataProps {
 
 export default function EmptyData({ children, showFallBack = false }: EmptyDataProps) {
     return (
-        <div className="mt-4 flex min-h-141.5 w-full flex-col items-center justify-center gap-4 rounded-xl border border-gray-100">
+        <div className="px-5 md:px-0 mt-4 flex min-h-141.5 w-full flex-col items-center justify-center gap-4 rounded-xl border border-gray-100">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-100">
                 <FileSearchCorner size={18} />
             </div>

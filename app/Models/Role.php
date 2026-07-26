@@ -19,4 +19,8 @@ class Role extends Model
             'updated_at' => 'datetime:d/m/Y'
         ];
     }
+
+    public function permissions(){
+        return $this->belongsToMany(Permission::class,'role_permissions');
+    }
 }

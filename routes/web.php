@@ -39,6 +39,7 @@ Route::middleware(['auth:sanctum'])->group( function(){
     Route::post('/admin/users/roles/store', [AdminRoleController::class, 'store']);
     Route::patch('/admin/users/roles/{role}/update', [AdminRoleController::class, 'update']);
     Route::delete('/admin/users/roles/{role}/delete', [AdminRoleController::class, 'delete']);
+    ROute::get('/admin/users/roles/{role}/getPermissions', [AdminRoleController::class, 'getPermissions']);
 
     //PRODUCT
     Route::get('/admin/products', [AdminProductController::class, 'read']);
