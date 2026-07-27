@@ -3,7 +3,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminPermissionController;
+use App\Http\Controllers\AdminPostCategoriesController;
 use App\Http\Controllers\AdminPostController;
+use App\Http\Controllers\AdminProductCategoriesController;
 use App\Http\Controllers\AdminProductController;
 use App\Http\Controllers\AdminRoleController;
 use App\Http\Controllers\AdminUserController;
@@ -44,7 +46,19 @@ Route::middleware(['auth:sanctum'])->group( function(){
     //PRODUCT
     Route::get('/admin/products', [AdminProductController::class, 'read']);
 
+    //PRODUCT CATEGORY
+    Route::get('/admin/products/categories', [AdminProductCategoriesController::class, 'read']);
+    Route::post('/admin/products/categories/store', [AdminProductCategoriesController::class, 'store']);
+    Route::patch('/admin/products/categories/{category}/update', [AdminProductCategoriesController::class, 'update']);
+    Route::delete('/admin/products/categories/{category}/delete', [AdminProductCategoriesController::class, 'delete']);
+
     //POST
     Route::get('/admin/posts', [AdminPostController::class, 'read']);
+
+    //POST CATEGORY
+    Route::get('/admin/posts/categories', [AdminPostCategoriesController::class, 'read']);
+    Route::post('/admin/posts/categories/store', [AdminPostCategoriesController::class, 'store']);
+    Route::patch('/admin/posts/categories/{category}/update', [AdminPostCategoriesController::class, 'update']);
+    Route::delete('/admin/posts/categories/{category}/delete', [AdminPostCategoriesController::class, 'delete']);
 
 });

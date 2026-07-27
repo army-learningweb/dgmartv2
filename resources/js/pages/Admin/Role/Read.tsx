@@ -292,10 +292,11 @@ export default function Read({ roles, permissions, total }: ReadRoleType) {
                                 ))}
                             </tbody>
                         </table>
-
+                        
+                        {/* mobile */}
                         <div className="md:hidden inline-flex flex-col gap-2 w-full">
                             {roles.map(item => (
-                                <div className="border-b border-gray-200 p-3 w-full flex justify-between h-22">
+                                <div key={item.id} className="border-b border-gray-200 p-3 w-full flex justify-between h-22">
                                     <div className="mt-3">
                                         <p className="w-30 truncate">{item.name}</p>
                                         <p className="text-gray-500 w-40 truncate">{item.desc}</p>

@@ -215,7 +215,7 @@ export default function Read({ users, search, filter, total, active, inactive, r
                         <Select 
                             label="Trạng thái" 
                             name="status" 
-                            onSetData={(e) => setData("status", e.target.value as 'active' | 'inactive')}>
+                            onChange={(e) => setData("status", e.target.value as 'active' | 'inactive')}>
                                 <option value="active">Hoạt động</option>
                                 <option value="inactive">Vô hiệu hóa</option>
                         </Select>
@@ -293,7 +293,7 @@ export default function Read({ users, search, filter, total, active, inactive, r
                             label="Trạng thái" 
                             name="status" 
                             value={data.status}
-                            onSetData={(e) => setData("status", e.target.value as 'active' | 'inactive')}>
+                            onChange={(e) => setData("status", e.target.value as 'active' | 'inactive')}>
                                 <option value="active">Hoạt động</option>
                                 <option value="inactive">Vô hiệu hóa</option>
                         </Select>
