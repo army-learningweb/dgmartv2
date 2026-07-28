@@ -1,8 +1,9 @@
-import { Plus, Pen, Trash, FileText, Folder } from "lucide-react"
+import { Plus, Pen, Trash, Folder } from "lucide-react"
 import Button from "@/components/ui/Button"
 import { Head, useForm, router } from "@inertiajs/react"
 import { useState } from "react"
 import toast from "react-hot-toast"
+import clsx from "clsx"
 
 import FilterTab from "@/components/Admin/TableManager/FilterTab"
 import ModalCreate from "@/components/Admin/Modal/ModalCreate"
@@ -67,6 +68,7 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
     const handleCreate = (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         post('/admin/products/categories/store', {
+            preserveScroll: true,
             onSuccess: () => {
                 setOpenModalCreate(false);
                 reset();
@@ -92,7 +94,7 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
 
     // Xóa
     const handleDelete = (id: string) => {
-        if (confirm('Bạn có chắc muốn xóa danh mục này ?')) {
+        if (confirm('Bạn có chắc muốn xóa danh mục này, lưu ý cấp danh mục trước khi xóa ?')) {
             let toastID: string;
             router.delete(`/admin/products/categories/${id}/delete`, {
                 preserveScroll: true,
@@ -102,6 +104,9 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
                 onSuccess: () => {
                     toast.success('Xóa thành công', { id: toastID });
                 },
+                onError: (error) => {
+                    toast.error(error.message, { id: toastID });
+                }
             })
         }
     };
@@ -161,7 +166,9 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
                         <Input type="text" name="name" label="Tên danh mục" error={errors.name} value={data.name} onChange={(e) => setData('name', e.target.value)} autoComplete="on" />
                     </div>
                     <div className="mt-2">
-                        <Select label="Danh mục cha" name="parent_id" value={data.parent_id} onChange={(e) => setData("parent_id", e.target.value)}>
+                        <Select className={clsx("", {
+                            "opacity-50 pointer-events-none": data.parent_id == "0",
+                        })} label="Danh mục cha" name="parent_id" value={data.parent_id} onChange={(e) => setData("parent_id", e.target.value)}>
                             <option value="">-Chọn danh mục cha-</option>
                             {parent_categories?.length > 0 && (
                                 parent_categories.map(category => (
@@ -173,14 +180,22 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
                             )}
                         </Select>
                     </div>
-                    <p className="mt-2 text-green-700 p-2 bg-gray-50 rounded-lg">Để trống để khởi tạo danh mục cha.</p>
+
+                    {data.parent_id != "0" && (
+                        <p className="mt-2 text-green-700 p-2 bg-gray-50 rounded-lg">Để mặc định để khởi tạo danh mục cha.</p>
+                    )}
+
+                    {data.parent_id == "0" && (
+                        <p className="mt-2 text-amber-700 p-2 bg-amber-50 rounded-lg">Danh mục cha không thể sửa đổi !</p>
+                    )}
+
                     <div className="mt-2">
                         <Select label="Trạng thái" name="status" value={data.status} onChange={(e) => setData("status", e.target.value as 'active' | 'inactive')}>
                             <option value="active">Hoạt động</option>
                             <option value="inactive">Vô hiệu hóa</option>
                         </Select>
                     </div>
-                    <p className="mt-2 text-green-700 p-2 bg-gray-50 rounded-lg">Slug (URL Friendly) sẽ được hệ thống tự tạo theo tên danh mục.</p>
+                    <p className="mt-2 text-green-700 p-2 bg-gray-50 rounded-lg">Slug (URL Friendly) sẽ được hệ thống tự tạo theo tên danh mục</p>
                 </form>
             </ModalEdit>
 
@@ -324,34 +339,62 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
                         </table>
 
                         {/* mobile */}
-                        {/* <div className="md:hidden inline-flex flex-col gap-2 w-full">
-                                            {roles.map(item => (
-                                                <div key={item.id} className="border-b border-gray-200 p-3 w-full flex justify-between h-22">
-                                                    <div className="mt-3">
-                                                        <p className="w-30 truncate">{item.name}</p>
-                                                        <p className="text-gray-500 w-40 truncate">{item.desc}</p>
-                                                    </div>
-                
-                                                    <div className="flex flex-col h-6.75 gap-2">
-                                                        <Button onClick={() => handleOpenModalEdit(item)} variant="outline" size="small" animatePress={true}>
-                                                            <Pen size={13} className="text-gray-400" />
-                                                            <span>Cập nhật</span>
-                                                        </Button>
-                                                        <Button onClick={() => handleDelete(item.id)} variant="outline" size="small" animatePress={true}>
-                                                            <Trash size={13} className="text-gray-400" />
-                                                            <span>Xóa</span>
-                                                        </Button>
-                                                    </div>
-                                                </div>
-                
-                                            ))}
-                                        </div> */}
+                        <div className="md:hidden inline-flex flex-col gap-2 w-full p-3">
+                            {categories.map(category => (
+                                <Fragment key={category.id}>
+                                    <div className="border-b border-gray-200 py-2 flex gap-2 h-22.5">
+                                        <div className="flex gap-2 items-center flex-1 truncate relative">
+                                            <Folder className="fill-amber-500" strokeWidth={1} size={19.5} />
+                                            <div>{category.name}</div>
+                                            <div className="w-20 truncate">({category.slug})</div>
+                                            {category.status === 'active' && (
+                                                <div className="absolute left-3 bottom-6 h-3 w-3 rounded-full bg-green-600"></div>
+                                            )}
+                                            {category.status === 'inactive' && (
+                                                <div className="absolute left-3 bottom-6 h-3 w-3 rounded-full bg-red-600"></div>
+                                            )}
+                                        </div>
+                                        <div className="flex flex-col h-6.75 gap-2 w-22">
+                                            <Button onClick={() => handleOpenModalEdit(category)} variant="outline" size="small" animatePress={true}>
+                                                <Pen size={13} className="text-gray-400" />
+                                                <span>Cập nhật</span>
+                                            </Button>
+                                            <Button onClick={() => handleDelete(category.id)} variant="outline" size="small" animatePress={true}>
+                                                <Trash size={13} className="text-gray-400" />
+                                                <span>Xóa</span>
+                                            </Button>
+                                        </div>
+                                    </div>
+
+                                    {category.childs.map(item => (
+                                        <div key={item.id} className="border-b border-gray-200 py-2 flex gap-2 h-22.5">
+                                            <div className="flex gap-2 items-center flex-1 truncate relative border-l border-gray-300 ms-2 pl-6 h-5 mt-5.5">
+                                                <div>{item.name}</div>
+                                                <div className="w-20 truncate">({item.slug})</div>
+                                                
+                                            </div>
+                                            <div className="flex flex-col h-6.75 gap-2 w-22">
+                                                <Button onClick={() => handleOpenModalEdit(item)} variant="outline" size="small" animatePress={true}>
+                                                    <Pen size={13} className="text-gray-400" />
+                                                    <span>Cập nhật</span>
+                                                </Button>
+                                                <Button onClick={() => handleDelete(item.id)} variant="outline" size="small" animatePress={true}>
+                                                    <Trash size={13} className="text-gray-400" />
+                                                    <span>Xóa</span>
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </Fragment>
+
+                            ))}
+
+                        </div>
                     </div>
                 )}
 
-
                 {/* empty */}
-                {/* {categories?.length === 0 && (
+                {categories?.length === 0 && (
                     <EmptyData>
                         <Button
                             onClick={handleOpenModalCreate}
@@ -362,7 +405,7 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
                             <span>Thêm mới danh mục</span>
                         </Button>
                     </EmptyData>
-                )} */}
+                )}
 
             </section>
         </>

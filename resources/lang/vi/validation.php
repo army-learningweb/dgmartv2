@@ -20,6 +20,9 @@ return [
         'name' => 'Họ và tên',
         'tel' => 'Số điện thoại',
         'module' => 'Module',
-        'desc' => 'Mô tả'
+        'desc' => 'Mô tả',
+        'content' => 'Nội dung',
+        'title' => 'Tiêu đề',
+        'file' => 'File'
     ]
 ];

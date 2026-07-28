@@ -19,7 +19,7 @@ Route::post('/admin/logout', [AdminAuthController::class, 'logout']);
 Route::get('/admin/register', [AdminAuthController::class, 'register']);
 Route::post('/admin/register/store', [AdminAuthController::class, 'store']);
 
-Route::middleware(['auth:sanctum'])->group( function(){
+Route::middleware(['auth'])->group( function(){
 
     //DASHBOARD
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'read']);
@@ -54,6 +54,11 @@ Route::middleware(['auth:sanctum'])->group( function(){
 
     //POST
     Route::get('/admin/posts', [AdminPostController::class, 'read']);
+    Route::get('/admin/posts/create', [AdminPostController::class, 'create']);
+    Route::post('/admin/posts/store', [AdminPostController::class, 'store']);
+    Route::get('/admin/posts/{post}/edit', [AdminPostController::class, 'edit']);
+    Route::post('/admin/posts/{post}/update', [AdminPostController::class, 'update']);
+    Route::delete('/admin/posts/{post}/delete', [AdminPostController::class, 'delete']);
 
     //POST CATEGORY
     Route::get('/admin/posts/categories', [AdminPostCategoriesController::class, 'read']);

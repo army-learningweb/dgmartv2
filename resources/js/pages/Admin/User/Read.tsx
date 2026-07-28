@@ -48,8 +48,8 @@ export default function Read({ users, search, filter, total, active, inactive, r
 
     const [queryFilter, setQueryFilter] = useState<null | string>(filter ?? null);
     const [querySearch, setQuerySearch] = useState<string>(search ?? '');
-    const { handleQueryFilter } = useFilter({ querySearch, setQueryFilter });
-    const { isLoadingSearch, handleQuerySearch, handleClearSearch } = useSearch({ queryFilter, setQuerySearch });
+    const { handleQueryFilter } = useFilter({ querySearch, setQueryFilter, route: "/admin/users" });
+    const { isLoadingSearch, handleQuerySearch, handleClearSearch } = useSearch({ queryFilter, setQuerySearch, route: "/admin/users" });
 
     // Mở modal create
     const handleOpenModalCreate = () => {

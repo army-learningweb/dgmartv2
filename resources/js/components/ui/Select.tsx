@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { ChevronDown } from "lucide-react"
 
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
@@ -7,9 +8,10 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     children?: React.ReactNode;
     onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
     showError?: boolean;
+    className?: string;
 }
 
-export default function Select({ children, label, name, error, showError = false, onChange, ...props }: SelectProps) {
+export default function Select({ children, label, name, error, showError = true, onChange, className, ...props }: SelectProps) {
     return (
         <>
             <div className="relative">
@@ -19,11 +21,14 @@ export default function Select({ children, label, name, error, showError = false
                 >
                     {label}
                 </label>
-                <select 
+                <select
                     onChange={onChange}
                     name={name}
                     id={name}
-                    className="mt-2 w-full appearance-none rounded-lg border border-gray-200 px-2 py-1.75 transition-colors duration-150 focus:border-gray-400/70 focus:ring-3 focus:ring-gray-300/70 focus:ring-offset-blue-50 focus:outline-0"
+                    className={clsx(`mt-2 w-full appearance-none rounded-lg border border-gray-200 px-2 py-1.75 transition-colors duration-150 focus:border-gray-400/70 focus:ring-3 focus:ring-gray-300/70 focus:ring-offset-blue-50 focus:outline-0 ${className}`, {
+                        "ring-3 ring-red-600/20 border-red-600 focus:ring-red-600/20 focus:border-red-600": error,
+                        "focus:ring-3 focus:ring-gray-300/70 focus:ring-offset-blue-50 focus:border-gray-400/70 ": !error
+                    })}
                     {...props}
                 >
                     {children}

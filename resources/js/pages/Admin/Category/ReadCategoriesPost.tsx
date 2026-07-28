@@ -200,21 +200,21 @@ export default function ReadCategoriesPost({ categories, total }: ReadCategories
                             <tbody>
                                 {categories.map(item => (
                                     <tr key={item.id} className="border-b border-gray-200 last-of-type:border-0">
-                                        <td className="px-5 py-3 w-60 truncate">
+                                        <td className="px-5 py-3.5 w-60 truncate">
                                             <div className="flex items-center gap-2">
                                                 <FileText strokeWidth={1} className="fill-blue-500" />
                                                 <div>{item.name}</div>
                                             </div>
                                         </td>
-                                        <td className="px-5 py-3 w-60 truncate">{item.slug}</td>
-                                        <td className="px-5 py-3 w-45 truncate">{item.created_at}</td>
-                                        <td className="px-5 py-3 w-45 truncate">{item.updated_at}</td>
-                                        <td className="px-5 py-3">
+                                        <td className="px-5 py-3.5 w-60 truncate">{item.slug}</td>
+                                        <td className="px-5 py-3.5 w-45 truncate">{item.created_at}</td>
+                                        <td className="px-5 py-3.5 w-45 truncate">{item.updated_at}</td>
+                                        <td className="px-5 py-3.5">
                                             <div className="w-25">
                                                 <Badge status={item.status} />
                                             </div>
                                         </td>
-                                        <td className="px-5 py-3">
+                                        <td className="px-5 py-3.5">
                                             <div className="flex h-6.75 gap-2">
                                                 <Button onClick={() => handleOpenModalEdit(item)} variant="outline" size="small" animatePress={true}>
                                                     <Pen size={13} className="text-gray-400" />
