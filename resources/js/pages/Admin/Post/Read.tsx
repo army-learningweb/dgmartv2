@@ -1,5 +1,5 @@
 import { Plus, Pen, Trash } from "lucide-react"
-import { Head, Link, router, usePage } from "@inertiajs/react"
+import { Head, Link, router } from "@inertiajs/react"
 import { useState } from "react"
 import toast from "react-hot-toast"
 
@@ -8,6 +8,7 @@ import Badge from "@/components/ui/Badge"
 import SearchBar from "@/components/Admin/TableManager/SearchBar"
 import FilterTab from "@/components/Admin/TableManager/FilterTab"
 import Pagination from "@/components/Admin/Pagination/Pagination"
+import EmptyData from "@/components/Admin/Empty/EmptyData"
 
 import { useSearch } from "@/hooks/use-search"
 import { useFilter } from "@/hooks/use-filter"
@@ -27,7 +28,9 @@ export default function Read({ posts, total, active, inactive, filter, search }:
             let toastID: string;
             router.delete(`/admin/posts/${id}/delete`, {
                 data: {
-                    total: total
+                    total: total,
+                    current_page: posts?.current_page,
+                    post_on_page: posts?.data?.length
                 },
                 onStart: () => {
                     toastID = toast.loading('Đang xóa...');
@@ -112,14 +115,14 @@ export default function Read({ posts, total, active, inactive, filter, search }:
                                                 <a target="blank" href={item.media?.file_url}>
                                                     <img src={item.media?.file_url} alt={item.media?.file_name} className="h-18 w-30 rounded-lg object-cover" />
                                                 </a>
-                                                <div className="flex flex-col">
+                                                <div className="flex flex-col gap-1">
                                                     <p className="w-35 truncate font-medium">{item.title}</p>
                                                     <p className="w-35 truncate text-gray-500">{item.desc}</p>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-4 py-2.75">
-                                            <div className="flex flex-col">
+                                            <div className="flex flex-col gap-1">
                                                 <div className="w-30 truncate">{item.category?.name}</div>
                                                 <div className="w-50 truncate text-gray-500">{item.slug}</div>
                                             </div>
@@ -158,6 +161,16 @@ export default function Read({ posts, total, active, inactive, filter, search }:
 
                         {/* mobile */}
                     </div>
+                )}
+
+                {/* empty */}
+                {posts?.data.length === 0 && (
+                    <EmptyData>
+                        <Link href="/admin/posts/create" className="flex gap-2 items-center bg-blue-600 border border-blue-600 text-white hover:brightness-110 px-2.5 py-1.5 rounded-lg text-xs font-medium active:translate-y-0.5 transition-all duration-200 ">
+                        <Plus size={15} />
+                        <span>Thêm mới bài viết</span>
+                    </Link>
+                    </EmptyData>
                 )}
 
                 {/* pagination */}

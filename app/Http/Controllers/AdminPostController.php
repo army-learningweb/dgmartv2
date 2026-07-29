@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\Post;
 use App\Models\Media;
-use BcMath\Number;
 use Illuminate\Support\Facades\Storage;
 
 class AdminPostController extends Controller
@@ -20,14 +19,16 @@ class AdminPostController extends Controller
         $posts = Post::query()->with(['user:id,name', 'category:id,name', 'media' => function ($query) {
             $query->select(['object_id', 'file_url', 'file_name'])->where('object_type', 'post');
         }])
-        ->when($request->input('search'), function($query,$value) {
-            $query->where('title','like',"%{$value}%");
-        })
-        ->when($request->input('filter'), function($query,$value) {
-            $query->where('status',$value);
-        })
-        ->select(['id', 'title', 'desc', 'status', 'user_id', 'category_id', 'created_at', 'slug'])
-        ->paginate(5);
+            ->when($request->input('search'), function ($query, $value) {
+                $query->where('title', 'like', "%{$value}%");
+            })
+            ->when($request->input('filter'), function ($query, $value) {
+                $query->where('status', $value);
+            })
+            ->select(['id', 'title', 'desc', 'status', 'user_id', 'category_id', 'created_at', 'slug'])
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
 
         $total = Post::count();
         $active = Post::where('status', 'active')->count();
@@ -44,13 +45,11 @@ class AdminPostController extends Controller
     }
 
     // Thêm
-    public function create()
+    public function create(Request $request)
     {
         $post_categories = PostCategory::get(['id', 'name']);
-        $total = PostCategory::count();
         return Inertia::render("Admin/Post/Create", [
-            "post_categories" => $post_categories,
-            "total" => $total,
+            "post_categories" => $post_categories
         ]);
     }
 
@@ -72,6 +71,7 @@ class AdminPostController extends Controller
         $validated["slug"] = $parent_category_slug . "/" . Str::slug($request->input('title'));
         $new_post = Post::create($validated);
 
+        // Xử lí ảnh bìa
         if ($request->hasFile("file")) {
             $file = $request->file("file");
             $file_size = $file->getSize();
@@ -80,7 +80,7 @@ class AdminPostController extends Controller
             $file_path = $file->storeAs("post", $file_url, "public");
             $object_id = $new_post->id;
             $object_type = "post";
-            $is_main = 0;
+            $role = "main";
 
             Media::create([
                 'file_url' => asset('storage/' . $file_path),
@@ -88,29 +88,59 @@ class AdminPostController extends Controller
                 'file_size' => $file_size,
                 'object_type' => $object_type,
                 'object_id' => $object_id,
-                'is_main' => $is_main
+                'role' => $role
             ]);
+        }
+
+        // Xử lí ảnh trong nội dung
+        preg_match_all('/<img[^>]+src="([^">]+)"/i', $validated['content'], $matches);
+        $img_urls = $matches[1] ?? [];
+
+        if (!empty($img_urls)) {
+            $file_names = array_map(function ($url) {
+                $file_name = basename($url);
+                return asset("/storage/post/$file_name");
+            }, $img_urls);
+
+            Media::whereIn('file_url', $file_names)
+                ->whereNull('object_id')
+                ->where('object_type', 'post')
+                ->where('role', 'content')
+                ->update([
+                    'object_id' => $new_post->id,
+                    'updated_at' => now()
+                ]);
         }
     }
 
     // Xóa
-    public function delete(Request $request,Post $post){
-        $file = Media::where('object_type','post')->where('object_id', $post->id)->first();
-        if($file){
-            $path = str_replace(asset('/storage'), '',$file->file_url);
-            if(Storage::disk('public')->exists($path)) Storage::disk('public')->delete($path);
-            $file->delete();
+    public function delete(Request $request, Post $post)
+    {
+        // Xóa file
+        $files = Media::where('object_id', $post->id)->where('object_type', 'post')->get();
+        if ($files) {
+            foreach($files as $file){
+                $path = str_replace(asset('/storage'), '', $file->file_url);
+                if (Storage::disk('public')->exists($path)){
+                    Storage::disk('public')->delete($path);
+                }
+                $file->delete();
+            }
         }
+        // Xóa bài viết
         $post->delete();
 
-        // $page_visit = floor((int) $request->input('total') % 5);
-        // if($page_visit % 2 == 0) $page_visit -= 1;    
-        // return redirect("/admin/posts?page={$page_visit}");
-        return redirect("/admin/posts");
+        if ($request->input('post_on_page') === 1) {
+            $current_page = (int) $request->input('current_page') - 1;
+            return redirect("/admin/posts?page={$current_page}");
+        }
+
+        return redirect("/admin/posts?page={$request->input('current_page')}");
     }
 
     // Sửa
-    public function edit(Post $post){
+    public function edit(Post $post)
+    {
 
         $post_categories = PostCategory::get(['id', 'name']);
         $post = $post->load('media:object_id,file_url,file_name');
@@ -121,12 +151,13 @@ class AdminPostController extends Controller
         ]);
     }
 
-    public function update(Request $request, Post $post){
+    public function update(Request $request, Post $post)
+    {
 
         $rule_file = ["nullable"];
-        if($request->input('file_id') == null && $request->file("file") == null){
+        if ($request->input('file_id') == null && $request->file("file") == null) {
             $rule_file = ["required", "mimes:jpg,jpeg,png,avif,webp", "max:20480"];
-        } 
+        }
         $validated = $request->validate([
             "file" => $rule_file,
             "title" => ["required", "min:2", "max:255", "regex:/^[\p{L}\p{P}\p{N}\s]+$/u"],
@@ -151,12 +182,12 @@ class AdminPostController extends Controller
             $file_path = $file->storeAs("post", $file_url, "public");
             $object_id = $post->id;
             $object_type = "post";
-            $is_main = 0;
+            $role = "main";
 
-            $old_file = Media::where('object_type','post')->where('object_id',$post->id)->first();
-            if($old_file){
-                $old_file_path = str_replace(asset('/storage'), '',$old_file->file_url);
-                if(Storage::disk("public")->exists($old_file_path)) Storage::disk("public")->delete($old_file_path);
+            $old_file = Media::where('object_type', 'post')->where('object_id', $post->id)->first();
+            if ($old_file) {
+                $old_file_path = str_replace(asset('/storage'), '', $old_file->file_url);
+                if (Storage::disk("public")->exists($old_file_path)) Storage::disk("public")->delete($old_file_path);
                 $old_file->delete();
             }
 
@@ -166,8 +197,35 @@ class AdminPostController extends Controller
                 'file_size' => $file_size,
                 'object_type' => $object_type,
                 'object_id' => $object_id,
-                'is_main' => $is_main
+                'role' => $role
             ]);
+        }
+
+        Media::where('object_id',$post->id)
+        ->where('object_type','post')
+        ->where('role','content')
+        ->update([
+            'object_id' => null
+        ]);
+
+        // Xử lí ảnh trong nội dung
+        preg_match_all('/<img[^>]+src="([^">]+)"/i', $validated['content'], $matches);
+        $img_urls = $matches[1] ?? [];
+
+        if (!empty($img_urls)) {
+            $file_names = array_map(function ($url) {
+                $file_name = basename($url);
+                return asset("/storage/post/$file_name");
+            }, $img_urls);
+
+            Media::whereIn('file_url', $file_names)
+                ->whereNull('object_id')
+                ->where('object_type', 'post')
+                ->where('role', 'content')
+                ->update([
+                    'object_id' => $post->id,
+                    'updated_at' => now()
+                ]);
         }
     }
 }

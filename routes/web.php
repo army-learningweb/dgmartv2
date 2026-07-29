@@ -8,6 +8,7 @@ use App\Http\Controllers\AdminPostController;
 use App\Http\Controllers\AdminProductCategoriesController;
 use App\Http\Controllers\AdminProductController;
 use App\Http\Controllers\AdminRoleController;
+use App\Http\Controllers\AdminUploadFileContentController;
 use App\Http\Controllers\AdminUserController;
 
 Route::inertia('/', 'welcome')->name('home');
@@ -65,5 +66,8 @@ Route::middleware(['auth'])->group( function(){
     Route::post('/admin/posts/categories/store', [AdminPostCategoriesController::class, 'store']);
     Route::patch('/admin/posts/categories/{category}/update', [AdminPostCategoriesController::class, 'update']);
     Route::delete('/admin/posts/categories/{category}/delete', [AdminPostCategoriesController::class, 'delete']);
+
+    //UPLOAD FILE CONTENT
+    Route::post('/admin/uploadFileContent', [AdminUploadFileContentController::class, 'upload']);
 
 });

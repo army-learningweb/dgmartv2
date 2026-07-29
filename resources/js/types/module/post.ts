@@ -39,7 +39,6 @@ interface PostCategoriesType {
 
 export type ReadPostCategoriesType = {
     post_categories: PostCategoriesType[];
-    total: string;
 };
 
 // Đọc

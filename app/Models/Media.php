@@ -12,7 +12,7 @@ class Media extends Model
         'file_size',
         'object_type',
         'object_id',
-        'is_main',
+        'role',
         'created_at',
         'updated_at',
     ];

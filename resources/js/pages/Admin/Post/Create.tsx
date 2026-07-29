@@ -1,4 +1,4 @@
-import { Head, Link, useForm, router, usePage } from "@inertiajs/react"
+import { Head, Link, useForm, router } from "@inertiajs/react"
 import Textarea from "@/components/ui/Textarea"
 import toast from "react-hot-toast";
 import { TriangleAlert } from "lucide-react";
@@ -6,31 +6,30 @@ import { TriangleAlert } from "lucide-react";
 import Button from "@/components/ui/Button";
 import FileUpload from "@/components/Admin/TableManager/FileUpload";
 import Select from "@/components/ui/Select";
+import MCEeditor from "@/components/Admin/MCEeditor/Editor";
 
 import { ReadPostCategoriesType } from "@/types/module/post";
 import { CreatePostType } from "@/types/module/post";
 
-export default function Create({post_categories, total} : ReadPostCategoriesType) {
+export default function Create({post_categories} : ReadPostCategoriesType) {
     const { data, setData, post, errors, processing, reset, clearErrors, } = useForm<CreatePostType>({
         file: null,
         title: '',
         desc: '',
-        content: '',
+        content: 'Nhập nội dung',
         status: 'active',
         category_id: '',
     });
-
+    
     const handleSubmit = (e:React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         post("/admin/posts/store", {
+            preserveScroll: true,
+            preserveState:true,
             onSuccess: () => {
-                reset();
                 clearErrors();
                 toast.success('Thêm mới thành công');
-
-                let lastVisitPage = Math.round(Number(total) / 5);
-                if(Number(total) % 2 != 0) lastVisitPage += 1;
-                router.visit(`/admin/posts?page=${lastVisitPage}`);
+                router.visit(`/admin/posts`);
             },
         })
     } 
@@ -103,13 +102,13 @@ export default function Create({post_categories, total} : ReadPostCategoriesType
                         </div>
                     </div>
 
-                    <div className="mt-2">
-                        <Textarea onChange={(e) => setData("content", e.target.value)} label="Nội dung bài viết" name="content" error={errors.content} showError={false} className="h-90!" />
+                    <div className="mt-4">
+                        <MCEeditor value={data.content} onChange={(content) => setData("content", content)}/>
                     </div>
 
-                    <div className="mt-2 flex justify-end">
+                    <div className="mt-4 flex justify-end">
                         <Button processing={processing} processingLabel="Đang xử lí..." animatePress={true}>Thêm mới</Button>
-                    </div>
+                    </div>                 
                 </form>
             </section>
         </>
