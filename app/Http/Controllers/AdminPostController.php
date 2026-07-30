@@ -17,7 +17,9 @@ class AdminPostController extends Controller
     public function read(Request $request)
     {
         $posts = Post::query()->with(['user:id,name', 'category:id,name', 'media' => function ($query) {
-            $query->select(['object_id', 'file_url', 'file_name'])->where('object_type', 'post');
+            $query->select(['object_id', 'file_url', 'file_name'])
+            ->where('object_type', 'post')
+            ->where('role','main');
         }])
             ->when($request->input('search'), function ($query, $value) {
                 $query->where('title', 'like', "%{$value}%");
@@ -143,7 +145,10 @@ class AdminPostController extends Controller
     {
 
         $post_categories = PostCategory::get(['id', 'name']);
-        $post = $post->load('media:object_id,file_url,file_name');
+        $post = $post->with(['media' => function($querry){
+            $querry->where('object_type','post')
+            ->where('role','main');
+        }])->first();
 
         return Inertia::render("Admin/Post/Edit", [
             'post_categories' => $post_categories,

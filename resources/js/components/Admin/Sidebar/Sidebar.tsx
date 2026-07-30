@@ -10,7 +10,7 @@ export default function Sidebar() {
     const { url } = usePage();
 
     return (
-        <div className="w-[80%] md:w-[17%] bg-white md:bg-transparent min-h-screen fixed md:top-4 p-4 md:p-0 md:inline-flex flex-col justify-between hidden">
+        <div className="w-[80%] md:w-[16%] bg-white md:bg-transparent min-h-screen fixed md:top-4 p-4 md:p-0 md:inline-flex flex-col justify-between hidden">
             <div className="relative">
                 {/* close sidebar on mobile */}
                 <div className="absolute block md:hidden right-4 top-4 p-0.5 rounded-md">

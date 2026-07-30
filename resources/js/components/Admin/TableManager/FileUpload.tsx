@@ -9,15 +9,15 @@ interface ImageReviewType {
 }
 
 interface FileUploadProps {
-    onSetData: (field:string, file:File | null) => void;
-    error?:string,
-    file_url?:string,
-    file_name?:string,
+    onSetData: (field: string, file: File | null) => void;
+    error?: string,
+    file_url?: string,
+    file_name?: string,
 }
 
-export default function FileUpload({onSetData, error, file_url, file_name} : FileUploadProps) {
+export default function FileUpload({ onSetData, error, file_url, file_name }: FileUploadProps) {
     const [imageReview, setImageReview] = useState<ImageReviewType | null>(file_url ? {
-        url : file_url,
+        url: file_url,
         name: file_name
     } : null);
 
@@ -28,7 +28,7 @@ export default function FileUpload({onSetData, error, file_url, file_name} : Fil
                 url: URL.createObjectURL(file),
                 name: file.name
             });
-            onSetData("file",file);
+            onSetData("file", file);
         }
     }
     const handleRemoveImageReview = () => {
@@ -37,17 +37,17 @@ export default function FileUpload({onSetData, error, file_url, file_name} : Fil
         onSetData("file_id", null);
         onSetData("file", null);
     }
-    
+
     return (
         <>
-            <div className="font-medium">Ảnh</div>
-            <div className={clsx("relative flex flex-col items-center justify-center text-gray-500 border border-gray-300 border-dashed w-full h-100 rounded-xl mt-2 gap-2", {
-                "border-red-600" : error
+            <div className="font-medium">Ảnh (Thumbnail)</div>
+            <div className={clsx("relative flex flex-col items-center justify-center text-gray-500 border border-gray-200 bg-gray-50 w-full h-60 rounded-xl mt-1.75 gap-2", {
+                "border-red-600 ring-3 ring-red-600/20": error
             })}>
                 <input accept="images/*" onChange={handleShowImageReview} type="file" name="file" id="file" className="hidden" />
-                <label htmlFor="file" className="gap-2 active:translate-y-0.5 transition-all duration-150 cursor-pointer flex items-center justify-center bg-blue-600 text-white px-2 py-1.5 rounded-lg text-xs font-medium">
+                <label htmlFor="file" className="gap-1 active:translate-y-0.5 transition-all duration-150 cursor-pointer flex items-center justify-center text-blue-600 px-2 py-1.5 text-xs font-medium hover:underline">
                     <ImageUp size={18} />
-                    Upload ảnh
+                    <div className="mt-0.75">Upload ảnh</div>
                 </label>
                 <div> Hỗ trợ: png, jpg, jpeg, avif, webp</div>
                 <div>Max size: 20MB</div>

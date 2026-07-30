@@ -1,4 +1,4 @@
-import { Plus, Pen, Trash } from "lucide-react"
+import { Plus, Pen, Trash, CornerDownRight } from "lucide-react"
 import { Head, Link, router } from "@inertiajs/react"
 import { useState } from "react"
 import toast from "react-hot-toast"
@@ -102,7 +102,7 @@ export default function Read({ posts, total, active, inactive, filter, search }:
                                     <td className="px-4 py-2">Bài viết</td>
                                     <td className="px-4 py-2">Danh mục & Slug</td>
                                     <td className="px-4 py-2">Người tạo</td>
-                                    <td className="px-4 py-2">Ngày tạo</td>
+                                    <td className="px-4 py-2">Ngày đăng</td>
                                     <td className="px-4 py-2">Trạng thái</td>
                                     <td className="px-4 py-2">Tùy chỉnh</td>
                                 </tr>
@@ -160,6 +160,40 @@ export default function Read({ posts, total, active, inactive, filter, search }:
                         </table>
 
                         {/* mobile */}
+                        <div className="md:hidden inline-flex flex-col gap-2 w-full">
+                            {posts.data.map(item => (
+                                <div key={item.id} className="border-b border-gray-200 p-3 w-full flex justify-between h-24">
+                                    <div className="relative">
+                                        <div className="flex items-center gap-5">
+                                            <a target="blank" href={item.media?.file_url}>
+                                                <img src={item.media?.file_url} alt={item.media?.file_name} className="h-18 w-30 rounded-lg object-cover" />
+                                            </a>
+                                            <div className="flex flex-col gap-1">
+                                                <p className="w-30 truncate font-medium">{item.title}</p>
+                                                <p className="w-30 truncate text-gray-500">{item.desc}</p>
+                                            </div>
+                                        </div>
+                                        {item.status === 'active' && (
+                                            <div className="absolute left-28 -bottom-1 h-3 w-3 rounded-full bg-green-600"></div>
+                                        )}
+                                        {item.status === 'inactive' && (
+                                            <div className="absolute left-28 -bottom-1 h-3 w-3 rounded-full bg-red-600"></div>
+                                        )}
+                                    </div>
+
+                                    <div className="flex flex-col h-6.75 gap-2">
+                                        <Link href={`/admin/posts/${item.id}/edit`} className="flex gap-2 items-center  border border-gray-200 hover:bg-gray-100 px-2.5 py-1.5 rounded-lg text-xs font-medium active:translate-y-0.5 transition-all duration-200 ">
+                                                    <Pen size={13} className="text-gray-400" />
+                                                    <span>Cập nhật</span>
+                                                </Link>
+                                        <Button onClick={() => handleDelete(item.id)} variant="outline" size="small" animatePress={true}>
+                                            <Trash size={13} className="text-gray-400" />
+                                            <span>Xóa</span>
+                                        </Button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 )}
 
@@ -167,9 +201,9 @@ export default function Read({ posts, total, active, inactive, filter, search }:
                 {posts?.data.length === 0 && (
                     <EmptyData>
                         <Link href="/admin/posts/create" className="flex gap-2 items-center bg-blue-600 border border-blue-600 text-white hover:brightness-110 px-2.5 py-1.5 rounded-lg text-xs font-medium active:translate-y-0.5 transition-all duration-200 ">
-                        <Plus size={15} />
-                        <span>Thêm mới bài viết</span>
-                    </Link>
+                            <Plus size={15} />
+                            <span>Thêm mới bài viết</span>
+                        </Link>
                     </EmptyData>
                 )}
 

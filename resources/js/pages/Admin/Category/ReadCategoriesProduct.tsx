@@ -1,4 +1,4 @@
-import { Plus, Pen, Trash, Folder } from "lucide-react"
+import { Plus, Pen, Trash, Folder, CornerDownRight } from "lucide-react"
 import Button from "@/components/ui/Button"
 import { Head, useForm, router } from "@inertiajs/react"
 import { useState } from "react"
@@ -248,7 +248,7 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
                                 {categories.map(category => (
                                     <Fragment key={category.id}>
                                         {/* danh mục cha */}
-                                        <tr className="border-b border-gray-200">
+                                        <tr className="border-b border-gray-100">
                                             <td className="px-5 py-4">
                                                 <div className="flex gap-2 items-center w-40 truncate">
                                                     <Folder className="fill-amber-500" strokeWidth={1} size={19.5} />
@@ -292,9 +292,10 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
                                         {/* danh mục con */}
                                         {category.childs?.length > 0 && (
                                             category.childs.map(item => (
-                                                <tr key={item.id} className="border-b border-gray-200">
+                                                <tr key={item.id} className="border-b border-gray-100">
                                                     <td className="px-5 py-4">
-                                                        <div className="ms-2.5 border-l border-gray-300 w-40 truncate pl-4">
+                                                        <div className="flex gap-2 ms-2.5 w-40 truncate">
+                                                            <CornerDownRight size={18} strokeWidth={1.5}/>
                                                             <div>{item.name}</div>
                                                         </div>
                                                     </td>
