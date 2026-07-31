@@ -153,10 +153,11 @@ export default function Read({ roles, permissions, total }: ReadRoleType) {
                                                     <div key={item.id} className="flex gap-1">
                                                         <input checked={data.permissions.includes(item.id)} onChange={(e) => {
                                                             setData("permissions", e.target.checked
-                                                                ? [...data.permissions, item.id]
-                                                                : data.permissions.filter(id => id !== item.id)
-                                                            )
-                                                        }} type="checkbox" name="permissions" id={item.id} className="border-gray-200 bg-white" />
+                                                                    ? [...data.permissions, item.id]
+                                                                    : data.permissions.filter(id => id !== item.id)
+                                                                )
+                                                            }} 
+                                                        type="checkbox" name="permissions" id={item.id} className="border-gray-200 bg-white" />
                                                         <label htmlFor={item.id} className="select-none">{item.name}</label>
                                                     </div>
                                                 ))}

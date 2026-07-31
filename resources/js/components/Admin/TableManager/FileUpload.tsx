@@ -40,7 +40,7 @@ export default function FileUpload({ onSetData, error, file_url, file_name }: Fi
 
     return (
         <>
-            <div className="font-medium">Ảnh (Thumbnail)</div>
+            <div className="font-medium">Ảnh</div>
             <div className={clsx("relative flex flex-col items-center justify-center text-gray-500 border border-gray-200 bg-gray-50 w-full h-60 rounded-xl mt-1.75 gap-2", {
                 "border-red-600 ring-3 ring-red-600/20": error
             })}>

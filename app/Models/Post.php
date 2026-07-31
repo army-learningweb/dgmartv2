@@ -18,7 +18,7 @@ class Post extends Model
         'updated_at'
     ];
 
-    public function casts(): array{
+    protected function casts(): array{
         return[
             'created_at' => 'datetime:d/m/Y',
             'updated_at' => 'datetime:d/m/Y'

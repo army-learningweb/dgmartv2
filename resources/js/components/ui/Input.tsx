@@ -24,6 +24,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({ type, name, label, err
                 {...props} />
 
             {/* error */}
+
             {showError && (
                 error && (
                     <div className="mt-2 text-red-600">{error}</div>

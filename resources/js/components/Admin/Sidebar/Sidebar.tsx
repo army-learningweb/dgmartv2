@@ -38,6 +38,8 @@ export default function Sidebar() {
                         <NavLink urlActiveOpen={url.startsWith("/admin/products")} name="Sản phẩm" icon={<Package strokeWidth={1.75} size={17} />}>
                             <NavSubLink isActive={url === "/admin/products"} route="/admin/products" name="Danh sách sản phẩm" />
                             <NavSubLink isActive={url.startsWith("/admin/products/categories")} route="/admin/products/categories" name="Danh mục sản phẩm" />
+                            <NavSubLink isActive={url === "/admin/products/configs"} route="/admin/products/configs" name="Danh sách cấu hình" />
+                            <NavSubLink isActive={url.startsWith("/admin/products/configsTypes")} route="/admin/products/configsTypes" name="Danh sách loại cấu hình" />
                         </NavLink>
 
                         {/* post */}

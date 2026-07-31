@@ -6,6 +6,8 @@ use App\Http\Controllers\AdminPermissionController;
 use App\Http\Controllers\AdminPostCategoriesController;
 use App\Http\Controllers\AdminPostController;
 use App\Http\Controllers\AdminProductCategoriesController;
+use App\Http\Controllers\AdminProductConfigController;
+use App\Http\Controllers\AdminProductConfigTypeController;
 use App\Http\Controllers\AdminProductController;
 use App\Http\Controllers\AdminRoleController;
 use App\Http\Controllers\AdminUploadFileContentController;
@@ -46,12 +48,30 @@ Route::middleware(['auth'])->group( function(){
 
     //PRODUCT
     Route::get('/admin/products', [AdminProductController::class, 'read']);
+    Route::get('/admin/products/create', [AdminProductController::class, 'create']);
+    Route::post('/admin/products/store', [AdminProductController::class, 'store']);
+    Route::get('/admin/products/{post}/edit', [AdminProductController::class, 'edit']);
+    Route::post('/admin/products/{post}/update', [AdminProductController::class, 'update']);
+    Route::delete('/admin/products/{post}/delete', [AdminProductController::class, 'delete']);
 
     //PRODUCT CATEGORY
     Route::get('/admin/products/categories', [AdminProductCategoriesController::class, 'read']);
     Route::post('/admin/products/categories/store', [AdminProductCategoriesController::class, 'store']);
     Route::patch('/admin/products/categories/{category}/update', [AdminProductCategoriesController::class, 'update']);
     Route::delete('/admin/products/categories/{category}/delete', [AdminProductCategoriesController::class, 'delete']);
+
+    //PRODUCT CONFIG
+    Route::get('/admin/products/configs', [AdminProductConfigController::class, 'read']);
+    Route::post('/admin/products/configs/store', [AdminProductConfigController::class, 'store']);
+    Route::patch('/admin/products/configs/{config}/update', [AdminProductConfigController::class, 'update']);
+    Route::delete('/admin/products/configs/{config}/delete', [AdminProductConfigController::class, 'delete']);
+
+    //PRODUCT CONFIG TYPES
+    Route::get('/admin/products/configsTypes', [AdminProductConfigTypeController::class, 'read']);
+    Route::post('/admin/products/configsTypes/store', [AdminProductConfigTypeController::class, 'store']);
+    Route::patch('/admin/products/configsTypes/{config}/update', [AdminProductConfigTypeController::class, 'update']);
+    Route::delete('/admin/products/configsTypes/{config}/delete', [AdminProductConfigTypeController::class, 'delete']);
+    Route::get('/admin/products/configsTypes/{type}/getConfigs', [AdminProductConfigTypeController::class, 'getConfigs']);
 
     //POST
     Route::get('/admin/posts', [AdminPostController::class, 'read']);
