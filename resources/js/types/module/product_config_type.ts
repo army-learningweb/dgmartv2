@@ -4,18 +4,19 @@ interface ProductConfigTypeS {
     desc: string;
     created_at: string;
     updated_at: string;
-    configs: string[]
+    configs: string[];
 }
 
 export interface ConfigType {
-    id: string,
-    name: string,
-    group: string
+    id: string;
+    name: string;
+    group: string;
 }
 
 export type ReadProductConfigTypeS = {
-    types: ProductConfigTypeS[] 
-    configs: Record<string,ConfigType[]>
+    types: ProductConfigTypeS[]; 
+    configs: Record<string,ConfigType[]>;
+    total: string;
 }
 
 export type CreateProductConfigTypeS = {

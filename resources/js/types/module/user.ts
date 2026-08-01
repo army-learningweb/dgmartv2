@@ -6,7 +6,7 @@ export type Role = {
     name: string
 }
 
-// Đọc
+// Protype
 export type User = {
     id: string;
     name: string;
@@ -21,6 +21,7 @@ export type User = {
     role: Role
 };
 
+// Read
 export type UsersReadType = {
     users: PaginatedData<
         Pick<
@@ -44,7 +45,7 @@ export type UsersReadType = {
     roles: Role[]
 };
 
-// Thêm User
+// Create
 export type CreateUserType = {
     id?: string;
     name: string;
@@ -59,7 +60,7 @@ export type CreateUserType = {
     current_page:number,
 };
 
-// Cập nhật User
+// Update
 export type EditUserType = {
     id: string;
     name: string;

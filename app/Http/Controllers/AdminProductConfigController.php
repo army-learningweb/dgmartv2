@@ -42,6 +42,8 @@ class AdminProductConfigController extends Controller
         $validated['name'] = ucfirst($request->input('name'));
         $validated['group'] = ucfirst(strtolower($request->input('group')));
 
+        if($validated['price_include'] == 0) $validated['price_include'] = null;
+
         ProductConfig::create($validated);
     }
 

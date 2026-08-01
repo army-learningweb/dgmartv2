@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\Media;
+use App\Models\ProductConfigType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -50,9 +51,11 @@ class AdminProductController extends Controller
     // Thêm
     public function create(Request $request)
     {
-        $product_categories = ProductCategory::get(['id', 'name']);
+        $product_categories = ProductCategory::whereNot('id',1)->get(['id', 'name', 'parent_id']);
+        $types = ProductConfigType::get(['id','name']);
         return Inertia::render("Admin/Product/Create", [
-            "product_categories" => $product_categories
+            "product_categories" => $product_categories,
+            "types" => $types
         ]);
     }
 
@@ -233,5 +236,10 @@ class AdminProductController extends Controller
                     'updated_at' => now()
                 ]);
         }
+    }
+
+    public function getConfigs(Request $request, ProductConfigType $type){
+
+        return response()->json($type);
     }
 }

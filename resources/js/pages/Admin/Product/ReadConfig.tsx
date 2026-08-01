@@ -1,17 +1,19 @@
 import { Head, useForm, router } from "@inertiajs/react"
-import { Plus, Pen, Trash } from "lucide-react"
-import React, { useEffect, useState } from "react"
-import toast from "react-hot-toast"
 import { Fragment } from "react"
-import { vndFormat } from "@/lib/currency_format"
-import clsx from "clsx"
+import toast from "react-hot-toast"
 
-import Button from "@/components/ui/Button"
-import FilterTab from "@/components/Admin/TableManager/FilterTab"
-import ModalCreate from "@/components/Admin/Modal/ModalCreate"
-import ModalEdit from "@/components/Admin/Modal/ModalEdit"
 import Input from "@/components/ui/Input"
 import EmptyData from "@/components/Admin/Empty/EmptyData"
+
+import Modal from "@/components/Admin/Modal/Modal"
+import Title from "@/components/Admin/TableManager/Title"
+import ButtonCreate from "@/components/Admin/TableManager/ButtonCreate"
+import ButtonEdit from "@/components/Admin/TableManager/ButtonEdit"
+import ButtonDelete from "@/components/Admin/TableManager/ButtonDelete"
+import ButtonQuickCreate from "@/components/Admin/TableManager/ButtonQuickCreate"
+
+import { useModal } from "@/hooks/use-modal"
+import { vndFormat } from "@/lib/currency_format"
 
 import { CreateProductConfigType, EditProductConfigType } from "@/types/module/product_config"
 import { ReadProductConfigType } from "@/types/module/product_config"
@@ -24,43 +26,19 @@ export default function ReadConfig({ configs, total }: ReadProductConfigType) {
         group: ''
     });
 
-    const [openModalCreate, setOpenModalCreate] = useState(false);
-    const [openModalEdit, setOpenModalEdit] = useState(false);
-    const [idUpdate, setIdUpdate] = useState<null | string>(null);
+    // Modal hooks
+    const { openModal, isEditModal, setOpenModal, setIsEditModal, handleOpenModal, handleCloseModal, } = useModal({ reset, clearErrors });
 
-    // Mở modal create
-    const handleOpenModalCreate = () => {
-        setOpenModalCreate(true);
-    }
-
-    // Đóng modal create
-    const handleCloseModalCreate = () => {
-        setOpenModalCreate(false);
-        reset();
-        setTimeout(() => {
-            clearErrors();
-        }, 300);
-    };
-
-    // Mở modal edit
-    const handleOpenModalEdit = (config: EditProductConfigType) => {
+    // Modal Edit Mode
+    const handleEdit = (config: EditProductConfigType) => {
         setData({
             id: config.id,
             name: config.name,
             price_include: config.price_include ?? '',
             group: config.group,
         });
-        setIdUpdate(config.id);
-        setOpenModalEdit(true);
-    };
-
-    // Đóng modal edit
-    const handleCloseModalEdit = () => {
-        setOpenModalEdit(false);
-        reset();
-        setTimeout(() => {
-            clearErrors();
-        }, 300);
+        setOpenModal(true);
+        setIsEditModal(true);
     };
 
     // Thêm
@@ -69,7 +47,7 @@ export default function ReadConfig({ configs, total }: ReadProductConfigType) {
         post('/admin/products/configs/store', {
             preserveScroll: true,
             onSuccess: () => {
-                setOpenModalCreate(false);
+                setOpenModal(false);
                 reset();
                 clearErrors();
                 toast.success('Thêm mới thành công');
@@ -78,12 +56,12 @@ export default function ReadConfig({ configs, total }: ReadProductConfigType) {
     };
 
     // Sửa
-    const handleEdit = (e: React.SubmitEvent<HTMLFormElement>) => {
+    const handleUpdate = (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
-        patch(`/admin/products/configs/${idUpdate}/update`, {
+        patch(`/admin/products/configs/${data.id}/update`, {
             preserveScroll: true,
             onSuccess: () => {
-                setOpenModalEdit(false);
+                setOpenModal(false);
                 reset();
                 clearErrors();
                 toast.success('Cập nhật thành công');
@@ -107,37 +85,21 @@ export default function ReadConfig({ configs, total }: ReadProductConfigType) {
         }
     };
 
-    // Nút tạo nhanh
-    const [isOpenQuickCreate, setIsOpenQuickCreate] = useState<boolean>(false);
-    useEffect(() => {
-        const handleOpenQuickCreate = (e: Event) => {
-            const scrollY = window.scrollY;
-            if (scrollY >= 200) {
-                setIsOpenQuickCreate(true)
-            } else {
-                setIsOpenQuickCreate(false)
-            }
-        }
-
-        window.addEventListener("scroll", handleOpenQuickCreate);
-        return () => window.removeEventListener("scroll", handleOpenQuickCreate);
-    }, [])
-
     return (
         <>
             <Head title="Danh sách cấu hình" />
 
             {/* Modal */}
-            <ModalCreate
-                onClose={handleCloseModalCreate}
-                isOpen={openModalCreate}
+            <Modal
+                onClose={handleCloseModal}
+                isOpen={openModal}
                 customSize="w-[90%] md:w-[30%] min-h-[40%]"
-                title="Thêm mới cấu hình"
-                labelSubmit="Thêm mới"
-                formSubmitId="createConfig"
+                title={!isEditModal ? 'Thêm mới cấu hình' : 'Chỉnh sửa thông tin'}
+                labelSubmit={!isEditModal ? 'Thêm mới' : 'Cập nhật'}
+                formSubmitId="config"
                 processing={processing}
             >
-                <form onSubmit={handleCreate} id="createConfig">
+                <form onSubmit={!isEditModal ? handleCreate : handleUpdate} id="config">
                     <div>
                         <Input type="text" name="group" label="Nhóm cấu hình" error={errors.group} value={data.group} onChange={(e) => setData('group', e.target.value)} autoComplete="on" />
                         <p className='mt-1 text-gray-500'>VD: RAM, CPU,... (Dùng để nhóm các cấu hình cùng loại)</p>
@@ -150,74 +112,20 @@ export default function ReadConfig({ configs, total }: ReadProductConfigType) {
 
                     <div className='mt-2'>
                         <Input type="number" name="price_include" label="Giá đi kèm" error={errors.price_include} value={data.price_include} onChange={(e) => setData('price_include', e.target.value)} autoComplete="on" />
-                        <p className='mt-1 text-gray-500'>VD: Để trống nếu không có</p>
+                        <p className='mt-1 text-gray-500'>(Không bắt buộc)</p>
                     </div>
                 </form>
-            </ModalCreate>
+            </Modal>
 
-            {/* Modal */}
-            <ModalEdit
-                onClose={handleCloseModalEdit}
-                isOpen={openModalEdit}
-                customSize="w-[90%] md:w-[30%] min-h-[40%]"
-                title="Cập nhật cấu hình"
-                labelSubmit="Cập nhật"
-                formSubmitId="editConfigs"
-                processing={processing}
-            >
-                <form onSubmit={handleEdit} id="editConfigs">
-                    <div>
-                        <Input type="text" name="group" label="Nhóm cấu hình" error={errors.group} value={data.group} onChange={(e) => setData('group', e.target.value)} autoComplete="on" />
-                        <p className='mt-1 text-gray-500'>VD: RAM, CPU,... (Dùng để nhóm các cấu hình cùng loại)</p>
-                    </div>
-
-                    <div className='mt-2'>
-                        <Input type="text" name="name" label="Cấu hình" error={errors.name} value={data.name} onChange={(e) => setData('name', e.target.value)} autoComplete="on" />
-                        <p className='mt-1 text-gray-500'>VD: 8GB, Đỏ, GTX-5060,...</p>
-                    </div>
-
-                    <div className='mt-2'>
-                        <Input type="number" name="price_include" label="Giá đi kèm" error={errors.price_include} value={data.price_include} onChange={(e) => setData('price_include', e.target.value)} autoComplete="on" />
-                        <p className='mt-1 text-gray-500'>VD: Để trống nếu không có</p>
-                    </div>
-                </form>
-            </ModalEdit>
 
             <section>
+                {/* quick create */}
+                <ButtonQuickCreate onOpenModal={handleOpenModal} />
+
                 {/* title */}
                 <div className="flex items-center justify-between">
-                    <h1 className="mt-px text-lg font-medium tracking-tight">
-                        Danh sách cấu hình
-                    </h1>
-                    <Button
-                        onClick={handleOpenModalCreate}
-                        animatePress={true}
-                        size="small"
-                    >
-                        <Plus size={15} />
-                        <span>Thêm mới cấu hình</span>
-                    </Button>
-                </div>
-
-                {/* stats */}
-                <div className="mt-4 flex items-center justify-between">
-                    {/* stats */}
-                    <div className="hidden gap-1 rounded-xl bg-gray-100 p-1 tracking-tight md:grid md:grid-cols-1">
-                        <FilterTab
-                            isActive={true}
-                            countData={total}
-                            label="Tất cả"
-                        />
-                    </div>
-                </div>
-
-                {/* quick create */}
-                <div onClick={handleOpenModalCreate}
-                    className={clsx("fixed right-5 top-5 md:right-10 md:top-5 bg-blue-600 text-white h-10 w-10 rounded-xl flex items-center justify-center cursor-pointer hover:brightness-110 active:translate-y-0.5 transition-all duration-150 ease-out", {
-                        "opacity-0 scale-95": !isOpenQuickCreate,
-                        "opacity-100 scale-100": isOpenQuickCreate
-                    })}>
-                    <Plus size={18} />
+                    <Title heading={`Danh sách cấu hình (${total})`} />
+                    <ButtonCreate onOpenModal={handleOpenModal} />
                 </div>
 
                 {/* data */}
@@ -249,7 +157,6 @@ export default function ReadConfig({ configs, total }: ReadProductConfigType) {
                                                     {item.price_include !== null && (
                                                         vndFormat(Number(item.price_include))
                                                     )}
-
                                                     {item.price_include === null && (
                                                         <>------------</>
                                                     )}
@@ -258,14 +165,8 @@ export default function ReadConfig({ configs, total }: ReadProductConfigType) {
                                                 <td className='px-5 py-2 w-55 truncate'>{item.updated_at}</td>
                                                 <td className='px-5 py-2'>
                                                     <div className="flex h-6.75 gap-2">
-                                                        <Button onClick={() => handleOpenModalEdit(item)} variant="outline" size="small" animatePress={true}>
-                                                            <Pen size={13} className="text-gray-400" />
-                                                            <span>Cập nhật</span>
-                                                        </Button>
-                                                        <Button onClick={() => handleDelete(item.id)} variant="outline" size="small" animatePress={true}>
-                                                            <Trash size={13} className="text-gray-400" />
-                                                            <span>Xóa</span>
-                                                        </Button>
+                                                        <ButtonEdit onEdit={() => handleEdit(item)} />
+                                                        <ButtonDelete onDelete={() => handleDelete(item.id)} />
                                                     </div>
                                                 </td>
                                             </tr>
@@ -296,14 +197,8 @@ export default function ReadConfig({ configs, total }: ReadProductConfigType) {
                                             </div>
 
                                             <div className="flex flex-col h-6.75 gap-2">
-                                                <Button onClick={() => handleOpenModalEdit(item)} variant="outline" size="small" animatePress={true}>
-                                                    <Pen size={13} className="text-gray-400" />
-                                                    <span>Cập nhật</span>
-                                                </Button>
-                                                <Button onClick={() => handleDelete(item.id)} variant="outline" size="small" animatePress={true}>
-                                                    <Trash size={13} className="text-gray-400" />
-                                                    <span>Xóa</span>
-                                                </Button>
+                                                <ButtonEdit onEdit={() => handleEdit(item)} />
+                                                <ButtonDelete onDelete={() => handleDelete(item.id)} />
                                             </div>
                                         </div>
                                     ))}
@@ -316,14 +211,7 @@ export default function ReadConfig({ configs, total }: ReadProductConfigType) {
                 {/* empty */}
                 {Object.entries(configs)?.length === 0 && (
                     <EmptyData>
-                        <Button
-                            onClick={handleOpenModalCreate}
-                            animatePress={true}
-                            size="small"
-                        >
-                            <Plus size={15} />
-                            <span>Thêm mới cấu hình</span>
-                        </Button>
+                        <ButtonCreate onOpenModal={handleOpenModal} />
                     </EmptyData>
                 )}
             </section>

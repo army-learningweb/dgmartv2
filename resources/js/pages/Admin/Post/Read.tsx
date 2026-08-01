@@ -14,6 +14,11 @@ import { useSearch } from "@/hooks/use-search"
 import { useFilter } from "@/hooks/use-filter"
 
 import { ReadPostType } from "@/types/module/post"
+import ButtonDelete from "@/components/Admin/TableManager/ButtonDelete"
+import ButtonEditLink from "@/components/Admin/TableManager/ButtonEditLink"
+import Title from "@/components/Admin/TableManager/Title"
+import ButtonCreate from "@/components/Admin/TableManager/ButtonCreate"
+import ButtonCreateLink from "@/components/Admin/TableManager/ButtonCreateLink"
 
 export default function Read({ posts, total, active, inactive, filter, search }: ReadPostType) {
 
@@ -48,14 +53,8 @@ export default function Read({ posts, total, active, inactive, filter, search }:
             <section>
                 {/* title */}
                 <div className="flex items-center justify-between">
-                    <h1 className="mt-px text-lg font-medium tracking-tight">
-                        Danh sách bài viết
-                    </h1>
-
-                    <Link href="/admin/posts/create" className="flex gap-2 items-center bg-blue-600 border border-blue-600 text-white hover:brightness-110 px-2.5 py-1.5 rounded-lg text-xs font-medium active:translate-y-0.5 transition-all duration-200 ">
-                        <Plus size={15} />
-                        <span>Thêm mới bài viết</span>
-                    </Link>
+                    <Title heading="Danh sách bài viết" />
+                    <ButtonCreateLink route="/admin/posts/create" />
                 </div>
 
                 {/* filter & search */}
@@ -144,14 +143,8 @@ export default function Read({ posts, total, active, inactive, filter, search }:
                                         </td>
                                         <td className="px-4 py-2.75">
                                             <div className="flex h-6.75 gap-2">
-                                                <Link href={`/admin/posts/${item.id}/edit`} className="flex gap-2 items-center  border border-gray-200 hover:bg-gray-100 px-2.5 py-1.5 rounded-lg text-xs font-medium active:translate-y-0.5 transition-all duration-200 ">
-                                                    <Pen size={13} className="text-gray-400" />
-                                                    <span>Cập nhật</span>
-                                                </Link>
-                                                <Button onClick={() => handleDelete(item.id)} variant="outline" size="small" animatePress={true}>
-                                                    <Trash size={13} className="text-gray-400" />
-                                                    <span>Xóa</span>
-                                                </Button>
+                                                <ButtonEditLink route={`/admin/posts/${item.id}/edit`} />
+                                                <ButtonDelete onDelete={() => handleDelete(item.id)} />
                                             </div>
                                         </td>
                                     </tr>
@@ -182,14 +175,8 @@ export default function Read({ posts, total, active, inactive, filter, search }:
                                     </div>
 
                                     <div className="flex flex-col h-6.75 gap-2">
-                                        <Link href={`/admin/posts/${item.id}/edit`} className="flex gap-2 items-center  border border-gray-200 hover:bg-gray-100 px-2.5 py-1.5 rounded-lg text-xs font-medium active:translate-y-0.5 transition-all duration-200 ">
-                                                    <Pen size={13} className="text-gray-400" />
-                                                    <span>Cập nhật</span>
-                                                </Link>
-                                        <Button onClick={() => handleDelete(item.id)} variant="outline" size="small" animatePress={true}>
-                                            <Trash size={13} className="text-gray-400" />
-                                            <span>Xóa</span>
-                                        </Button>
+                                        <ButtonEditLink route={`/admin/posts/${item.id}/edit`} />
+                                        <ButtonDelete onDelete={() => handleDelete(item.id)} />
                                     </div>
                                 </div>
                             ))}
@@ -200,10 +187,7 @@ export default function Read({ posts, total, active, inactive, filter, search }:
                 {/* empty */}
                 {posts?.data.length === 0 && (
                     <EmptyData>
-                        <Link href="/admin/posts/create" className="flex gap-2 items-center bg-blue-600 border border-blue-600 text-white hover:brightness-110 px-2.5 py-1.5 rounded-lg text-xs font-medium active:translate-y-0.5 transition-all duration-200 ">
-                            <Plus size={15} />
-                            <span>Thêm mới bài viết</span>
-                        </Link>
+                        <ButtonCreateLink route="/admin/posts/create" />
                     </EmptyData>
                 )}
 

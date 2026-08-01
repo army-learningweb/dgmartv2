@@ -35,7 +35,7 @@ class AdminProductCategoriesController extends Controller
         $validated["user_id"] = Auth::user()->id;
         $validated["parent_id"] = $request->input('parent_id');
 
-        if($request->input('parent_id') != 0){
+        if($request->input('parent_id') !== "0"){
             $parent_slug = ProductCategory::where('id',$request->input('parent_id'))->value('slug');
             $validated["slug"] = $parent_slug ."/". Str::slug($request->input('name'));
         }

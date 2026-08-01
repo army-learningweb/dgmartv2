@@ -53,6 +53,7 @@ Route::middleware(['auth'])->group( function(){
     Route::get('/admin/products/{post}/edit', [AdminProductController::class, 'edit']);
     Route::post('/admin/products/{post}/update', [AdminProductController::class, 'update']);
     Route::delete('/admin/products/{post}/delete', [AdminProductController::class, 'delete']);
+    Route::get('/admin/products/{type}/getConfigs', [AdminProductController::class , 'getConfigs']);
 
     //PRODUCT CATEGORY
     Route::get('/admin/products/categories', [AdminProductCategoriesController::class, 'read']);
@@ -69,8 +70,8 @@ Route::middleware(['auth'])->group( function(){
     //PRODUCT CONFIG TYPES
     Route::get('/admin/products/configsTypes', [AdminProductConfigTypeController::class, 'read']);
     Route::post('/admin/products/configsTypes/store', [AdminProductConfigTypeController::class, 'store']);
-    Route::patch('/admin/products/configsTypes/{config}/update', [AdminProductConfigTypeController::class, 'update']);
-    Route::delete('/admin/products/configsTypes/{config}/delete', [AdminProductConfigTypeController::class, 'delete']);
+    Route::patch('/admin/products/configsTypes/{type}/update', [AdminProductConfigTypeController::class, 'update']);
+    Route::delete('/admin/products/configsTypes/{type}/delete', [AdminProductConfigTypeController::class, 'delete']);
     Route::get('/admin/products/configsTypes/{type}/getConfigs', [AdminProductConfigTypeController::class, 'getConfigs']);
 
     //POST

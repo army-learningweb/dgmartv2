@@ -1,6 +1,6 @@
 import ModalLayout from "./ModalLayout"
 
-interface ModalCreateProps extends React.ComponentPropsWithoutRef<'div'> {
+interface ModalProps extends React.ComponentPropsWithoutRef<'div'> {
     children: React.ReactNode
     title: string;
     labelSubmit: string;
@@ -11,7 +11,7 @@ interface ModalCreateProps extends React.ComponentPropsWithoutRef<'div'> {
     processing: boolean
 }
 
-export default function ModalCreate({ customSize, title, labelSubmit, onClose, isOpen, formSubmitId, processing, children }: ModalCreateProps) {
+export default function Modal({ customSize, title, labelSubmit, onClose, isOpen, formSubmitId, processing, children }: ModalProps) {
     return (
         <ModalLayout
             customSize={customSize}

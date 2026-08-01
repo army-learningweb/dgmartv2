@@ -13,11 +13,11 @@ export default function EmptyData({ children, showFallBack = false }: EmptyDataP
                 <FileSearchCorner size={18} />
             </div>
 
-            <div className="text-center">
+            <div className="text-center space-y-1">
                 <h1 className="font-medium">
                     Không tìm thấy dữ liệu !
                 </h1>
-                <p className="text-gray-500">
+                <p className="text-gray-500 w-70 md:w-full">
                     Nếu có dữ liệu liên quan, dữ liệu sẽ được hiển thị tại đây
                 </p>
             </div>

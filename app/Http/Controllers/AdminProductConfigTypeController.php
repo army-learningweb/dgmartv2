@@ -18,9 +18,11 @@ class AdminProductConfigTypeController extends Controller
             ->groupBy('group');
 
         $types = ProductConfigType::all();
+        $total = ProductConfigType::count();
         return Inertia::render("Admin/Product/ReadConfigType", [
             'configs' => $configs,
-            'types' => $types
+            'types' => $types,
+            'total' => $total
         ]);
     }
 
@@ -32,18 +34,34 @@ class AdminProductConfigTypeController extends Controller
             'desc' => ["required", "min:2", "max:100", "regex:/^[\p{L}\p{N}\s]+$/u"],
             'configs' => ["required", "array"]
         ], [
-            'configs.required' => "Bạn chưa chọn cấu hình, hãy chọn ít nhất 1 đến 2 cấu hình cho loại này"
+            'configs.required' => "Bạn chưa chọn cấu hình, hãy chọn ít nhất 1 đến 2 cấu hình cho loại này."
         ]);
 
         $new_type = ProductConfigType::create($validated);
-        $new_type->mapToConfig()->attach($request->input('configs'));
+        $new_type->mapToConfig()->attach($validated['configs']);
     }
 
     // Sửa
-    public function update() {}
+    public function update(Request $request, ProductConfigType $type)
+    {
+        $validated = $request->validate([
+            'name' => ["required", "min:2", "max:100", "regex:/^[\p{L}\p{N}\s]+$/u", "unique:product_config_types,id,".$type->id],
+            'desc' => ["required", "min:2", "max:100", "regex:/^[\p{L}\p{N}\s]+$/u"],
+            'configs' => ["required", "array"]
+        ], [
+            'configs.required' => "Bạn chưa chọn cấu hình, hãy chọn ít nhất 1 đến 2 cấu hình cho loại này."
+        ]);
+
+        $type->update($validated);
+        $type->mapToConfig()->sync($validated['configs']);
+
+    }
 
     // Xóa
-    public function delete() {}
+    public function delete(ProductConfigType $type)
+    {
+        $type->delete();
+    }
 
     // get config
     public function getConfigs(ProductConfigType $type)

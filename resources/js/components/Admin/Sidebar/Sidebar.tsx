@@ -50,9 +50,9 @@ export default function Sidebar() {
 
                         {/* User */}
                         <NavLink urlActiveOpen={url.startsWith("/admin/users")} name="Thành viên" icon={<UsersRound strokeWidth={1.75} size={17} />}>
-                            <NavSubLink isActive={url === "/admin/users"} route="/admin/users" name="Danh sách thành viên" />
-                            <NavSubLink isActive={url.startsWith("/admin/users/permissions")} route="/admin/users/permissions" name="Quản lí quyền" />
-                            <NavSubLink isActive={url.startsWith("/admin/users/roles")} route="/admin/users/roles" name="Quản lí vai trò" />
+                            <NavSubLink isActive={url.startsWith("/admin/users")} route="/admin/users" name="Danh sách thành viên" />
+                            <NavSubLink isActive={url === "/admin/users/roles"} route="/admin/users/roles" name="Quản lí vai trò" />
+                            <NavSubLink isActive={url === "/admin/users/permissions"} route="/admin/users/permissions" name="Quản lí quyền" />
                         </NavLink>
 
                         <NavLink route="/admin/dashboard" name="Đơn hàng" isActive={url === "/admin/sales"} icon={<PackageCheck strokeWidth={1.75} size={17} />} />

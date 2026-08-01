@@ -1,26 +1,26 @@
-import { userAvatar } from "@/lib/users"
 import { ChevronsUpDown, LogOut } from 'lucide-react';
 import { usePage, Link } from "@inertiajs/react";
 import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import UserAvatar from "@/components/Admin/TableManager/UserAvatar";
 import { Auth } from "@/types";
+
 export default function UserSetting() {
 
     const { user } = usePage<{ auth: Auth }>().props.auth;
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
-    
+
     useEffect(() => {
-        const handleCLickOutSide = (e:MouseEvent) => {
-            if(!isOpen) return;
-            if(menuRef.current && !menuRef.current.contains(e.target as Node)){
+        const handleCLickOutSide = (e: MouseEvent) => {
+            if (!isOpen) return;
+            if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
                 setIsOpen(false);
             }
         }
-        document.addEventListener("mousedown",handleCLickOutSide);
-        return () => document.removeEventListener("mousedown",handleCLickOutSide);
-    },[isOpen])
+        document.addEventListener("mousedown", handleCLickOutSide);
+        return () => document.removeEventListener("mousedown", handleCLickOutSide);
+    }, [isOpen])
 
     return (
         <div ref={menuRef} onClick={() => setIsOpen(!isOpen)} className={clsx("select-none flex justify-between items-center gap-2 md:mb-8.5 p-2 rounded-xl transition-colors duration-150 relative", {
@@ -29,9 +29,7 @@ export default function UserSetting() {
         })}>
             {/* avatar */}
             <div className="flex items-center gap-2">
-                <div className="w-10 h-10 rounded-xl bg-blue-600 text-white font-medium flex items-center justify-center">
-                    {userAvatar(user.name)}
-                </div>
+                <UserAvatar name={user.name} />
                 <div>{user.name}</div>
             </div>
             <ChevronsUpDown strokeWidth={1.75} size={17} />
@@ -43,7 +41,7 @@ export default function UserSetting() {
             })}>
                 <div className="flex items-center gap-2 p-2 text-xs">
                     {/* avatar */}
-                    <UserAvatar name={user.name}/>
+                    <UserAvatar name={user.name} />
                     {/* name */}
                     <div className="flex flex-col">
                         <div>{user.name}</div>

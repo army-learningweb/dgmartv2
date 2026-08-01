@@ -1,12 +1,12 @@
 import { Head, Link, useForm, router } from "@inertiajs/react"
 import Textarea from "@/components/ui/Textarea"
 import toast from "react-hot-toast";
-import { TriangleAlert } from "lucide-react";
 
 import Button from "@/components/ui/Button";
-import FileUpload from "@/components/Admin/TableManager/FileUpload";
 import Select from "@/components/ui/Select";
 import MCEeditor from "@/components/Admin/MCEeditor/Editor";
+import FileUpload from "@/components/Admin/TableManager/FileUpload";
+import SimpleBreadcrum from "@/components/Admin/TableManager/SimpleBreadcrum";
 
 import { ReadPostCategoriesType } from "@/types/module/post";
 import { CreatePostType } from "@/types/module/post";
@@ -40,10 +40,7 @@ export default function Create({ post_categories }: ReadPostCategoriesType) {
             <section>
                 {/* title */}
                 <div className="flex items-center justify-between">
-                    <div className="mt-px text-lg font-medium tracking-tight flex gap-2">
-                        <Link href="/admin/posts" className="text-gray-400 font-normal hover:underline">Danh sách bài viết</Link>/
-                        <div>Thêm mới bài viết</div>
-                    </div>
+                    <SimpleBreadcrum prevRoute="/admin/posts" prevPage="Danh sách bài viết" currentPage="Thêm mới bài viết" />
                 </div>
 
                 {/* form */}

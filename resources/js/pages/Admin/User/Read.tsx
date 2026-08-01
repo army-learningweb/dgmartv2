@@ -1,32 +1,36 @@
 import { Head, useForm, usePage, router } from '@inertiajs/react';
-import { Pen, Trash, Plus, TriangleAlert } from 'lucide-react';
+import { TriangleAlert } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import clsx from 'clsx';
 
-import Button from '@/components/ui/Button';
-import UserAvatar from '@/components/Admin/TableManager/UserAvatar';
-import Pagination from '@/components/Admin/Pagination/Pagination';
-import ModalCreate from '@/components/Admin/Modal/ModalCreate';
-import ModalEdit from '@/components/Admin/Modal/ModalEdit';
-import Input from '@/components/ui/Input';
-import SearchBar from '@/components/Admin/TableManager/SearchBar';
-import FilterTab from '@/components/Admin/TableManager/FilterTab';
-import EmptyData from '@/components/Admin/Empty/EmptyData';
 import Badge from '@/components/ui/Badge';
 import Select from '@/components/ui/Select';
+import Input from '@/components/ui/Input';
+
+import Title from '@/components/Admin/TableManager/Title';
 import RoleBadge from '@/components/Admin/TableManager/RoleBadge';
+import ButtonEdit from '@/components/Admin/TableManager/ButtonEdit';
+import ButtonDelete from '@/components/Admin/TableManager/ButtonDelete';
+import ButtonCreate from '@/components/Admin/TableManager/ButtonCreate';
+import SearchBar from '@/components/Admin/TableManager/SearchBar';
+import FilterTab from '@/components/Admin/TableManager/FilterTab';
+import UserAvatar from '@/components/Admin/TableManager/UserAvatar';
+import Pagination from '@/components/Admin/Pagination/Pagination';
+import Modal from '@/components/Admin/Modal/Modal';
+import EmptyData from '@/components/Admin/Empty/EmptyData';
 
 import { useSearch } from '@/hooks/use-search';
 import { useFilter } from '@/hooks/use-filter';
+import { useModal } from '@/hooks/use-modal';
 
 import { UsersReadType } from '@/types/module/user';
 import { CreateUserType } from '@/types/module/user';
 import { EditUserType } from '@/types/module/user';
 import { Auth } from '@/types';
 
+export default function Read({ users, search, filter, total, active, inactive, roles, }: UsersReadType) {
 
-export default function Read({ users, search, filter, total, active, inactive, roles }: UsersReadType) {
     const { data, setData, post, patch, errors, processing, reset, clearErrors, } = useForm<CreateUserType>({
         id: '',
         name: '',
@@ -38,59 +42,35 @@ export default function Read({ users, search, filter, total, active, inactive, r
         password_confirmation: '',
         user_on_page: users?.data?.length,
         last_page: users.last_page,
-        current_page: users.current_page
+        current_page: users.current_page,
     });
-
     const { user } = usePage<{ auth: Auth }>().props.auth;
-    const [openModalCreate, setOpenModalCreate] = useState(false);
-    const [openModalEdit, setOpenModalEdit] = useState(false);
-    const [idUpdate, setIdUpdate] = useState<null | string>(null);
-
     const [queryFilter, setQueryFilter] = useState<null | string>(filter ?? null);
     const [querySearch, setQuerySearch] = useState<string>(search ?? '');
-    const { handleQueryFilter } = useFilter({ querySearch, setQueryFilter, route: "/admin/users" });
-    const { isLoadingSearch, handleQuerySearch, handleClearSearch } = useSearch({ queryFilter, setQuerySearch, route: "/admin/users" });
 
-    // Mở modal create
-    const handleOpenModalCreate = () => {
-        setOpenModalCreate(true);
-    }
+    // Lọc theo trạng thái
+    const { handleQueryFilter } = useFilter({ querySearch, setQueryFilter, route: '/admin/users' });
 
-    // Đóng modal create
-    const handleCloseModalCreate = () => {
-        setOpenModalCreate(false);
-        reset();
-        setTimeout(() => {
-            clearErrors();
-        }, 300);
-    };
+    // Tìm kiếm
+    const { isLoadingSearch, handleQuerySearch, handleClearSearch } = useSearch({ queryFilter, setQuerySearch, route: '/admin/users' });
 
-    // Mở modal edit
-    const handleOpenModalEdit = (user: EditUserType) => {
-        console.log(user);
+    // Modal hooks
+    const { openModal, isEditModal, setOpenModal, setIsEditModal, handleOpenModal, handleCloseModal, } = useModal({ reset, clearErrors });
+
+    // Mở Modal mode edit
+    const handleEdit = (user: EditUserType) => {
         setData({
             id: user.id,
             name: user.name,
             tel: user.tel,
             email: user.email,
             status: user.status,
-            role_id: user.role_id ?? "",
+            role_id: user.role_id ?? '',
             password: '',
             password_confirmation: '',
         });
-        setIdUpdate(user.id);
-        setOpenModalEdit(true);
-
-        
-    };
-
-    // Đóng modal edit
-    const handleCloseModalEdit = () => {
-        setOpenModalEdit(false);
-        reset();
-        setTimeout(() => {
-            clearErrors();
-        }, 300);
+        setOpenModal(true);
+        setIsEditModal(true);
     };
 
     // Thêm
@@ -102,7 +82,7 @@ export default function Read({ users, search, filter, total, active, inactive, r
                 reset('password_confirmation');
             },
             onSuccess: () => {
-                setOpenModalCreate(false);
+                setOpenModal(false);
                 reset();
                 clearErrors();
                 toast.success('Thêm mới thành công');
@@ -111,15 +91,15 @@ export default function Read({ users, search, filter, total, active, inactive, r
     };
 
     // Sửa
-    const handleEdit = (e: React.SubmitEvent<HTMLFormElement>) => {
+    const handleUpdate = (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
-        patch(`/admin/users/${idUpdate}/update`, {
+        patch(`/admin/users/${data.id}/update`, {
             onError: () => {
                 reset('password');
                 reset('password_confirmation');
             },
             onSuccess: () => {
-                setOpenModalEdit(false);
+                setOpenModal(false);
                 reset();
                 clearErrors();
                 toast.success('Cập nhật thành công');
@@ -134,7 +114,7 @@ export default function Read({ users, search, filter, total, active, inactive, r
             router.delete(`/admin/users/${id}/delete`, {
                 data: {
                     user_on_page: users?.data?.length,
-                    current_page: users.current_page
+                    current_page: users.current_page,
                 },
                 onStart: () => {
                     toastID = toast.loading('Đang xóa...');
@@ -142,7 +122,7 @@ export default function Read({ users, search, filter, total, active, inactive, r
                 onSuccess: () => {
                     toast.success('Xóa thành công', { id: toastID });
                 },
-            })
+            });
         }
     };
 
@@ -151,109 +131,32 @@ export default function Read({ users, search, filter, total, active, inactive, r
             <Head title="Thành viên" />
 
             {/* Modal */}
-            <ModalCreate
-                onClose={handleCloseModalCreate}
-                isOpen={openModalCreate}
-                customSize="w-[90%] md:w-[38%] min-h-[50%]"
-                title="Thêm mới thành viên"
-                labelSubmit="Thêm mới"
+            <Modal
+                onClose={handleCloseModal}
+                isOpen={openModal}
+                processing={processing}
+                title={!isEditModal ? 'Thêm mới thành viên' : 'Chỉnh sửa thông tin'}
+                labelSubmit={!isEditModal ? 'Thêm mới' : 'Cập nhật'}
                 formSubmitId="createUser"
-                processing={processing}
-            >
-                <form onSubmit={handleCreate} id="createUser">
-                    {Object.keys(errors).length > 0 && (
-                        <ul className="rounded-lg bg-red-50 p-4 text-red-700">
-                            {Object.values(errors).map((error, index) => (
-                                <li
-                                    key={index}
-                                    className="mt-1 flex items-center gap-2 first-of-type:mt-0"
-                                >
-                                    <TriangleAlert
-                                        size={16}
-                                        strokeWidth={1.7}
-                                    />
-                                    {error}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-
-                    <div className="mt-2 grid md:grid-cols-2 gap-4">
-                        <div>
-                            <Input type="text" name="name" label="Họ và tên" error={errors.name} showError={false} value={data.name} onChange={(e) => setData('name', e.target.value)} autoComplete="on" />
-                        </div>
-                        <div>
-                            <Input type="tel" name="tel" label="Số điện thoại" error={errors.tel} showError={false} value={data.tel} onChange={(e) => setData('tel', e.target.value)} autoComplete="on" />
-                        </div>
-                    </div>
-
-                    <div className="mt-2">
-                        <Input type="text" name="email" label="Email" error={errors.email} showError={false} value={data.email} onChange={(e) => setData('email', e.target.value)} autoComplete="username" />
-                    </div>
-
-                    <div className="mt-2 grid md:grid-cols-2 gap-4">
-                        <div>
-                            <Input type="password" name="password" label="Mật khẩu" error={errors.password} showError={false} value={data.password} onChange={(e) => setData('password', e.target.value)} autoComplete="current-password" />
-                        </div>
-
-                        <div>
-                            <Input type="password" name="password_confirmation" label="Xác nhận mật khẩu" value={data.password_confirmation} onChange={(e) => setData('password_confirmation', e.target.value)} autoComplete="new-password" />
-                        </div>
-                    </div>
-
-                    <div className='mt-2'>
-                        <Select onChange={(e) => setData("role_id", e.target.value)} label="Phân vai trò" name="role_id" error={errors.role_id} value={data.role_id}>
-                            <option value="">-Chọn vai trò-</option>
-                            {roles.map(role => (
-                                <option key={role.id} value={role.id}>{role.name}</option>
-                            ))}
-                        </Select>
-                        <p className='mt-2 text-gray-500'>(Không bắt buộc)</p>
-                    </div>
-
-                    <div className="mt-2">
-                        <Select 
-                            label="Trạng thái" 
-                            name="status" 
-                            onChange={(e) => setData("status", e.target.value as 'active' | 'inactive')}>
-                                <option value="active">Hoạt động</option>
-                                <option value="inactive">Vô hiệu hóa</option>
-                        </Select>
-                    </div>
-
-                </form>
-            </ModalCreate>
-
-            <ModalEdit
-                onClose={handleCloseModalEdit}
-                isOpen={openModalEdit}
                 customSize="w-[90%] md:w-[38%] min-h-[50%]"
-                title="Cập nhật thông tin"
-                labelSubmit="Cập nhật"
-                formSubmitId="editUser"
-                processing={processing}
             >
-                <form onSubmit={handleEdit} id="editUser">
+                <form onSubmit={!isEditModal ? handleCreate : handleUpdate} id="createUser">
                     {Object.keys(errors).length > 0 && (
                         <ul className="rounded-lg bg-red-50 p-4 text-red-700">
                             {Object.values(errors).map((error, index) => (
-                                <li
-                                    key={index}
-                                    className="mt-1 flex items-center gap-2 first-of-type:mt-0"
-                                >
-                                    <TriangleAlert
-                                        size={16}
-                                        strokeWidth={1.7}
-                                    />
+                                <li key={index} className="mt-1 flex items-center gap-2 first-of-type:mt-0">
+                                    <TriangleAlert size={16} strokeWidth={1.7} />
                                     {error}
                                 </li>
                             ))}
                         </ul>
                     )}
-                    <div className="mt-2 grid grid-cols-2 gap-4">
+
+                    <div className="mt-2 grid gap-4 md:grid-cols-2">
                         <div>
                             <Input type="text" name="name" label="Họ và tên" error={errors.name} showError={false} value={data.name} onChange={(e) => setData('name', e.target.value)} autoComplete="on" />
                         </div>
+
                         <div>
                             <Input type="tel" name="tel" label="Số điện thoại" error={errors.tel} showError={false} value={data.tel} onChange={(e) => setData('tel', e.target.value)} autoComplete="on" />
                         </div>
@@ -263,58 +166,42 @@ export default function Read({ users, search, filter, total, active, inactive, r
                         <Input type="text" name="email" label="Email" error={errors.email} showError={false} value={data.email} onChange={(e) => setData('email', e.target.value)} autoComplete="username" />
                     </div>
 
-                    <div className="mt-2 grid grid-cols-2 gap-4">
+                    <div className="mt-2 grid gap-4 md:grid-cols-2">
                         <div>
                             <Input type="password" name="password" label="Mật khẩu" error={errors.password} showError={false} value={data.password} onChange={(e) => setData('password', e.target.value)} autoComplete="current-password" />
                         </div>
 
                         <div>
-                            <Input type="password" name="password_confirmation" label="Xác nhận mật khẩu" value={data.password_confirmation} onChange={(e) => setData('password_confirmation', e.target.value)} autoComplete="new-password" />
+                            <Input type="password" name="password_confirmation" label="Xác nhận mật khẩu" value={data.password_confirmation} onChange={(e) => setData('password_confirmation', e.target.value,)} autoComplete="new-password" />
                         </div>
                     </div>
 
-                     <div className='mt-2'>
-                        <Select 
-                            onChange={(e) => setData("role_id", e.target.value)} 
-                            label="Phân vai trò" 
-                            name="role_id" 
-                            error={errors.role_id} 
-                            value={data.role_id}>
-                                <option value="">-Chọn vai trò-</option>
-                                {roles.map(role => (
-                                    <option key={role.id} value={role.id}>{role.name}</option>
-                                ))}
+                    <div className="mt-2">
+                        <Select onChange={(e) => setData('role_id', e.target.value)} label="Phân vai trò" name="role_id" error={errors.role_id} value={data.role_id}>
+                            <option value="">-Chọn vai trò-</option>
+                            {roles.map((role) => (
+                                <option key={role.id} value={role.id}>
+                                    {role.name}
+                                </option>
+                            ))}
                         </Select>
-                        <p className='mt-2 text-gray-500'>(Không bắt buộc)</p>
+                        <p className="mt-2 text-gray-500">(Không bắt buộc)</p>
                     </div>
 
                     <div className="mt-2">
-                        <Select  
-                            label="Trạng thái" 
-                            name="status" 
-                            value={data.status}
-                            onChange={(e) => setData("status", e.target.value as 'active' | 'inactive')}>
-                                <option value="active">Hoạt động</option>
-                                <option value="inactive">Vô hiệu hóa</option>
+                        <Select label="Trạng thái" name="status" onChange={(e) => setData('status', e.target.value as 'active' | 'inactive',)} value={data.status}>
+                            <option value="active">Hoạt động</option>
+                            <option value="inactive">Vô hiệu hóa</option>
                         </Select>
                     </div>
                 </form>
-            </ModalEdit>
+            </Modal>
 
             <section>
                 {/* title */}
                 <div className="flex items-center justify-between">
-                    <h1 className="mt-px text-lg font-medium tracking-tight">
-                        Danh sách thành viên
-                    </h1>
-                    <Button
-                        onClick={handleOpenModalCreate}
-                        animatePress={true}
-                        size="small"
-                    >
-                        <Plus size={15} />
-                        <span>Thêm mới thành viên</span>
-                    </Button>
+                    <Title heading="Danh sách thành viên" />
+                    <ButtonCreate onOpenModal={handleOpenModal} />
                 </div>
 
                 {/* filter & search */}
@@ -384,7 +271,9 @@ export default function Read({ users, search, filter, total, active, inactive, r
                                                     )}
 
                                                     {!item.role && (
-                                                        <div className='text-gray-500 text-xs'>Chưa phân vai trò !</div>
+                                                        <div className="text-xs text-gray-500">
+                                                            Chưa phân vai trò !
+                                                        </div>
                                                     )}
                                                 </div>
                                             </div>
@@ -404,14 +293,14 @@ export default function Read({ users, search, filter, total, active, inactive, r
 
                                         {/* create at */}
                                         <td className="px-4 py-3">
-                                            <div className='w-30 truncate'>
+                                            <div className="w-30 truncate">
                                                 {item.created_at}
                                             </div>
                                         </td>
 
                                         {/* update at */}
                                         <td className="px-4 py-3">
-                                            <div className='w-30 truncate'>
+                                            <div className="w-30 truncate">
                                                 {item.updated_at}
                                             </div>
                                         </td>
@@ -425,15 +314,9 @@ export default function Read({ users, search, filter, total, active, inactive, r
 
                                         {/* setting */}
                                         <td className="px-4 py-3">
-                                            <div className={clsx('flex h-6.75 gap-2', { 'pointer-events-none opacity-50': item.id == String(user.id), },)}>
-                                                <Button onClick={() => handleOpenModalEdit(item)} variant="outline" size="small" animatePress={true}>
-                                                    <Pen size={13} className="text-gray-400" />
-                                                    <span>Cập nhật</span>
-                                                </Button>
-                                                <Button onClick={() => handleDelete(item.id)} variant="outline" size="small" animatePress={true}>
-                                                    <Trash size={13} className="text-gray-400" />
-                                                    <span>Xóa</span>
-                                                </Button>
+                                            <div className={clsx('flex h-6.75 gap-2', { 'pointer-events-none opacity-50': item.id == String(user.id) })}>
+                                                <ButtonEdit onEdit={() => handleEdit(item,)} />
+                                                <ButtonDelete onDelete={() => handleDelete(item.id)} />
                                             </div>
                                         </td>
                                     </tr>
@@ -463,16 +346,13 @@ export default function Read({ users, search, filter, total, active, inactive, r
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className={clsx('flex flex-col gap-2 md:flex-row', { 'pointer-events-none opacity-50': item.id == String(user.id), },)}>
-                                            <Button onClick={() => handleOpenModalEdit(item)} variant="outline" size="small" animatePress={true}>
-                                                <Pen size={13} className="text-gray-400" />
-                                                <span>Cập nhật</span>
-                                            </Button>
-
-                                            <Button onClick={() => handleDelete(item.id)} variant="outline" size="small" animatePress={true}>
-                                                <Trash size={13} className="text-gray-400" />
-                                                <span>Xóa</span>
-                                            </Button>
+                                        <div className={clsx('flex flex-col gap-2 md:flex-row',{
+                                                    'pointer-events-none opacity-50': item.id == String(user.id)
+                                                }
+                                            )}
+                                        >
+                                            <ButtonEdit onEdit={() =>handleEdit(item)}/>
+                                            <ButtonDelete onDelete={() =>handleDelete(item.id)}/>
                                         </div>
                                     </div>
                                 </div>
@@ -482,9 +362,7 @@ export default function Read({ users, search, filter, total, active, inactive, r
                 )}
 
                 {/* empty */}
-                {users.data?.length === 0 && (
-                    <EmptyData showFallBack={true} />
-                )}
+                {users.data?.length === 0 && <EmptyData showFallBack={true} />}
 
                 {/* pagination */}
                 {users.data?.length > 0 && (

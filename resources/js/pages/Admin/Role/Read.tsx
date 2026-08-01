@@ -1,68 +1,50 @@
-import { Head, useForm, router } from "@inertiajs/react"
-import { Plus, Pen, Trash } from "lucide-react"
-import { useState } from "react"
-import React from "react"
-import toast from "react-hot-toast"
-import axios from "axios"
+import { Head, useForm, router } from '@inertiajs/react';
+import React from 'react';
+import toast from 'react-hot-toast';
+import axios from 'axios';
 
-import Button from "@/components/ui/Button"
-import ModalCreate from "@/components/Admin/Modal/ModalCreate"
-import ModalEdit from "@/components/Admin/Modal/ModalEdit"
-import Input from "@/components/ui/Input"
-import Textarea from "@/components/ui/Textarea"
-import FilterTab from "@/components/Admin/TableManager/FilterTab"
-import EmptyData from "@/components/Admin/Empty/EmptyData"
+import Input from '@/components/ui/Input';
+import Textarea from '@/components/ui/Textarea';
+import Modal from '@/components/Admin/Modal/Modal';
+import EmptyData from '@/components/Admin/Empty/EmptyData';
+import ButtonCreate from '@/components/Admin/TableManager/ButtonCreate';
+import ButtonDelete from '@/components/Admin/TableManager/ButtonDelete';
+import ButtonEdit from '@/components/Admin/TableManager/ButtonEdit';
+import Title from '@/components/Admin/TableManager/Title';
+
+import { useModal } from '@/hooks/use-modal';
 
 import { ReadRoleType } from '@/types/module/role';
 import { CreateRoleType } from '@/types/module/role';
 import { EditRoleType } from '@/types/module/role';
+import { Permission } from '@/types/module/permission';
 
 export default function Read({ roles, permissions, total }: ReadRoleType) {
-    const { data, setData, post, patch, errors, processing, reset, clearErrors, } = useForm<CreateRoleType>({
+    const { data, setData, post, patch, errors, processing, reset, clearErrors } = useForm<CreateRoleType>({
         id: '',
         name: '',
         desc: '',
-        permissions: []
+        permissions: [],
     });
 
-    const [openModalCreate, setOpenModalCreate] = useState(false);
-    const [openModalEdit, setOpenModalEdit] = useState(false);
-    const [idUpdate, setIdUpdate] = useState<null | string>(null);
+    // Modal hooks
+    const { openModal, isEditModal, setOpenModal, setIsEditModal, handleOpenModal, handleCloseModal } = useModal({ reset, clearErrors });
 
-    // Mở modal create
-    const handleOpenModalCreate = () => {
-        setOpenModalCreate(true);
-    }
-
-    // Đóng modal create
-    const handleCloseModalCreate = () => {
-        setOpenModalCreate(false);
-        reset();
-        setTimeout(() => {
-            clearErrors();
-        }, 300);
-    };
-
-    // Mở modal edit
-    const handleOpenModalEdit = async (role: EditRoleType) => {
-        const res = await axios.get(`/admin/users/roles/${role.id}/getPermissions`);
-        setData({
-            id: role.id,
-            name: role.name,
-            desc: role.desc,
-            permissions: [...res.data]
-        });
-        setIdUpdate(role.id);
-        setOpenModalEdit(true);
-    };
-
-    // Đóng modal edit
-    const handleCloseModalEdit = () => {
-        setOpenModalEdit(false);
-        reset();
-        setTimeout(() => {
-            clearErrors();
-        }, 300);
+    // Modal edit mode
+    const handleEdit = async (role: EditRoleType) => {
+        try {
+            const res = await axios.get(`/admin/users/roles/${role.id}/getPermissions`);
+            setData({
+                id: role.id,
+                name: role.name,
+                desc: role.desc,
+                permissions: [...res.data],
+            });
+            setOpenModal(true);
+            setIsEditModal(true);
+        } catch (error) {
+            toast.error('Lỗi không thể cập nhật, vui lòng thử lại sau !');
+        }
     };
 
     // Thêm
@@ -70,7 +52,7 @@ export default function Read({ roles, permissions, total }: ReadRoleType) {
         e.preventDefault();
         post('/admin/users/roles/store', {
             onSuccess: () => {
-                setOpenModalCreate(false);
+                setOpenModal(false);
                 reset();
                 clearErrors();
                 toast.success('Thêm mới thành công');
@@ -79,12 +61,12 @@ export default function Read({ roles, permissions, total }: ReadRoleType) {
     };
 
     // Sửa
-    const handleEdit = (e: React.SubmitEvent<HTMLFormElement>) => {
+    const handleUpdate = (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
-        patch(`/admin/users/roles/${idUpdate}/update`, {
+        patch(`/admin/users/roles/${data.id}/update`, {
             preserveScroll: true,
             onSuccess: () => {
-                setOpenModalEdit(false);
+                setOpenModal(false);
                 reset();
                 clearErrors();
                 toast.success('Cập nhật thành công');
@@ -104,8 +86,17 @@ export default function Read({ roles, permissions, total }: ReadRoleType) {
                 onSuccess: () => {
                     toast.success('Xóa thành công', { id: toastID });
                 },
-            })
+            });
         }
+    };
+
+    // Chọn nhiều
+    const handleCheckAll = (module: Permission[], checked: boolean) => {
+        const moduleIds = module.map(item => item.id);
+        setData("permissions", checked
+            ? [...new Set([...data.permissions, ...moduleIds])]
+            : data.permissions.filter(id => !moduleIds.includes(id))
+        )
     };
 
     return (
@@ -113,147 +104,97 @@ export default function Read({ roles, permissions, total }: ReadRoleType) {
             <Head title="Vai trò" />
 
             {/* Modal */}
-            <ModalCreate
-                onClose={handleCloseModalCreate}
-                isOpen={openModalCreate}
+            <Modal
+                onClose={handleCloseModal}
+                isOpen={openModal}
                 customSize="w-[90%] md:w-[40%] min-h-[50%]"
-                title="Thêm mới vai trò"
-                labelSubmit="Thêm mới"
+                title={
+                    !isEditModal ? 'Thêm mới vai trò' : 'Chỉnh sửa thông tin'
+                }
+                labelSubmit={!isEditModal ? 'Thêm mới' : 'Cập nhật'}
                 formSubmitId="createRole"
                 processing={processing}
             >
-                <form onSubmit={handleCreate} id="createRole">
-                    <div className='mt-1'>
+                <form onSubmit={!isEditModal ? handleCreate : handleUpdate} id="createRole" >
+                    <div className="mt-1">
                         <Input type="text" name="name" label="Tên vai trò" error={errors.name} value={data.name} onChange={(e) => setData('name', e.target.value)} autoComplete="on" />
-                        <p className='mt-1 text-gray-500'>VD: Admin,Post Manager...</p>
+                        <p className="mt-1 text-gray-500">
+                            VD: Admin,Post Manager...
+                        </p>
                     </div>
 
-                    <div className='mt-2'>
+                    <div className="mt-2">
                         <Textarea name="desc" label="Mô tả" error={errors.desc} value={data.desc} onChange={(e) => setData('desc', e.target.value)} autoComplete="on" />
-                        <p className='mt-0.5 text-gray-500'>VD: Quản lí toàn bộ hệ thống</p>
                     </div>
 
-                    <hr className="my-3 border-gray-100" />
                     <div className="mt-2">
                         <div className="flex gap-2">
-                            <p className="font-semibold text-gray-800 ">Chọn quyền </p>
-                            <p className="text-gray-500">(Vai trò này có quyền gì?)</p>
+                            <p className="font-semibold text-gray-800">
+                                Chọn quyền{' '}
+                            </p>
+                            <p className="text-gray-500">
+                                (Vai trò này có quyền gì?)
+                            </p>
+                            {errors.permissions && (
+                                <div className="text-red-600">
+                                    {errors.permissions}
+                                </div>
+                            )}
                         </div>
-                        {errors.permissions && <div className="text-red-600 my-1">{errors.permissions}</div>}
                         <div className="max-h-48 overflow-y-auto pb-2">
                             {Object.values(permissions)?.length > 0 && (
                                 <>
-                                    {Object.entries(permissions).map(([module, items]) => (
-                                        <div key={module} className="border border-gray-200 py-1 px-4 mt-2 rounded-lg" >
-                                            <div className="py-1 px-2 bg-blue-100 text-blue-700 w-fit rounded-md mt-1 text-xs font-medium">
-                                                {module}
+                                    {Object.entries(permissions).map(
+                                        ([module, items]) => (
+                                            <div key={module} className="mt-2 rounded-lg border border-gray-200 px-4 py-1">
+                                                <div className="flex items-center gap-2 py-2">
+                                                    <input onChange={(e) => handleCheckAll(items, e.target.checked,)}
+                                                        type="checkbox"
+                                                        name="checkAll"
+                                                        id={module}
+                                                        checked={items.every(item => data.permissions.includes(item.id))}
+                                                    />
+                                                    <label htmlFor={module} className="mb-0.5 font-medium text-blue-600 select-none">
+                                                        Module {module}
+                                                    </label>
+                                                </div>
+
+                                                <div className="mt-2 grid grid-cols-4 py-1">
+                                                    {items.map((item) => (
+                                                        <div key={item.id} className="flex gap-1">
+                                                            <input checked={data.permissions.includes(item.id,)}
+                                                                onChange={(e) => {
+                                                                    setData('permissions', e.target.checked
+                                                                        ? [...data.permissions, item.id,]
+                                                                        : data.permissions.filter((id) => id !== item.id,)
+                                                                    );
+                                                                }}
+                                                                type="checkbox"
+                                                                name="permissions"
+                                                                id={item.id}
+                                                                className="border-gray-200 bg-white"
+                                                            />
+                                                            <label htmlFor={item.id} className="select-none">
+                                                                {item.name}
+                                                            </label>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
-                                            <div className="py-1 grid grid-cols-4 mt-2">
-                                                {items.map(item => (
-                                                    <div key={item.id} className="flex gap-1">
-                                                        <input checked={data.permissions.includes(item.id)} onChange={(e) => {
-                                                            setData("permissions", e.target.checked
-                                                                    ? [...data.permissions, item.id]
-                                                                    : data.permissions.filter(id => id !== item.id)
-                                                                )
-                                                            }} 
-                                                        type="checkbox" name="permissions" id={item.id} className="border-gray-200 bg-white" />
-                                                        <label htmlFor={item.id} className="select-none">{item.name}</label>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    ))}
+                                        ),
+                                    )}
                                 </>
                             )}
                         </div>
                     </div>
                 </form>
-            </ModalCreate>
-
-            <ModalEdit
-                onClose={handleCloseModalEdit}
-                isOpen={openModalEdit}
-                customSize="w-[90%] md:w-[40%] min-h-[50%]"
-                title="Cập nhật thông tin"
-                labelSubmit="Cập nhật"
-                formSubmitId="editRole"
-                processing={processing}
-            >
-                <form onSubmit={handleEdit} id="editRole">
-                    <div className='mt-1'>
-                        <Input type="text" name="name" label="Tên vai trò" error={errors.name} value={data.name} onChange={(e) => setData('name', e.target.value)} autoComplete="on" />
-                        <p className='mt-1 text-gray-500'>VD: Admin,Post Manager...</p>
-                    </div>
-
-                    <div className='mt-2'>
-                        <Textarea name="desc" label="Mô tả" error={errors.desc} value={data.desc} onChange={(e) => setData('desc', e.target.value)} autoComplete="on" />
-                        <p className='mt-0.5 text-gray-500'>VD: Quản lí toàn bộ hệ thống</p>
-                    </div>
-
-                    <hr className="my-3 border-gray-100" />
-                    <div className="mt-2">
-                        <div className="flex gap-2">
-                            <p className="font-semibold text-gray-800 ">Chọn quyền </p>
-                            <p className="text-gray-500">(Vai trò này có quyền gì?)</p>
-                        </div>
-                        {errors.permissions && <div className="text-red-600 my-1">{errors.permissions}</div>}
-                        <div className="max-h-48 overflow-y-auto pb-2">
-                            {Object.values(permissions)?.length > 0 && (
-                                <>
-                                    {Object.entries(permissions).map(([module, items]) => (
-                                        <div key={module} className="border border-gray-200 py-1 px-4 mt-2 rounded-lg" >
-                                            <div className="py-1 px-2 bg-blue-100 text-blue-700 w-fit rounded-md mt-1 text-xs font-medium">
-                                                {module}
-                                            </div>
-                                            <div className="py-1 grid grid-cols-4 mt-2">
-                                                {items.map(item => (
-                                                    <div key={item.id} className="flex gap-1">
-                                                        <input checked={data.permissions.includes(item.id)} onChange={(e) => {
-                                                            setData("permissions", e.target.checked
-                                                                ? [...data.permissions, item.id]
-                                                                : data.permissions.filter(id => id !== item.id)
-                                                            )
-                                                        }} type="checkbox" name="permissions" id={item.id} className="border-gray-200 bg-white" />
-                                                        <label htmlFor={item.id} className="select-none">{item.name}</label>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </>
-                            )}
-                        </div>
-                    </div>
-                </form>
-            </ModalEdit>
+            </Modal>
 
             <section>
                 {/* title */}
                 <div className="flex items-center justify-between">
-                    <h1 className="mt-px text-lg font-medium tracking-tight">
-                        Quản lí vai trò
-                    </h1>
-                    <Button
-                        onClick={handleOpenModalCreate}
-                        animatePress={true}
-                        size="small"
-                    >
-                        <Plus size={15} />
-                        <span>Thêm mới vai trò</span>
-                    </Button>
-                </div>
-
-                {/* stats */}
-                <div className="mt-4 flex items-center justify-between">
-                    {/* stats */}
-                    <div className="hidden gap-1 rounded-xl bg-gray-100 p-1 tracking-tight md:grid md:grid-cols-1">
-                        <FilterTab
-                            isActive={true}
-                            countData={total}
-                            label="Tất cả"
-                        />
-                    </div>
+                    <Title heading={`Quản lí vai trò (${total})`} />
+                    <ButtonCreate onOpenModal={handleOpenModal} />
                 </div>
 
                 {/* data */}
@@ -271,50 +212,49 @@ export default function Read({ roles, permissions, total }: ReadRoleType) {
                                 </tr>
                             </thead>
                             <tbody>
-                                {roles.map(item => (
+                                {roles.map((item) => (
                                     <tr key={item.id} className="border-b border-gray-200 last-of-type:border-0">
-                                        <td className="px-5 py-3 w-60 truncate">{item.name}</td>
-                                        <td className="px-5 py-3 w-65 truncate">{item.desc}</td>
-                                        <td className="px-5 py-3 w-60 truncate">{item.created_at}</td>
-                                        <td className="px-5 py-3 w-60 truncate">{item.updated_at}</td>
+                                        <td className="w-60 truncate px-5 py-3">
+                                            {item.name}
+                                        </td>
+                                        <td className="w-65 truncate px-5 py-3">
+                                            {item.desc}
+                                        </td>
+                                        <td className="w-60 truncate px-5 py-3">
+                                            {item.created_at}
+                                        </td>
+                                        <td className="w-60 truncate px-5 py-3">
+                                            {item.updated_at}
+                                        </td>
                                         <td className="px-5 py-3">
                                             <div className="flex h-6.75 gap-2">
-                                                <Button onClick={() => handleOpenModalEdit(item)} variant="outline" size="small" animatePress={true}>
-                                                    <Pen size={13} className="text-gray-400" />
-                                                    <span>Cập nhật</span>
-                                                </Button>
-                                                <Button onClick={() => handleDelete(item.id)} variant="outline" size="small" animatePress={true}>
-                                                    <Trash size={13} className="text-gray-400" />
-                                                    <span>Xóa</span>
-                                                </Button>
+                                                <ButtonEdit onEdit={() => handleEdit(item)} />
+                                                <ButtonDelete onDelete={() => handleDelete(item.id)} />
                                             </div>
                                         </td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
-                        
+
                         {/* mobile */}
-                        <div className="md:hidden inline-flex flex-col gap-2 w-full">
-                            {roles.map(item => (
-                                <div key={item.id} className="border-b border-gray-200 p-3 w-full flex justify-between h-22">
+                        <div className="inline-flex w-full flex-col gap-2 md:hidden">
+                            {roles.map((item) => (
+                                <div key={item.id} className="flex h-22 w-full justify-between border-b border-gray-200 p-3">
                                     <div className="mt-3">
-                                        <p className="w-30 truncate">{item.name}</p>
-                                        <p className="text-gray-500 w-40 truncate">{item.desc}</p>
+                                        <p className="w-30 truncate">
+                                            {item.name}
+                                        </p>
+                                        <p className="w-40 truncate text-gray-500">
+                                            {item.desc}
+                                        </p>
                                     </div>
 
-                                    <div className="flex flex-col h-6.75 gap-2">
-                                        <Button onClick={() => handleOpenModalEdit(item)} variant="outline" size="small" animatePress={true}>
-                                            <Pen size={13} className="text-gray-400" />
-                                            <span>Cập nhật</span>
-                                        </Button>
-                                        <Button onClick={() => handleDelete(item.id)} variant="outline" size="small" animatePress={true}>
-                                            <Trash size={13} className="text-gray-400" />
-                                            <span>Xóa</span>
-                                        </Button>
+                                    <div className="flex h-6.75 flex-col gap-2">
+                                        <ButtonEdit onEdit={() => handleEdit(item)} />
+                                        <ButtonDelete onDelete={() => handleDelete(item.id)} />
                                     </div>
                                 </div>
-
                             ))}
                         </div>
                     </div>
@@ -323,17 +263,10 @@ export default function Read({ roles, permissions, total }: ReadRoleType) {
                 {/* empty */}
                 {roles?.length === 0 && (
                     <EmptyData>
-                        <Button
-                            onClick={handleOpenModalCreate}
-                            animatePress={true}
-                            size="small"
-                        >
-                            <Plus size={15} />
-                            <span>Thêm mới vai trò</span>
-                        </Button>
+                        <ButtonCreate onOpenModal={handleOpenModal} />
                     </EmptyData>
                 )}
             </section>
         </>
-    )
+    );
 }

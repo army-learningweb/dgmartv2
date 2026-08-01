@@ -6,7 +6,7 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     name: string;
     label: string;
     children?: React.ReactNode;
-    onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+    onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
     showError?: boolean;
     className?: string;
 }
