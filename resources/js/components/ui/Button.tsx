@@ -16,7 +16,7 @@ export default function Button({ variant = 'primary', size = 'medium', animatePr
         primary: 'bg-blue-600 border border-blue-600 text-white hover:brightness-110',
         secondary: 'bg-gray-600 border border-gray-600 text-white hover:brightness-110',
         outline: 'border border-gray-200 hover:bg-gray-100 bg-white',
-        danger: 'bg-red-600 border-red-600 text-white hover:brightness-110',
+        danger: 'bg-red-700 border-red-700 text-white hover:brightness-110',
         warning: 'bg-amber-600 border-amber-600 text-black hover:brightness-110'
     }
 
@@ -29,7 +29,7 @@ export default function Button({ variant = 'primary', size = 'medium', animatePr
 
     return (
         <button type={type} disabled={disabled || processing} className={clsx(`px-2.5 py-1.5 rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1 ${className} ${variants[variant]} ${sizes[size]} `, {
-            "active:translate-y-0.5" : animatePress
+            "active:translate-y-px" : animatePress
         })} {...props}>
             {!processing && children}
 

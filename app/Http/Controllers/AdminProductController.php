@@ -52,10 +52,8 @@ class AdminProductController extends Controller
     public function create(Request $request)
     {
         $product_categories = ProductCategory::whereNot('id',1)->get(['id', 'name', 'parent_id']);
-        $types = ProductConfigType::get(['id','name']);
         return Inertia::render("Admin/Product/Create", [
-            "product_categories" => $product_categories,
-            "types" => $types
+            "product_categories" => $product_categories
         ]);
     }
 

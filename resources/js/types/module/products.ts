@@ -19,19 +19,14 @@ interface ProductCategories {
     parent_id: string;
 }
 
-interface ProductTypes{
-    id: string;
-    name: string;
-}
-
 export type ReadProductType = {
     products: PaginatedData<ProductType[]>
     product_categories : ProductCategories[]
-    types : ProductTypes[]
 }
 
 export type CreateProductType = {
     file : null | File;
+    files: null | File;
     name : string;
     desc : string;
     content: string;

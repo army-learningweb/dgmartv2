@@ -1,24 +1,27 @@
-import { ImageUp, ImageOff } from "lucide-react"
-import { useState } from "react"
-import Button from "@/components/ui/Button"
+import { Upload, Images } from "lucide-react"
+import { useEffect, useState } from "react"
 import clsx from "clsx";
+import { MegabyteFormat } from "@/lib/megabyte_format";
 
 interface ImageReviewType {
-    url?: string,
-    name?: string
+    url?: string;
+    name?: string;
+    size?: number;
 }
 
 interface FileUploadProps {
     onSetData: (field: string, file: File | null) => void;
-    error?: string,
-    file_url?: string,
-    file_name?: string,
+    error?: string;
+    file_url?: string;
+    file_name?: string;
+    file_size?: number;
 }
 
-export default function FileUpload({ onSetData, error, file_url, file_name }: FileUploadProps) {
+export default function FileUpload({ onSetData, error, file_url, file_name, file_size }: FileUploadProps) {
     const [imageReview, setImageReview] = useState<ImageReviewType | null>(file_url ? {
         url: file_url,
-        name: file_name
+        name: file_name,
+        size: file_size
     } : null);
 
     const handleShowImageReview = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,14 +29,15 @@ export default function FileUpload({ onSetData, error, file_url, file_name }: Fi
         if (file) {
             setImageReview({
                 url: URL.createObjectURL(file),
-                name: file.name
+                name: file.name,
+                size: file.size
             });
             onSetData("file", file);
         }
     }
+
     const handleRemoveImageReview = () => {
         setImageReview(null);
-        (document.getElementById("file") as HTMLInputElement | null)!.value = "";
         onSetData("file_id", null);
         onSetData("file", null);
     }
@@ -41,32 +45,48 @@ export default function FileUpload({ onSetData, error, file_url, file_name }: Fi
     return (
         <>
             <div className="font-medium">Ảnh</div>
-            <div className={clsx("relative flex flex-col items-center justify-center text-gray-500 border border-gray-200 bg-gray-50 w-full h-60 rounded-xl mt-1.75 gap-2", {
+
+            <div className={clsx("flex flex-col items-center justify-center relative border border-gray-100 bg-gray-100 w-full h-60 rounded-xl mt-1.75 gap-1 overflow-hidden p-1", {
                 "border-red-600 ring-3 ring-red-600/20": error
             })}>
-                <input accept="images/*" onChange={handleShowImageReview} type="file" name="file" id="file" className="hidden" />
-                <label htmlFor="file" className="gap-1 active:translate-y-0.5 transition-all duration-150 cursor-pointer flex items-center justify-center text-blue-600 px-2 py-1.5 text-xs font-medium hover:underline">
-                    <ImageUp size={18} />
-                    <div className="mt-0.75">Upload ảnh</div>
-                </label>
-                <div> Hỗ trợ: png, jpg, jpeg, avif, webp</div>
-                <div>Max size: 20MB</div>
-
                 {/* review */}
-                {(imageReview) && (
-                    <img src={imageReview?.url} alt="" className="absolute top-0 left-0 w-full h-full rounded-xl object-cover" />
+                {imageReview && (
+                    <div className="border border-gray-100 bg-white shadow-sm rounded-lg flex items-center justify-center w-full h-full overflow-hidden">
+                        <img src={imageReview?.url} alt="" className="w-full h-full rounded-xl object-scale-down" />
+                    </div>
                 )}
 
-                {/* remove */}
-                {(imageReview) && (
-                    <div className="flex items-center gap-2 absolute right-2 top-2">
-                        <div className="bg-gray-50 px-2 py-1.75 text-black rounded-lg text-xs font-medium">{imageReview?.name}</div>
-                        <Button onClick={handleRemoveImageReview} type="button" animatePress={true} variant="danger" size="small" className="">
-                            <ImageOff size={18} /> Thu hồi
-                        </Button>
+                {!imageReview && (
+                    <div className="flex-col gap-1 flex items-center text-gray-500 text-xs font-medium">
+                        <Images size={25} className="text-gray-500" />
+                        <span> Hỗ trợ ( png, jpg, jpeg, avif, webp)</span>
+                        <span> Dung lượng tối đa: 20MB  </span>
+                    </div>
+                )}
+
+                {!imageReview && (
+                    <div>
+                        <input onChange={handleShowImageReview} type="file" name="file" id="file" className="hidden" />
+                        <label htmlFor="file" className="mt-2 gap-1 active:translate-y-px transition-all duration-150 cursor-pointer flex items-center justify-center py-1 px-2 text-xs font-medium border border-gray-300 bg-white rounded-md ">
+                            <Upload size={12} />
+                            <div className="">Upload</div>
+                        </label>
                     </div>
                 )}
             </div>
+
+            {/* remove */}
+            {(imageReview) && (
+                <div className="flex justify-between items-center gap-2 mt-2 bg-gray-50 rounded-lg py-1 px-2 hover:bg-gray-100">
+                    <div className="py-1.75 text-black rounded-lg text-xs font-medium flex gap-1 items-center">
+                        <div className="w-59 truncate">{imageReview?.name}</div>
+                        <div className="text-gray-500">({MegabyteFormat(imageReview?.size ?? 0)})</div>
+                    </div>
+                    <div onClick={handleRemoveImageReview} className="tracking-tight text-red-600 text-xs font-medium cursor-pointer">
+                        Thu hồi
+                    </div>
+                </div>
+            )}
         </>
     )
 }

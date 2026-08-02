@@ -18,8 +18,8 @@ class AdminPostController extends Controller
     {
         $posts = Post::query()->with(['user:id,name', 'category:id,name', 'media' => function ($query) {
             $query->select(['object_id', 'file_url', 'file_name'])
-            ->where('object_type', 'post')
-            ->where('role','main');
+                ->where('object_type', 'post')
+                ->where('role', 'main');
         }])
             ->when($request->input('search'), function ($query, $value) {
                 $query->where('title', 'like', "%{$value}%");
@@ -121,9 +121,9 @@ class AdminPostController extends Controller
         // Xóa file
         $files = Media::where('object_id', $post->id)->where('object_type', 'post')->get();
         if ($files) {
-            foreach($files as $file){
+            foreach ($files as $file) {
                 $path = str_replace(asset('/storage'), '', $file->file_url);
-                if (Storage::disk('public')->exists($path)){
+                if (Storage::disk('public')->exists($path)) {
                     Storage::disk('public')->delete($path);
                 }
                 $file->delete();
@@ -145,9 +145,9 @@ class AdminPostController extends Controller
     {
 
         $post_categories = PostCategory::get(['id', 'name']);
-        $post = $post->with(['media' => function($querry){
-            $querry->where('object_type','post')
-            ->where('role','main');
+        $post = $post->with(['media' => function ($querry) {
+            $querry->where('object_type', 'post')
+                ->where('role', 'main');
         }])->first();
 
         return Inertia::render("Admin/Post/Edit", [
@@ -189,7 +189,11 @@ class AdminPostController extends Controller
             $object_type = "post";
             $role = "main";
 
-            $old_file = Media::where('object_type', 'post')->where('object_id', $post->id)->first();
+            $old_file = Media::where('object_id', $post->id)
+                ->where('object_type', 'post')
+                ->where('role', 'main')
+                ->first();
+
             if ($old_file) {
                 $old_file_path = str_replace(asset('/storage'), '', $old_file->file_url);
                 if (Storage::disk("public")->exists($old_file_path)) Storage::disk("public")->delete($old_file_path);
@@ -206,12 +210,12 @@ class AdminPostController extends Controller
             ]);
         }
 
-        Media::where('object_id',$post->id)
-        ->where('object_type','post')
-        ->where('role','content')
-        ->update([
-            'object_id' => null
-        ]);
+        Media::where('object_id', $post->id)
+            ->where('object_type', 'post')
+            ->where('role', 'content')
+            ->update([
+                'object_id' => null
+            ]);
 
         // Xử lí ảnh trong nội dung
         preg_match_all('/<img[^>]+src="([^">]+)"/i', $validated['content'], $matches);

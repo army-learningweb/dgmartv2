@@ -48,6 +48,7 @@ export default function MCEditor({ value, onChange }: MCEditorProps) {
             value={value}
             onEditorChange={onChange}
             init={{
+                
                 promotion: false,
                 statusbar: false,
                 min_height: 650,
@@ -67,9 +68,7 @@ export default function MCEditor({ value, onChange }: MCEditorProps) {
                     }
 
                     img { 
-                        width: 100%;
-                        height: auto;
-                        border-radius: 10px; 
+                        border-radius: 15px; 
                     }
                 `,
                 relative_urls: false,
