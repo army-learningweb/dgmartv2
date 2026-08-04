@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import Button from "@/components/ui/Button";
 import Select from "@/components/ui/Select";
 import MCEeditor from "@/components/Admin/MCEeditor/Editor";
-import FileUpload from "@/components/Admin/TableManager/FileUpload";
+import FileUpload from "@/components/Admin/File/FileUpload";
 import SimpleBreadcrum from "@/components/Admin/TableManager/SimpleBreadcrum";
 
 import { ReadPostCategoriesType } from "@/types/module/post";
@@ -58,7 +58,7 @@ export default function Create({ post_categories }: ReadPostCategoriesType) {
 
                             <div className="mt-2">
                                 <div className="font-semibold mb-2">Nội dung bài viết</div>
-                                <MCEeditor value={data.content} onChange={(content) => setData("content", content)} />
+                                <MCEeditor value={data.content} onChange={(content) => setData("content", content)} typeImageContent="post"/>
                             </div>
                         </div>
 

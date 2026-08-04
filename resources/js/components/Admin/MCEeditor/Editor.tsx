@@ -32,9 +32,10 @@ import 'tinymce/plugins/wordcount';
 interface MCEditorProps {
     value: string,
     onChange: (content: string) => void;
+    typeImageContent: string
 }
 
-export default function MCEditor({ value, onChange }: MCEditorProps) {
+export default function MCEditor({ value, onChange, typeImageContent }: MCEditorProps) {
     const [isMounted, setIsMounted] = useState(false);
     useEffect(() => {
         setIsMounted(true);
@@ -47,8 +48,7 @@ export default function MCEditor({ value, onChange }: MCEditorProps) {
             licenseKey="gpl"
             value={value}
             onEditorChange={onChange}
-            init={{
-                
+            init={{  
                 promotion: false,
                 statusbar: false,
                 min_height: 650,
@@ -78,6 +78,7 @@ export default function MCEditor({ value, onChange }: MCEditorProps) {
                     try {
                         const formData = new FormData();
                         formData.append('file', blobInfo.blob(), blobInfo.filename());
+                        formData.append('type', typeImageContent);
                         const res = await axios.post('/admin/uploadFileContent', formData);
                         return res.data.file_url;
                     } catch (error) {

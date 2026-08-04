@@ -1,4 +1,4 @@
-import { Head, Link, useForm, router } from "@inertiajs/react"
+import { Head, Link, useForm } from "@inertiajs/react"
 import Textarea from "@/components/ui/Textarea"
 import { useEffect, useState } from "react";
 import { Upload, Images } from "lucide-react"
@@ -8,15 +8,16 @@ import Button from "@/components/ui/Button";
 import Select from "@/components/ui/Select";
 import Input from "@/components/ui/Input";
 import MCEeditor from "@/components/Admin/MCEeditor/Editor";
-import FileUpload from "@/components/Admin/TableManager/FileUpload";
+import FileUpload from "@/components/Admin/File/FileUpload";
 import SimpleBreadcrum from "@/components/Admin/TableManager/SimpleBreadcrum";
 
 import { ReadProductType } from "@/types/module/products";
 import { CreateProductType } from "@/types/module/products";
 import clsx from "clsx";
+import toast from "react-hot-toast";
 
 export default function Create({ product_categories }: ReadProductType) {
-    const { data, setData, post, errors, processing, clearErrors } = useForm<CreateProductType>({
+    const { data, setData, post, errors, processing, clearErrors, reset } = useForm<CreateProductType>({
         file: null,
         files: null,
         name: "",
@@ -28,105 +29,65 @@ export default function Create({ product_categories }: ReadProductType) {
 
     const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post("/admin/products/store", {
+        setData("files" , filesReview.map(file => file.file));
+        post("/admin/products/store",{
             preserveScroll: true,
             preserveState: true,
             onSuccess: () => {
                 clearErrors();
-                router.visit(`/admin/products`);
+                toast.success("Thêm mới thành công");
+                reset();
             },
         })
     }
 
-    interface FilesProps {
-        file_url: string;
-        file_name: string;
-        file_size: number;
-        file_order: number;
-    }
+    const [filesReview, setFilesReview] = useState<any[]>([]);
 
-    const [filesReview, setFilesReview] = useState<FilesProps[]>([])
+    // Upload file review
     const handleFilesUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = e.target.files
-
-        if (files) {
+        const files = e.target.files;
+        if(files){
             const filesArr = Array.from(files);
-            if (filesArr.length > 4) {
-                alert("Upload tối đã 4 ảnh");
-                return
-            }
+            if(filesArr?.length > 4) return alert("Upload tối đa 4 ảnh")
             setFilesReview(prev => {
-
-                const filesArrType: FilesProps[] = filesArr.map((file,index) => ({
-                    file_url: URL.createObjectURL(file),
-                    file_name: file.name,
-                    file_size: file.size,
-                    file_order: prev.length + index
+                const convertFiles = filesArr.map(file => ({
+                    file: file,
+                    id: Date.now() + Math.random(),
+                    name: file.name,
+                    url: URL.createObjectURL(file),
+                    size: file.size,
                 }))
-
-                const reminingSlot = 4 - prev.length
-
-                if (reminingSlot >= 1) {
-                    const fileAlowed = filesArrType.slice(0, reminingSlot);
-                    return [...prev, ...fileAlowed]
+                const remaningFiles = 4 - prev.length
+                if(remaningFiles >= 1){
+                    const allowedFile = convertFiles.slice(0,remaningFiles);
+                    return [...prev, ...allowedFile];
                 }
-
-                return [...prev, ...filesArrType]
+                return [...prev, ...convertFiles];
             })
         }
     }
 
-    useEffect(() => {
-        return () => {
-            if (filesReview.length > 0) {
-                filesReview.map(file => URL.revokeObjectURL(file.file_url))
-            }
-        }
-    }, [])
-
     // Thu hồi file
     const handleRemoveFile = (url: string) => {
-        setFilesReview(prev => prev.filter(file => file.file_url != url))
-        setFilesReview(prev => prev.map((file,index) => (
-            {...file, file_order : index}
-        )))
+        setFilesReview(prev => prev.filter(file => file.url != url))
     }
 
-    const [fileHover, setFileHover] = useState<string | null>(null)
-
-    // Hover vào file
-    const handleMouseEnterFile = (url: string) => {
-        setFileHover(url);
+    // Drag file
+    const handleDrag = (e:any, order : number) => {
+        e.dataTransfer.setData("order" , order.toString());
     }
 
-    // Out file
-    const handleMouseLeaveFile = () => {
-        setFileHover(null);
-    }
+    // Drop file
+    const handleDrop = (e:any, order : number) => {
+        const DragOrder = e.dataTransfer.getData("order");
+        const DropOrder = order;
+        if(DragOrder === DropOrder) return;
 
-    // Kéo file
-    const handleDragFile = (e:any, file_order : number) => {
-        e.dataTransfer.setData("file_order", file_order.toString());
-    }
+        const tempFilesReview = [...filesReview];
+        const [moveFile] = tempFilesReview.splice(DragOrder,1);
+        tempFilesReview.splice(DropOrder,0,moveFile);
 
-    // Thả file
-    const handleDropFile = (e:any, file_order : number) => {
-        const dragFileOrder = Number(e.dataTransfer.getData("file_order"));
-        const dropFileOrder = Number(file_order);
-
-        if(dragFileOrder === dropFileOrder) return;
-
-        let configPositionFiles = [...filesReview];
-        configPositionFiles.splice(dragFileOrder,1);
-
-        const fileDrag = filesReview.filter(file => file.file_order === dragFileOrder)[0];     
-        configPositionFiles.splice(dropFileOrder,0,fileDrag);
-
-        const completePositionFiles = configPositionFiles.map((file,newIndex) => (
-            {...file, file_order : newIndex}
-        ))
-
-        setFilesReview(completePositionFiles);
+        setFilesReview(tempFilesReview)
     }
 
     return (
@@ -140,14 +101,13 @@ export default function Create({ product_categories }: ReadProductType) {
 
                 {/* form */}
                 <form onSubmit={handleSubmit} className="mt-2">
-
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1 md:shrink-0">
                             <div className="mt-2">
                                 <Input type="text" name="name" label="Tên sản phẩm" error={errors.name} showError={false} value={data.name} onChange={(e) => setData('name', e.target.value)} autoComplete="on" />
                             </div>
 
-                            <div className="md:mt-2">
+                            <div className="mt-2">
                                 <Textarea label="Mô tả ngắn" name="desc" error={errors.desc} className="h-20!" value={data.desc} onChange={(e) => setData("desc", e.target.value)} />
                             </div>
 
@@ -167,7 +127,6 @@ export default function Create({ product_categories }: ReadProductType) {
                                 </Select>
                             </div>
 
-
                             <div className="mt-2">
                                 <Select label="Trạng thái" name="status" onChange={(e) => setData("status", e.target.value)}>
                                     <option value="active">Hoạt động</option>
@@ -175,53 +134,31 @@ export default function Create({ product_categories }: ReadProductType) {
                                 </Select>
                             </div>
 
-
                             <div className="mt-2">
                                 <div className="font-semibold mb-2">Mô tả chi tiết sản phẩm</div>
-                                <MCEeditor value={data.content} onChange={(content) => setData("content", content)} />
+                                <MCEeditor value={data.content} onChange={(content) => setData("content", content)} typeImageContent="product"/>
                             </div>
-
                         </div>
 
                         <div className="md:w-[30%] md:shrink-0 mt-2">
                             <div className="sticky top-5">
-                                <div>
-                                    <FileUpload onSetData={setData} error={errors.file} />
-                                </div>
+                                <FileUpload onSetData={setData} error={errors.file} />
                                 
                                 <hr className="my-3 border-gray-100"/>
                                 
-                                {filesReview.length < 4 && (
-                                    <div className="font-medium mt-2 flex justify-between items-center">
-                                    <label htmlFor="files" className="gap-1 active:translate-y-px transition-all duration-150 cursor-pointer flex items-center justify-center py-1 px-2 text-xs font-medium border border-gray-300 bg-white rounded-md ">
-                                        <Upload size={12} />
-                                        <div className="">Upload ảnh chi tiết (còn {4 - filesReview.length} lần)</div>
-                                    </label>
-                                    <input onChange={handleFilesUpload} multiple type="file" name="files" id="files" className="hidden" />
-                                </div>
-                                )}
-                                
-
+                                {/* img review */}
                                 <div className="mt-2 h-fit border-gray-500 bg-gray-100 rounded-xl p-1 flex items-center">
                                     {filesReview?.length > 0 && (
                                         <div className="grid grid-cols-4 gap-1 w-full">
                                             {filesReview.map((file, index) => (
-                                                <motion.div
-                                                    layout
-                                                    
-                                                    draggable
-                                                    onDragOver={(e) => e.preventDefault()}
-                                                    onDragStart={(e) => handleDragFile(e,file.file_order)}
-                                                    onDrop={(e) => handleDropFile(e,file.file_order)}
-
-                                                    onMouseEnter={() => handleMouseEnterFile(file.file_url)} 
-                                                    onMouseLeave={handleMouseLeaveFile}
-                                                    key={file.file_url} className={clsx("bg-white shadow-sm w-21 h-20 border rounded-lg overflow-hidden", {
-                                                        'border-gray-100': fileHover !== file.file_url,
-                                                        'border-gray-400': fileHover === file.file_url
+                                                <motion.div draggable layout drag
+                                                    onDragOver={(e) => e.preventDefault()}  
+                                                    onDragStart={(e) => handleDrag(e,index)}
+                                                    onDrop={(e) => handleDrop(e,index)}
+                                                    key={file.id} className={clsx("bg-white shadow-sm w-21 h-20 rounded-lg overflow-hidden", {
+                                                        
                                                     })}>
-
-                                                    <img src={file.file_url} alt={file.file_name} className="w-full h-hull object-cover"/>
+                                                    <img src={file.url} alt={file.name} className="w-full h-hull object-cover"/>
                                                 </motion.div>
                                             ))}
 
@@ -243,35 +180,35 @@ export default function Create({ product_categories }: ReadProductType) {
                                         </div>
                                     )}
                                 </div>
-
+                                
+                                {/* remove review */}
                                 {filesReview?.length > 0 && (
                                     <div className="flex flex-col">
                                         {filesReview.map((file, index) => (
-                                            <motion.div
-                                                layout
-
-                                                draggable
-                                                onDragOver={(e) => e.preventDefault()}
-                                                onDragStart={(e) => handleDragFile(e,file.file_order)}
-                                                onDrop={(e) => handleDropFile(e,file.file_order)}
-  
-                                                onMouseEnter={() => handleMouseEnterFile(file.file_url)} 
-                                                onMouseLeave={handleMouseLeaveFile}
-
-                                                key={file.file_url}
+                                            <motion.div layout 
+                                                key={file.id} 
                                                 className={clsx("flex justify-between items-center gap-2 mt-2 rounded-lg py-1 px-2", {
-                                                    'bg-gray-50': fileHover !== file.file_url,
-                                                    'bg-gray-100': fileHover === file.file_url
+
                                                 })}>
-                                                <div className="py-1.75 text-black rounded-lg text-xs font-medium flex gap-1 items-center">
-                                                    <div className="w-59 truncate">{file?.file_name}</div>
-                                                    <div className="text-gray-500">({Math.round(file?.file_size / (1024 * 2))}MB)</div>
+                                                <div className="w-70 truncate py-1.75 text-black rounded-lg text-xs font-medium flex gap-1 items-center">
+                                                    {file.name}
                                                 </div>
-                                                <div onClick={() => handleRemoveFile(file.file_url)} className="tracking-tight text-red-600 text-xs font-medium cursor-pointer">
+                                                <div onClick={() => handleRemoveFile(file.url)} className="tracking-tight text-red-600 text-xs font-medium cursor-pointer">
                                                     Thu hồi
                                                 </div>
                                             </motion.div>
                                         ))}
+                                    </div>
+                                )}
+
+                                {/* upload button */}
+                                {filesReview?.length < 4 && (
+                                    <div className="font-medium mt-2 flex justify-between items-center">
+                                        <label htmlFor="files" className="gap-1 active:translate-y-px transition-all duration-150 cursor-pointer flex items-center justify-center py-1 px-2 text-xs font-medium border border-gray-300 bg-white rounded-md ">
+                                            <Upload size={12} />
+                                            <div className="">Upload ảnh chi tiết</div>
+                                        </label>
+                                        <input onChange={handleFilesUpload} multiple type="file" name="files" id="files" className="hidden" />
                                     </div>
                                 )}
 
@@ -281,7 +218,6 @@ export default function Create({ product_categories }: ReadProductType) {
                                     </Button>
                                     <Button size="small" processing={processing} processingLabel="Đang xử lí..." animatePress={true}>Thêm mới</Button>
                                 </div>
-
                             </div>
                         </div>
                     </div>

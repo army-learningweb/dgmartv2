@@ -18,10 +18,9 @@ class AdminProductController extends Controller
     // Đọc
     public function read(Request $request)
     {
-        $products = Product::query()->with(['user:id,name', 'category:id,name', 'media' => function ($query) {
+        $products = Product::query()->with(['user:id,name', 'category:id,name', 'medias' => function ($query) {
             $query->select(['object_id', 'file_url', 'file_name'])
-            ->where('object_type', 'product')
-            ->where('role','main');
+                ->where('object_type', 'product');
         }])
             ->when($request->input('search'), function ($query, $value) {
                 $query->where('name', 'like', "%{$value}%");
@@ -49,9 +48,9 @@ class AdminProductController extends Controller
     }
 
     // Thêm
-    public function create(Request $request)
+    public function create()
     {
-        $product_categories = ProductCategory::whereNot('id',1)->get(['id', 'name', 'parent_id']);
+        $product_categories = ProductCategory::whereNot('id', 1)->get(['id', 'name', 'parent_id']);
         return Inertia::render("Admin/Product/Create", [
             "product_categories" => $product_categories
         ]);
@@ -60,50 +59,75 @@ class AdminProductController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            "file" => ["required", "mimes:jpg,jpeg,png,avif,webp", "max:20480"],
-            "title" => ["required", "min:2", "max:255", "regex:/^[\p{L}\p{P}\p{N}\s]+$/u"],
-            "desc" => ["required", "min:2", "max:255", "regex:/^[\p{L}\p{P}\p{N}\s]+$/u"],
-            "content" => ["required"],
-            "category_id" => ["required"]
-        ], [
-            "category_id.required" => "Danh mục bài viết không được để trống."
+            'file' => ["required"],
+            'name' => ["required", "min:2", "max:250", "regex:/^[\p{L}\p{P}\p{N}\s]+$/u", "unique:products"],
+            'desc' => ["required", "min:2", "max:250", "regex:/^[\p{L}\p{P}\p{N}\s]+$/u", "unique:products"],
+            'content' => ["required"],
+            'category_id' => ["required"],
         ]);
+        $parent_category_slug = ProductCategory::where('id', $validated['category_id'])->value("slug");
+        $validated['slug'] = $parent_category_slug . "/" . Str::slug($validated['name']);
+        $validated['user_id'] = Auth::user()->id;
 
-        $validated["user_id"] = Auth::user()->id;
-        $validated["status"] = $request->input('status');
-        $parent_category_slug = ProductCategory::where('id', $request->input('category_id'))->value('slug');
-        $validated["slug"] = $parent_category_slug . "/" . Str::slug($request->input('title'));
-        $new_product = ProductCategory::create($validated);
+        $new_product = Product::create($validated);
 
-        // Xử lí ảnh bìa
-        if ($request->hasFile("file")) {
-            $file = $request->file("file");
+        // Ảnh chính
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $file_fullname = $file->getClientOriginalName();
+            $file_name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $file_ex = pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);
             $file_size = $file->getSize();
-            $file_name = $file->getClientOriginalName();
-            $file_url = time() . "-" . Str::slug(pathinfo($file_name, PATHINFO_FILENAME)) . "." . pathinfo($file_name, PATHINFO_EXTENSION);
-            $file_path = $file->storeAs("post", $file_url, "public");
+            $object_type = 'product';
+            $role = 'main';
             $object_id = $new_product->id;
-            $object_type = "post";
-            $role = "main";
+            $file_path = $file->storeAs("product/main", time() . "-" . $file_name . "." . $file_ex, "public");
 
             Media::create([
-                'file_url' => asset('storage/' . $file_path),
-                'file_name' => $file_name,
+                'file_url' => asset($file_path),
+                'file_name' => $file_fullname,
                 'file_size' => $file_size,
                 'object_type' => $object_type,
-                'object_id' => $object_id,
-                'role' => $role
+                'role' => $role,
+                'object_id' => $object_id
             ]);
         }
 
-        // Xử lí ảnh trong nội dung
-        preg_match_all('/<img[^>]+src="([^">]+)"/i', $validated['content'], $matches);
-        $img_urls = $matches[1] ?? [];
+        // Ảnh phụ
+        if ($request->hasFile('files')) {
+            $files = $request->file('files');
+            foreach ($files as $index => $file) {
+                $file_fullname = $file->getClientOriginalName();
+                $file_name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $file_ex = pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);
+                $file_size = $file->getSize();
 
+                $object_type = 'product';
+                $role = 'sub';
+                $object_id = $new_product->id;
+                $file_order = $index;
+                $file_path = $file->storeAs("product/sub", time() . "-" . $file_name . "." . $file_ex, "public");
+
+                Media::create([
+                    'file_url' => asset($file_path),
+                    'file_name' => $file_fullname,
+                    'file_size' => $file_size,
+                    'object_type' => $object_type,
+                    'role' => $role,
+                    'object_id' => $object_id,
+                    'order' => $file_order
+                ]);
+            }
+        }
+
+        // Ảnh nội dung chi tiết sản phẩm
+        $pattern = '/<img[^>]+src=["\']([^"\']+)["\']/i';
+        preg_match_all($pattern, $validated['content'], $matches);
+        $img_urls = $matches[1] ?? [];
         if (!empty($img_urls)) {
             $file_names = array_map(function ($url) {
                 $file_name = basename($url);
-                return asset("/storage/product/$file_name");
+                return asset("/storage/product/content/$file_name");
             }, $img_urls);
 
             Media::whereIn('file_url', $file_names)
@@ -123,9 +147,9 @@ class AdminProductController extends Controller
         // Xóa file
         $files = Media::where('object_id', $product->id)->where('object_type', 'product')->get();
         if ($files) {
-            foreach($files as $file){
+            foreach ($files as $file) {
                 $path = str_replace(asset('/storage'), '', $file->file_url);
-                if (Storage::disk('public')->exists($path)){
+                if (Storage::disk('public')->exists($path)) {
                     Storage::disk('public')->delete($path);
                 }
                 $file->delete();
@@ -147,9 +171,9 @@ class AdminProductController extends Controller
     {
 
         $product_categories = ProductCategory::get(['id', 'name']);
-        $product = $product->with(['media' => function($querry){
-            $querry->where('object_type','product')
-            ->where('role','main');
+        $product = $product->with(['media' => function ($querry) {
+            $querry->where('object_type', 'product')
+                ->where('role', 'main');
         }])->first();
 
         return Inertia::render("Admin/Product/Edit", [
@@ -208,12 +232,12 @@ class AdminProductController extends Controller
             ]);
         }
 
-        Media::where('object_id',$product->id)
-        ->where('object_type','product')
-        ->where('role','content')
-        ->update([
-            'object_id' => null
-        ]);
+        Media::where('object_id', $product->id)
+            ->where('object_type', 'product')
+            ->where('role', 'content')
+            ->update([
+                'object_id' => null
+            ]);
 
         // Xử lí ảnh trong nội dung
         preg_match_all('/<img[^>]+src="([^">]+)"/i', $validated['content'], $matches);
@@ -236,8 +260,8 @@ class AdminProductController extends Controller
         }
     }
 
-    public function getConfigs(Request $request, ProductConfigType $type){
-
+    public function getConfigs(Request $request, ProductConfigType $type)
+    {
         return response()->json($type);
     }
 }

@@ -1,4 +1,4 @@
-import { PaginatedData } from "./global";
+import { PaginatedData } from './global';
 
 interface ProductType {
     id: string;
@@ -14,22 +14,23 @@ interface ProductType {
 }
 
 interface ProductCategories {
-    id : string;
+    id: string;
     name: string;
     parent_id: string;
 }
 
+
 export type ReadProductType = {
-    products: PaginatedData<ProductType[]>
-    product_categories : ProductCategories[]
-}
+    products: PaginatedData<ProductType[]>;
+    product_categories: ProductCategories[];
+};
 
 export type CreateProductType = {
-    file : null | File;
-    files: null | File;
-    name : string;
-    desc : string;
+    file: null | File;
+    files: null | File[];
+    name: string;
+    desc: string;
     content: string;
     status: string;
-    category_id : string;
-}
+    category_id: string;
+};

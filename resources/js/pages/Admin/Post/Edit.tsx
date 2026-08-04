@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { TriangleAlert } from "lucide-react";
 
 import Button from "@/components/ui/Button";
-import FileUpload from "@/components/Admin/TableManager/FileUpload";
+import FileUpload from "@/components/Admin/File/FileUpload";
 import Select from "@/components/ui/Select";
 import MCEeditor from "@/components/Admin/MCEeditor/Editor";
 
