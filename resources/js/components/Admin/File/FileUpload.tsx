@@ -1,12 +1,10 @@
 import { Upload, Images } from "lucide-react"
 import { useEffect, useState } from "react"
 import clsx from "clsx";
-import { MegabyteFormat } from "@/lib/megabyte_format";
 
 interface ImageReviewType {
     url?: string;
     name?: string;
-    size?: number;
 }
 
 interface FileUploadProps {
@@ -14,23 +12,23 @@ interface FileUploadProps {
     error?: string;
     file_url?: string;
     file_name?: string;
-    file_size?: number;
+    showError?: boolean;
+    onClearError: any;
 }
 
-export default function FileUpload({ onSetData, error, file_url, file_name, file_size }: FileUploadProps) {
+export default function FileUpload({ onSetData, error, file_url, file_name, onClearError, showError = true }: FileUploadProps) {
     const [imageReview, setImageReview] = useState<ImageReviewType | null>(file_url ? {
         url: file_url,
-        name: file_name,
-        size: file_size
+        name: file_name
     } : null);
 
     const handleShowImageReview = (e: React.ChangeEvent<HTMLInputElement>) => {
+        onClearError('file');
         const file = e.target.files?.[0]
         if (file) {
             setImageReview({
                 url: URL.createObjectURL(file),
                 name: file.name,
-                size: file.size
             });
             onSetData("file", file);
         }
@@ -41,6 +39,14 @@ export default function FileUpload({ onSetData, error, file_url, file_name, file
         onSetData("file_id", null);
         onSetData("file", null);
     }
+
+    useEffect(() => {
+        return () => {
+            if (imageReview?.url) {
+                URL.revokeObjectURL(imageReview.url);
+            }
+        }
+    }, [])
 
     return (
         <>
@@ -67,7 +73,7 @@ export default function FileUpload({ onSetData, error, file_url, file_name, file
                 {!imageReview && (
                     <div>
                         <input onChange={handleShowImageReview} type="file" name="file" id="file" className="hidden" />
-                        <label htmlFor="file" className="mt-2 gap-1 active:translate-y-px transition-all duration-150 cursor-pointer flex items-center justify-center py-1 px-2 text-xs font-medium border border-gray-300 bg-white rounded-md ">
+                        <label htmlFor="file" className="mt-2 gap-1 active:translate-y-0.5 transition-all duration-150 cursor-pointer flex items-center justify-center py-1 px-2 text-xs font-medium border border-gray-300 bg-white rounded-md ">
                             <Upload size={12} />
                             <div className="">Upload</div>
                         </label>
@@ -80,13 +86,19 @@ export default function FileUpload({ onSetData, error, file_url, file_name, file
                 <div className="flex justify-between items-center gap-2 mt-2 bg-gray-50 rounded-lg py-1 px-2 hover:bg-gray-100">
                     <div className="py-1.75 text-black rounded-lg text-xs font-medium flex gap-1 items-center">
                         <div className="w-59 truncate">{imageReview?.name}</div>
-                        <div className="text-gray-500">({MegabyteFormat(imageReview?.size ?? 0)})</div>
                     </div>
                     <div onClick={handleRemoveImageReview} className="tracking-tight text-red-600 text-xs font-medium cursor-pointer">
                         Thu hồi
                     </div>
                 </div>
             )}
+
+            {showError && (
+                error && (
+                    <div className="text-red-600 mt-2">{error}</div>
+                )
+            )}
+
         </>
     )
 }

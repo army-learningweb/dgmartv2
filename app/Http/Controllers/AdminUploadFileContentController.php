@@ -11,6 +11,7 @@ class AdminUploadFileContentController extends Controller
 {
     public function upload(Request $request){
         $typeImageContent = $request->input('type');
+        
         if ($request->hasFile("file")) {
             $file = $request->file("file");
             $file_size = $file->getSize();
@@ -22,7 +23,7 @@ class AdminUploadFileContentController extends Controller
             $role = "content";
             
             $new_file = Media::create([
-                'file_url' => asset("storage/" . $file_path),
+                'file_url' => $file_path,
                 'file_name' => $file_name,
                 'file_size' => $file_size,
                 'object_type' => $object_type,

@@ -23,6 +23,6 @@ return [
         'desc' => 'Mô tả',
         'content' => 'Nội dung',
         'title' => 'Tiêu đề',
-        'file' => 'File'
+        'file' => 'Ảnh'
     ]
 ];

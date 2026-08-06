@@ -18,6 +18,13 @@ class Product extends Model
         'updated_at'
     ];
 
+    protected function casts() : array {
+        return [
+            'created_at' => 'datetime:d/m/Y',
+            'updated_at' => 'datetime:d/m/Y',
+        ];
+    }
+
     public function user(){
         return $this->belongsTo(User::class);
     }
@@ -28,5 +35,9 @@ class Product extends Model
 
     public function medias(){
         return $this->hasMany(Media::class, 'object_id');
+    }
+
+    public function mainImage(){
+        return $this->hasOne(Media::class, 'object_id');
     }
 }

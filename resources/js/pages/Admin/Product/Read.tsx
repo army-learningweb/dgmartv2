@@ -9,38 +9,43 @@ import SearchBar from "@/components/Admin/TableManager/SearchBar"
 import FilterTab from "@/components/Admin/TableManager/FilterTab"
 import Pagination from "@/components/Admin/Pagination/Pagination"
 import EmptyData from "@/components/Admin/Empty/EmptyData"
+import ButtonEditLink from "@/components/Admin/TableManager/ButtonEditLink"
+import ButtonDelete from "@/components/Admin/TableManager/ButtonDelete"
 
 import { useSearch } from "@/hooks/use-search"
 import { useFilter } from "@/hooks/use-filter"
 
-import { ReadPostType } from "@/types/module/post"
+import Title from "@/components/Admin/TableManager/Title"
+import ButtonCreateLink from "@/components/Admin/TableManager/ButtonCreateLink"
 
-export default function Read({products}) {
+import { ReadProductType } from "@/types/module/products"
 
-    // const [queryFilter, setQueryFilter] = useState<null | string>(filter ?? null);
-    // const [querySearch, setQuerySearch] = useState<string>(search ?? '');
-    // const { handleQueryFilter } = useFilter({ querySearch, setQueryFilter, route: "/admin/products" });
-    // const { isLoadingSearch, handleQuerySearch, handleClearSearch } = useSearch({ queryFilter, setQuerySearch, route: "/admin/products" });
+export default function Read({ products, total, active, inactive, filter, search }: ReadProductType) {
+
+    const [queryFilter, setQueryFilter] = useState<null | string>(filter ?? null);
+    const [querySearch, setQuerySearch] = useState<string>(search ?? '');
+    const { handleQueryFilter } = useFilter({ querySearch, setQueryFilter, route: "/admin/products" });
+    const { isLoadingSearch, handleQuerySearch, handleClearSearch } = useSearch({ queryFilter, setQuerySearch, route: "/admin/products" });
 
     // Xóa
-    // const handleDelete = (id: string) => {
-    //     if (confirm('Bạn có chắc muốn xóa bài viết này ?')) {
-    //         let toastID: string;
-    //         router.delete(`/admin/posts/${id}/delete`, {
-    //             data: {
-    //                 total: total,
-    //                 current_page: posts?.current_page,
-    //                 post_on_page: posts?.data?.length
-    //             },
-    //             onStart: () => {
-    //                 toastID = toast.loading('Đang xóa...');
-    //             },
-    //             onSuccess: () => {
-    //                 toast.success('Xóa thành công', { id: toastID });
-    //             },
-    //         })
-    //     }
-    // };
+    const handleDelete = (id: string) => {
+        if (confirm('Bạn có chắc muốn xóa sản phẩm này ?')) {
+            let toastID: string;
+            router.delete(`/admin/products/${id}/delete`, {
+                data: {
+                    total: total,
+                    current_page: products?.current_page,
+                    post_on_page: products?.data?.length
+                },
+                onStart: () => {
+                    toastID = toast.loading('Đang xóa...');
+                },
+                onSuccess: () => {
+                    toast.success('Xóa thành công', { id: toastID });
+                },
+            })
+        }
+    };
 
     return (
         <>
@@ -48,30 +53,24 @@ export default function Read({products}) {
             <section>
                 {/* title */}
                 <div className="flex items-center justify-between">
-                    <h1 className="mt-px text-lg font-medium tracking-tight">
-                        Danh sách sản phẩm
-                    </h1>
-
-                    <Link href="/admin/products/create" className="flex gap-2 items-center bg-blue-600 border border-blue-600 text-white hover:brightness-110 px-2.5 py-1.5 rounded-lg text-xs font-medium active:translate-y-0.5 transition-all duration-200 ">
-                        <Plus size={15} />
-                        <span>Thêm mới sản phẩm</span>
-                    </Link>
+                    <Title heading="Danh sách sản phẩm" />
+                    <ButtonCreateLink route="/admin/products/create" />
                 </div>
 
                 {/* filter & search */}
                 <div className="mt-4 flex items-center justify-between">
                     {/* search */}
-                    {/* <SearchBar
+                    <SearchBar
                         onSearch={handleQuerySearch}
                         onClear={handleClearSearch}
                         querySearch={querySearch}
                         loadingSearch={isLoadingSearch}
                         resultCount={products.data.length}
-                        placeHolder="Tìm kiếm theo tiêu đề..."
-                    /> */}
+                        placeHolder="Tìm kiếm theo tên..."
+                    />
 
                     {/* stats */}
-                    {/* <div className="hidden gap-1 rounded-xl bg-gray-100 p-1 tracking-tight md:grid md:grid-cols-3">
+                    <div className="hidden gap-1 rounded-xl bg-gray-100 p-1 tracking-tight md:grid md:grid-cols-3">
                         <FilterTab
                             onFilter={() => handleQueryFilter(null)}
                             isActive={queryFilter === null}
@@ -90,16 +89,16 @@ export default function Read({products}) {
                             countData={inactive}
                             label="Vô hiệu hóa"
                         />
-                    </div> */}
+                    </div>
                 </div>
 
                 {products.data?.length > 0 && (
                     <div className="mt-4 h-full overflow-hidden rounded-xl border border-gray-200">
                         {/* desktop */}
-                        {/* <table className="hidden w-full md:table">
+                        <table className="hidden w-full md:table">
                             <thead className="border-b border-gray-200 bg-gray-100 font-medium text-gray-800">
                                 <tr>
-                                    <td className="px-4 py-2">Bài viết</td>
+                                    <td className="px-4 py-2">Sản phẩm</td>
                                     <td className="px-4 py-2">Danh mục & Slug</td>
                                     <td className="px-4 py-2">Người tạo</td>
                                     <td className="px-4 py-2">Ngày đăng</td>
@@ -108,56 +107,50 @@ export default function Read({products}) {
                                 </tr>
                             </thead>
                             <tbody>
-                                {posts.data.map((item) => (
+                                {products.data.map((item) => (
                                     <tr key={item.id} className="border-b border-gray-200">
-                                        <td className="px-4 py-2.75">
+                                        <td className="px-4 py-2">
                                             <div className="flex items-center gap-5">
-                                                <a target="blank" href={item.media?.file_url}>
-                                                    <img src={item.media?.file_url} alt={item.media?.file_name} className="h-18 w-30 rounded-lg object-cover" />
+                                                <a target="blank" href={item.main_image?.file_url} className="w-20 h-20">
+                                                    <img src={item.main_image?.file_url} alt={item.main_image?.file_name} className="h-full w-full rounded-lg object-cover " />
                                                 </a>
                                                 <div className="flex flex-col gap-1">
-                                                    <p className="w-35 truncate font-medium">{item.title}</p>
+                                                    <p className="w-35 truncate font-medium">{item.name}</p>
                                                     <p className="w-35 truncate text-gray-500">{item.desc}</p>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-4 py-2.75">
+                                        <td className="px-4 py-2">
                                             <div className="flex flex-col gap-1">
                                                 <div className="w-30 truncate">{item.category?.name}</div>
                                                 <div className="w-50 truncate text-gray-500">{item.slug}</div>
                                             </div>
                                         </td>
-                                        <td className="px-4 py-2.75">
+                                        <td className="px-4 py-2">
                                             <div className="w-30 truncate">
                                                 {item.user?.name}
                                             </div>
                                         </td>
-                                        <td className="px-4 py-2.75">
+                                        <td className="px-4 py-2">
                                             <div className="w-25 truncate">
                                                 {item.created_at}
                                             </div>
                                         </td>
-                                        <td className="px-4 py-2.75">
+                                        <td className="px-4 py-2">
                                             <div className="w-25">
                                                 <Badge status={item.status} />
                                             </div>
                                         </td>
-                                        <td className="px-4 py-2.75">
+                                        <td className="px-4 py-2">
                                             <div className="flex h-6.75 gap-2">
-                                                <Link href={`/admin/posts/${item.id}/edit`} className="flex gap-2 items-center  border border-gray-200 hover:bg-gray-100 px-2.5 py-1.5 rounded-lg text-xs font-medium active:translate-y-0.5 transition-all duration-200 ">
-                                                    <Pen size={13} className="text-gray-400" />
-                                                    <span>Cập nhật</span>
-                                                </Link>
-                                                <Button onClick={() => handleDelete(item.id)} variant="outline" size="small" animatePress={true}>
-                                                    <Trash size={13} className="text-gray-400" />
-                                                    <span>Xóa</span>
-                                                </Button>
+                                                <ButtonEditLink route={`/admin/products/${item.id}/edit`} />
+                                                <ButtonDelete onDelete={() => handleDelete(item.id)} />
                                             </div>
                                         </td>
                                     </tr>
                                 ))}
                             </tbody>
-                        </table> */}
+                        </table>
 
                         {/* mobile */}
                         <div className="md:hidden inline-flex flex-col gap-2 w-full">
@@ -198,26 +191,23 @@ export default function Read({products}) {
                 )}
 
                 {/* empty */}
-                {/* {posts?.data.length === 0 && (
+                {products?.data.length === 0 && (
                     <EmptyData>
-                        <Link href="/admin/posts/create" className="flex gap-2 items-center bg-blue-600 border border-blue-600 text-white hover:brightness-110 px-2.5 py-1.5 rounded-lg text-xs font-medium active:translate-y-0.5 transition-all duration-200 ">
-                            <Plus size={15} />
-                            <span>Thêm mới bài viết</span>
-                        </Link>
+                        <ButtonCreateLink route="/admin/products/create" />
                     </EmptyData>
-                )} */}
+                )}
 
                 {/* pagination */}
-                {/* {posts.data?.length > 0 && (
+                {products.data?.length > 0 && (
                     <Pagination
-                        firstUrl={posts.first_page_url}
-                        lastUrl={posts.last_page_url}
-                        prevUrl={posts.prev_page_url}
-                        nextUrl={posts.next_page_url}
-                        currentPage={posts.current_page}
-                        lastPage={posts.last_page}
+                        firstUrl={products.first_page_url}
+                        lastUrl={products.last_page_url}
+                        prevUrl={products.prev_page_url}
+                        nextUrl={products.next_page_url}
+                        currentPage={products.current_page}
+                        lastPage={products.last_page}
                     />
-                )} */}
+                )}
             </section>
         </>
     )

@@ -29,7 +29,7 @@ export default function Button({ variant = 'primary', size = 'medium', animatePr
 
     return (
         <button type={type} disabled={disabled || processing} className={clsx(`px-2.5 py-1.5 rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1 ${className} ${variants[variant]} ${sizes[size]} `, {
-            "active:translate-y-px" : animatePress
+            "active:translate-y-0.5" : animatePress
         })} {...props}>
             {!processing && children}
 

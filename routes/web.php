@@ -50,9 +50,9 @@ Route::middleware(['auth'])->group( function(){
     Route::get('/admin/products', [AdminProductController::class, 'read']);
     Route::get('/admin/products/create', [AdminProductController::class, 'create']);
     Route::post('/admin/products/store', [AdminProductController::class, 'store']);
-    Route::get('/admin/products/{post}/edit', [AdminProductController::class, 'edit']);
-    Route::post('/admin/products/{post}/update', [AdminProductController::class, 'update']);
-    Route::delete('/admin/products/{post}/delete', [AdminProductController::class, 'delete']);
+    Route::get('/admin/products/{product}/edit', [AdminProductController::class, 'edit']);
+    Route::post('/admin/products/{product}/update', [AdminProductController::class, 'update']);
+    Route::delete('/admin/products/{product}/delete', [AdminProductController::class, 'delete']);
     Route::get('/admin/products/{type}/getConfigs', [AdminProductController::class , 'getConfigs']);
 
     //PRODUCT CATEGORY

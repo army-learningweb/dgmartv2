@@ -9,9 +9,10 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
     showError?: boolean;
     className?: string;
+    onClearError?: any;
 }
 
-export default function Select({ children, label, name, error, showError = true, onChange, className, ...props }: SelectProps) {
+export default function Select({ children, label, name, error, onClearError, showError = true, onChange, className, ...props }: SelectProps) {
     return (
         <>
             <div className="relative">
@@ -23,6 +24,7 @@ export default function Select({ children, label, name, error, showError = true,
                 </label>
                 <select
                     onChange={onChange}
+                    onBlur={() => onClearError(name)}
                     name={name}
                     id={name}
                     className={clsx(`mt-2 w-full appearance-none rounded-lg border border-gray-200 px-2 py-1.75 transition-colors duration-150 focus:border-gray-400/70 focus:ring-3 focus:ring-gray-300/70 focus:ring-offset-blue-50 focus:outline-0 ${className}`, {

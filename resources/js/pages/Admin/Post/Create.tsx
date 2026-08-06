@@ -65,7 +65,7 @@ export default function Create({ post_categories }: ReadPostCategoriesType) {
                         <div className="md:flex-1 mt-2">
                             <div className="sticky top-5">
                                 <div>
-                                    <FileUpload onSetData={setData} error={errors.file} />
+                                    <FileUpload onSetData={setData} error={errors.file} onClearError={clearErrors}/>
                                 </div>
 
                                 <div className="mt-2">

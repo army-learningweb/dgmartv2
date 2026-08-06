@@ -18,9 +18,10 @@ class AdminProductController extends Controller
     // Đọc
     public function read(Request $request)
     {
-        $products = Product::query()->with(['user:id,name', 'category:id,name', 'medias' => function ($query) {
+        $products = Product::query()->with(['user:id,name', 'category:id,name', 'mainImage' => function ($query) {
             $query->select(['object_id', 'file_url', 'file_name'])
-                ->where('object_type', 'product');
+                ->where('object_type', 'product')
+                ->where('role','main');
         }])
             ->when($request->input('search'), function ($query, $value) {
                 $query->where('name', 'like', "%{$value}%");
@@ -59,12 +60,17 @@ class AdminProductController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'file' => ["required"],
+            'file' => ["required","mimes:jpg,jpeg,png,avif,webp","max:20480"],
+            'files.*' => ["mimes:jpg,jpeg,png,avif,webp","max:20480"],
             'name' => ["required", "min:2", "max:250", "regex:/^[\p{L}\p{P}\p{N}\s]+$/u", "unique:products"],
             'desc' => ["required", "min:2", "max:250", "regex:/^[\p{L}\p{P}\p{N}\s]+$/u", "unique:products"],
             'content' => ["required"],
             'category_id' => ["required"],
+        ], [
+            "category_id.required" => "Danh mục sản phẩm không được để trống.",
+            "files.*" => "Lỗi ! không thể upload ảnh vui lòng kiểm tra lại định đạng hoặc kích cỡ File"
         ]);
+        
         $parent_category_slug = ProductCategory::where('id', $validated['category_id'])->value("slug");
         $validated['slug'] = $parent_category_slug . "/" . Str::slug($validated['name']);
         $validated['user_id'] = Auth::user()->id;
@@ -84,7 +90,7 @@ class AdminProductController extends Controller
             $file_path = $file->storeAs("product/main", time() . "-" . $file_name . "." . $file_ex, "public");
 
             Media::create([
-                'file_url' => asset($file_path),
+                'file_url' => $file_path,
                 'file_name' => $file_fullname,
                 'file_size' => $file_size,
                 'object_type' => $object_type,
@@ -109,7 +115,7 @@ class AdminProductController extends Controller
                 $file_path = $file->storeAs("product/sub", time() . "-" . $file_name . "." . $file_ex, "public");
 
                 Media::create([
-                    'file_url' => asset($file_path),
+                    'file_url' => $file_path,
                     'file_name' => $file_fullname,
                     'file_size' => $file_size,
                     'object_type' => $object_type,
@@ -122,14 +128,14 @@ class AdminProductController extends Controller
 
         // Ảnh nội dung chi tiết sản phẩm
         $pattern = '/<img[^>]+src=["\']([^"\']+)["\']/i';
-        preg_match_all($pattern, $validated['content'], $matches);
+        preg_match_all($pattern, $request->input('content'), $matches);
         $img_urls = $matches[1] ?? [];
         if (!empty($img_urls)) {
             $file_names = array_map(function ($url) {
                 $file_name = basename($url);
-                return asset("/storage/product/content/$file_name");
+                return "product/content/$file_name";
             }, $img_urls);
-
+            
             Media::whereIn('file_url', $file_names)
                 ->whereNull('object_id')
                 ->where('object_type', 'product')
@@ -146,84 +152,105 @@ class AdminProductController extends Controller
     {
         // Xóa file
         $files = Media::where('object_id', $product->id)->where('object_type', 'product')->get();
+
         if ($files) {
             foreach ($files as $file) {
-                $path = str_replace(asset('/storage'), '', $file->file_url);
+                $path = $file->getRawOriginal('file_url');
                 if (Storage::disk('public')->exists($path)) {
                     Storage::disk('public')->delete($path);
                 }
                 $file->delete();
             }
         }
-        // Xóa bài viết
+
+        // Xóa sản phẩm
         $product->delete();
 
         if ($request->input('product_on_page') === 1) {
             $current_page = (int) $request->input('current_page') - 1;
             return redirect("/admin/product?page={$current_page}");
         }
-
         return redirect("/admin/product?page={$request->input('current_page')}");
     }
 
     // Sửa
     public function edit(Product $product)
     {
-
-        $product_categories = ProductCategory::get(['id', 'name']);
-        $product = $product->with(['media' => function ($querry) {
-            $querry->where('object_type', 'product')
-                ->where('role', 'main');
+        $product_categories = ProductCategory::whereNot('id',1)->get(['id', 'name','parent_id']);
+        $product = $product->with(['mainImage' => function ($query) use ($product) {
+            $query->where('object_type', 'product')
+                ->where('object_id', $product->id)
+                ->where('role','main')
+                ->select(['id','file_url','file_name','object_id']);
+        }
+        , 'medias' => function($query) use ($product){
+            $query->where('object_type', 'product')
+            ->where('object_id', $product->id)
+            ->where('role','sub')
+            ->select(['id','file_url','file_name','object_id']);
         }])->first();
+
+        $sub_media = Media::where('object_id', $product->id)
+            ->where('object_Type', 'product')
+            ->where('role', 'sub')
+            ->get(['id','order']);
 
         return Inertia::render("Admin/Product/Edit", [
             'product_categories' => $product_categories,
-            'product_info' => $product
+            'product' => $product,
+            'sub_media' => $sub_media
         ]);
     }
 
     public function update(Request $request, Product $product)
     {
-
+        return $request->all();
         $rule_file = ["nullable"];
         if ($request->input('file_id') == null && $request->file("file") == null) {
             $rule_file = ["required", "mimes:jpg,jpeg,png,avif,webp", "max:20480"];
         }
         $validated = $request->validate([
             "file" => $rule_file,
-            "title" => ["required", "min:2", "max:255", "regex:/^[\p{L}\p{P}\p{N}\s]+$/u"],
+            "name" => ["required", "min:2", "max:255", "regex:/^[\p{L}\p{P}\p{N}\s]+$/u"],
             "desc" => ["required", "min:2", "max:255", "regex:/^[\p{L}\p{P}\p{N}\s]+$/u"],
             "content" => ["required"],
             "category_id" => ["required"]
         ], [
-            "category_id.required" => "Danh mục bài viết không được để trống."
+            "category_id.required" => "Danh mục sản phẩm không được để trống."
         ]);
 
         $validated["status"] = $request->input('status');
         $parent_category_slug = ProductCategory::where('id', $request->input('category_id'))->value('slug');
-        $validated["slug"] = $parent_category_slug . "/" . Str::slug($request->input('title'));
+        $validated["slug"] = $parent_category_slug . "/" . Str::slug($request->input('name'));
         $validated["updated_at"] = now();
         $product->update($validated);
 
+        // Xử lí ảnh chính
         if ($request->hasFile("file")) {
             $file = $request->file("file");
             $file_size = $file->getSize();
             $file_name = $file->getClientOriginalName();
             $file_url = time() . "-" . Str::slug(pathinfo($file_name, PATHINFO_FILENAME)) . "." . pathinfo($file_name, PATHINFO_EXTENSION);
-            $file_path = $file->storeAs("product", $file_url, "public");
+            $file_path = $file->storeAs("product/main", $file_url, "public");
             $object_id = $product->id;
             $object_type = "product";
             $role = "main";
 
-            $old_file = Media::where('object_type', 'product')->where('object_id', $product->id)->first();
+            $old_file = Media::where('object_type', 'product')
+                ->where('object_id', $product->id)
+                ->where('role', 'main')
+                ->first();
+
             if ($old_file) {
-                $old_file_path = str_replace(asset('/storage'), '', $old_file->file_url);
-                if (Storage::disk("public")->exists($old_file_path)) Storage::disk("public")->delete($old_file_path);
+                $old_file_path = $old_file->getRawOriginal('file_url');
+                if (Storage::disk("public")->exists($old_file_path)){
+                    Storage::disk("public")->delete($old_file_path);
+                } 
                 $old_file->delete();
             }
 
             Media::create([
-                'file_url' => asset('storage/' . $file_path),
+                'file_url' => $file_path,
                 'file_name' => $file_name,
                 'file_size' => $file_size,
                 'object_type' => $object_type,
@@ -246,7 +273,7 @@ class AdminProductController extends Controller
         if (!empty($img_urls)) {
             $file_names = array_map(function ($url) {
                 $file_name = basename($url);
-                return asset("/storage/product/$file_name");
+                return "product/content/$file_name";
             }, $img_urls);
 
             Media::whereIn('file_url', $file_names)
@@ -260,7 +287,7 @@ class AdminProductController extends Controller
         }
     }
 
-    public function getConfigs(Request $request, ProductConfigType $type)
+    public function getConfigs(ProductConfigType $type)
     {
         return response()->json($type);
     }

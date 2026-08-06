@@ -1,7 +1,6 @@
 import { Head, Link, useForm, router } from "@inertiajs/react"
 import Textarea from "@/components/ui/Textarea"
 import toast from "react-hot-toast";
-import { TriangleAlert } from "lucide-react";
 
 import Button from "@/components/ui/Button";
 import FileUpload from "@/components/Admin/File/FileUpload";
@@ -12,7 +11,7 @@ import { ReadEditPostType } from "@/types/module/post";
 import { EditPostType } from "@/types/module/post";
 
 export default function Edit({ post_info, post_categories }: ReadEditPostType) {
-    const { data, setData, post, errors, processing, reset, clearErrors, } = useForm<EditPostType>({
+    const { data, setData, post, errors, processing, clearErrors, } = useForm<EditPostType>({
         file: null,
         title: post_info.title,
         desc: post_info.desc,
@@ -60,7 +59,7 @@ export default function Edit({ post_info, post_categories }: ReadEditPostType) {
 
                             <div className="mt-2">
                                 <div className="font-semibold mb-2">Nội dung bài viết</div>
-                                <MCEeditor value={data.content} onChange={(content) => setData("content", content)} />
+                                <MCEeditor value={data.content} onChange={(content) => setData("content", content)} typeImageContent="post"/>
                             </div>
                         </div>
 
@@ -70,6 +69,7 @@ export default function Edit({ post_info, post_categories }: ReadEditPostType) {
                                     <FileUpload
                                         onSetData={setData}
                                         error={errors.file}
+                                        onClearError={clearErrors}
                                         file_url={post_info.media?.file_url}
                                         file_name={post_info.media?.file_name}
                                     />

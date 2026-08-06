@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 class Media extends Model
@@ -17,4 +18,10 @@ class Media extends Model
         'updated_at',
         'order'
     ];
+
+    protected function fileUrl() : Attribute{
+        return Attribute::make(
+            get: fn ($value) => asset('storage/' . $value),
+        );
+    }
 }

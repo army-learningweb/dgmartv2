@@ -47,7 +47,7 @@ class AdminPostController extends Controller
     }
 
     // Thêm
-    public function create(Request $request)
+    public function create()
     {
         $post_categories = PostCategory::get(['id', 'name']);
         return Inertia::render("Admin/Post/Create", [
@@ -73,19 +73,19 @@ class AdminPostController extends Controller
         $validated["slug"] = $parent_category_slug . "/" . Str::slug($request->input('title'));
         $new_post = Post::create($validated);
 
-        // Xử lí ảnh bìa
+        // Ảnh chính
         if ($request->hasFile("file")) {
             $file = $request->file("file");
             $file_size = $file->getSize();
             $file_name = $file->getClientOriginalName();
             $file_url = time() . "-" . Str::slug(pathinfo($file_name, PATHINFO_FILENAME)) . "." . pathinfo($file_name, PATHINFO_EXTENSION);
-            $file_path = $file->storeAs("post", $file_url, "public");
+            $file_path = $file->storeAs("post/main", $file_url, "public");
             $object_id = $new_post->id;
             $object_type = "post";
             $role = "main";
 
             Media::create([
-                'file_url' => asset('storage/' . $file_path),
+                'file_url' => $file_path,
                 'file_name' => $file_name,
                 'file_size' => $file_size,
                 'object_type' => $object_type,
@@ -101,7 +101,7 @@ class AdminPostController extends Controller
         if (!empty($img_urls)) {
             $file_names = array_map(function ($url) {
                 $file_name = basename($url);
-                return asset("/storage/post/$file_name");
+                return "post/content/$file_name";
             }, $img_urls);
 
             Media::whereIn('file_url', $file_names)
@@ -122,7 +122,7 @@ class AdminPostController extends Controller
         $files = Media::where('object_id', $post->id)->where('object_type', 'post')->get();
         if ($files) {
             foreach ($files as $file) {
-                $path = str_replace(asset('/storage'), '', $file->file_url);
+                $path = $file->getRawOriginal('file_url');
                 if (Storage::disk('public')->exists($path)) {
                     Storage::disk('public')->delete($path);
                 }
@@ -143,7 +143,6 @@ class AdminPostController extends Controller
     // Sửa
     public function edit(Post $post)
     {
-
         $post_categories = PostCategory::get(['id', 'name']);
         $post = $post->with(['media' => function ($querry) {
             $querry->where('object_type', 'post')
@@ -179,12 +178,14 @@ class AdminPostController extends Controller
         $validated["updated_at"] = now();
         $post->update($validated);
 
+
+        // Ảnh chính
         if ($request->hasFile("file")) {
             $file = $request->file("file");
             $file_size = $file->getSize();
             $file_name = $file->getClientOriginalName();
             $file_url = time() . "-" . Str::slug(pathinfo($file_name, PATHINFO_FILENAME)) . "." . pathinfo($file_name, PATHINFO_EXTENSION);
-            $file_path = $file->storeAs("post", $file_url, "public");
+            $file_path = $file->storeAs("post/main", $file_url, "public");
             $object_id = $post->id;
             $object_type = "post";
             $role = "main";
@@ -195,13 +196,15 @@ class AdminPostController extends Controller
                 ->first();
 
             if ($old_file) {
-                $old_file_path = str_replace(asset('/storage'), '', $old_file->file_url);
-                if (Storage::disk("public")->exists($old_file_path)) Storage::disk("public")->delete($old_file_path);
+                $old_file_path = $old_file->getRawOriginal('file_url');
+                if (Storage::disk("public")->exists($old_file_path)){
+                    Storage::disk("public")->delete($old_file_path);
+                } 
                 $old_file->delete();
             }
 
             Media::create([
-                'file_url' => asset('storage/' . $file_path),
+                'file_url' => $file_path,
                 'file_name' => $file_name,
                 'file_size' => $file_size,
                 'object_type' => $object_type,
@@ -224,7 +227,7 @@ class AdminPostController extends Controller
         if (!empty($img_urls)) {
             $file_names = array_map(function ($url) {
                 $file_name = basename($url);
-                return asset("/storage/post/$file_name");
+                return "post/content/$file_name";
             }, $img_urls);
 
             Media::whereIn('file_url', $file_names)
