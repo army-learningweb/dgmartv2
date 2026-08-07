@@ -31,7 +31,7 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
     // Modal hooks
     const { openModal, isEditModal, setOpenModal, setIsEditModal, handleOpenModal, handleCloseModal } = useModal({ reset, clearErrors });
 
-    // Mở modal edit
+    // Modal edit mode
     const handleEdit = async (category: EditCategoriesPostType) => {
         setData({
             id: category.id,
@@ -90,6 +90,7 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
         }
     };
 
+
     return (
         <>
             {/* Modal */}
@@ -104,7 +105,7 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
             >
                 <form onSubmit={!isEditModal ? handleCreate : handleUpdate} id="categoryProduct" >
                     <div className="mt-1">
-                        <Input type="text" name="name" label="Tên danh mục" error={errors.name} value={data.name} onChange={(e) => setData('name', e.target.value)} autoComplete="on" />
+                        <Input type="text" name="name" label="Tên danh mục" error={errors.name} value={data.name} onChange={(e) => setData('name', e.target.value)} onBlur={() => clearErrors("name")} autoComplete="on" />
                     </div>
                     <div className="mt-2">
                         <Select className={clsx('', { 'pointer-events-none opacity-50': data.parent_id == '0' && isEditModal, })}
@@ -133,7 +134,7 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
 
                     {data.parent_id == '0' && isEditModal && (
                         <p className="mt-2 rounded-lg bg-amber-50 p-2 text-amber-700">
-                            Danh mục cha không thể sửa đổi !
+                            Danh mục cha không thể chọn "danh mục cha" khác !
                         </p>
                     )}
 
@@ -250,8 +251,8 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
                                                     </td>
                                                     <td className="px-5 py-4">
                                                         <div className="flex h-6.75 w-40 gap-2">
-                                                            <ButtonEdit onEdit={() => handleEdit(category)} />
-                                                            <ButtonDelete onDelete={() => handleDelete(category.id)} />
+                                                            <ButtonEdit onEdit={() => handleEdit(item)} />
+                                                            <ButtonDelete onDelete={() => handleDelete(item.id)} />
                                                         </div>
                                                     </td>
                                                 </tr>

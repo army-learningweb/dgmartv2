@@ -18,9 +18,10 @@ export const useModal = ({reset, clearErrors} : useModalCreateProps)  => {
     // Đóng modal
     const handleCloseModal = () => {
         setOpenModal(false);
-        reset();
+
         setTimeout(() => {
             clearErrors();
+            reset();
         }, 300);
     };
 

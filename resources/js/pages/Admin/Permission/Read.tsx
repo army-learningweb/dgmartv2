@@ -25,7 +25,7 @@ export default function Read({ permissions, total }: ReadPermissionType) {
         module: '',
     });
 
-    const {openModal, isEditModal,setOpenModal, setIsEditModal, handleOpenModal, handleCloseModal } = useModal({ reset, clearErrors });
+    const { openModal, isEditModal, setOpenModal, setIsEditModal, handleOpenModal, handleCloseModal } = useModal({ reset, clearErrors });
 
     // Modal Edit Mode
     const handleEdit = (permission: EditPermissionType) => {
@@ -88,27 +88,27 @@ export default function Read({ permissions, total }: ReadPermissionType) {
 
             {/* Modal */}
             <Modal
+                formSubmitId="createPermission"
                 onClose={handleCloseModal}
                 isOpen={openModal}
-                customSize="w-[90%] md:w-[30%] min-h-[40%]"
                 title={!isEditModal ? 'Thêm mới quyền' : 'Chỉnh sửa thông tin'}
                 labelSubmit={!isEditModal ? 'Thêm mới' : 'Cập nhật'}
-                formSubmitId="createPermission"
                 processing={processing}
+                customSize="w-[90%] md:w-[30%] min-h-[40%]"
             >
                 <form onSubmit={!isEditModal ? handleCreate : handleUpdate} id="createPermission">
                     <div>
-                        <Input type="text" name="module" label="Module" error={errors.module} value={data.module} onChange={(e) => setData('module', e.target.value)} autoComplete="on" />
+                        <Input type="text" name="module" label="Module" error={errors.module} value={data.module} onChange={(e) => setData('module', e.target.value)} onBlur={() => clearErrors("module")} autoComplete="on" />
                         <p className='mt-1 text-gray-500'>Nhóm các thao tác có chung module liên quan (vd:Post, Product,...)</p>
                     </div>
 
                     <div className='mt-2'>
-                        <Input type="text" name="name" label="Tên quyền" error={errors.name} value={data.name} onChange={(e) => setData('name', e.target.value)} autoComplete="on" />
+                        <Input type="text" name="name" label="Tên quyền" error={errors.name} value={data.name} onChange={(e) => setData('name', e.target.value)} onBlur={() => clearErrors("name")} autoComplete="on" />
                         <p className='mt-1 text-gray-500'>VD: Create, Edit, Update,...</p>
                     </div>
 
                     <div className='mt-2'>
-                        <Textarea name="desc" label="Mô tả" error={errors.desc} value={data.desc} onChange={(e) => setData('desc', e.target.value)} autoComplete="on" />
+                        <Textarea name="desc" label="Mô tả" error={errors.desc} value={data.desc} onChange={(e) => setData('desc', e.target.value)} onBlur={() => clearErrors("desc")} autoComplete="on" />
                     </div>
                 </form>
             </Modal>

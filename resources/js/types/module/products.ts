@@ -79,8 +79,8 @@ export type CreateProductType = {
 };
 
 export type EditProductType = CreateProductType & {
-    file_id:string;
-    files_id: [];
+    old_file:string;
+    old_files: any[] | null;
 }
 
 export type ReadEditProductType = {

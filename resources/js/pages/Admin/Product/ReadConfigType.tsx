@@ -89,13 +89,24 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
     };
 
     // Checkall
-    const handleCheckAll = (configTypes: ConfigType[], checked: boolean) => {
-        const idConfigs = configTypes.map((item) => item.id);
+    const handleCheckAll = (e: React.ChangeEvent<HTMLInputElement>, configItems: ConfigType[]) => {
+        const idConfigs = configItems.map((item) => item.id);
+        const checked = e.target.checked;
         setData('configs', checked
             ? [...new Set([...data.configs, ...idConfigs])]
             : data.configs.filter((id) => !idConfigs.includes(id)),
         );
+        clearErrors("configs");
     };
+
+    // CheckSingle
+    const handleCheckSingle = (e: React.ChangeEvent<HTMLInputElement>, itemId: string) => {
+        const checked = e.target.checked;
+        setData('configs', checked
+            ? [...data.configs, itemId]
+            : data.configs.filter((id,) => id !== itemId));
+        clearErrors("configs");
+    }
 
     return (
         <>
@@ -113,14 +124,15 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
             >
                 <form onSubmit={!isEditModal ? handleCreate : handleUpdate} id="createConfigType">
                     <div>
-                        <Input type="text" name="name" label="Tên loại" error={errors.name} value={data.name} onChange={(e) => setData('name', e.target.value)} autoComplete="on" />
+                        <Input type="text" name="name" label="Tên loại" error={errors.name} value={data.name}
+                            onChange={(e) => setData('name', e.target.value)} onBlur={() => clearErrors("name")} autoComplete="on" />
                         <p className="mt-1 text-gray-500">
                             VD: Laptop, Phụ kiện,...
                         </p>
                     </div>
 
                     <div className="mt-2">
-                        <Input type="text" name="desc" label="Mô tả" error={errors.desc} value={data.desc} onChange={(e) => setData('desc', e.target.value)} autoComplete="on" />
+                        <Input type="text" name="desc" label="Mô tả" error={errors.desc} value={data.desc} onChange={(e) => setData('desc', e.target.value)} onBlur={() => clearErrors("desc")} autoComplete="on" />
                         <p className="mt-1 text-gray-500">
                             VD: Cấu hình cho sản phẩm Laptop
                         </p>
@@ -132,7 +144,7 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
                             <span className="text-gray-500"> (Loại này có cấu hình gì?) </span>
                             {errors.configs && (
                                 <span className="text-red-600">
-                                    {errors.configs}
+                                    ({errors.configs})
                                 </span>
                             )}
                         </div>
@@ -140,28 +152,24 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
                         {Object.keys(configs)?.length > 0 && (
                             <div className="mt-2 max-h-75 overflow-y-auto border-b border-gray-200">
                                 {Object.entries(configs).map(
-                                    ([group, configTypes]) => (
+                                    ([group, configItems]) => (
                                         <div key={group} className="mb-2 rounded-lg border border-gray-200 px-3 pt-1 pb-2" >
                                             <div className="itemsc-enter mt-2 mb-4 flex w-fit gap-2 rounded-lg py-1">
-                                                <input onChange={(e) => handleCheckAll(configTypes, e.target.checked)}
+                                                <input onChange={(e) => handleCheckAll(e, configItems)}
+                                                    checked={configItems.every((item) => data.configs?.includes(item.id,))}
                                                     type="checkbox"
                                                     name="checkAll"
                                                     id={group}
                                                     value={group}
-                                                    checked={configTypes.every((item) => data.configs?.includes(item.id,))}
                                                 />
                                                 <label htmlFor={group} className="font-medium text-blue-600 select-none">{group} </label>
                                             </div>
 
                                             <div className="grid grid-cols-1 md:grid-cols-6 gap-y-4">
-                                                {configTypes.map((item) => (
+                                                {configItems.map((item) => (
                                                     <div key={item.id} className="flex items-center gap-2" >
                                                         <div>
-                                                            <input onChange={(e) => {
-                                                                setData('configs', e.target.checked
-                                                                    ? [...data.configs, item.id]
-                                                                    : data.configs.filter((id,) => id !== item.id));
-                                                            }}
+                                                            <input onChange={(e) => handleCheckSingle(e, item.id)}
                                                                 checked={data.configs.includes(item.id)}
                                                                 type="checkbox"
                                                                 name="configs"
@@ -251,7 +259,7 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
                 {/* empty */}
                 {types?.length === 0 && (
                     <EmptyData>
-                        <ButtonCreate onOpenModal={handleOpenModal}/>
+                        <ButtonCreate onOpenModal={handleOpenModal} />
                     </EmptyData>
                 )}
             </section>

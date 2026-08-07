@@ -91,13 +91,25 @@ export default function Read({ roles, permissions, total }: ReadRoleType) {
     };
 
     // Chọn nhiều
-    const handleCheckAll = (module: Permission[], checked: boolean) => {
-        const moduleIds = module.map(item => item.id);
+    const handleCheckAll = (e: React.ChangeEvent<HTMLInputElement>, moduleItems: Permission[]) => {
+        const checked = e.target.checked;
+        const moduleIds = moduleItems.map(item => item.id);
         setData("permissions", checked
             ? [...new Set([...data.permissions, ...moduleIds])]
             : data.permissions.filter(id => !moduleIds.includes(id))
-        )
+        );
+        clearErrors('permissions');
     };
+
+    // Chọn 1
+    const handleCheckSingle = (e: React.ChangeEvent<HTMLInputElement>, itemId: string) => {
+        const checked = e.target.checked;
+        setData('permissions', checked
+            ? [...data.permissions, itemId,]
+            : data.permissions.filter((id) => id !== itemId,)
+        );
+        clearErrors('permissions');
+    }
 
     return (
         <>
@@ -108,80 +120,69 @@ export default function Read({ roles, permissions, total }: ReadRoleType) {
                 onClose={handleCloseModal}
                 isOpen={openModal}
                 customSize="w-[90%] md:w-[40%] min-h-[50%]"
-                title={
-                    !isEditModal ? 'Thêm mới vai trò' : 'Chỉnh sửa thông tin'
-                }
+                title={!isEditModal ? 'Thêm mới vai trò' : 'Chỉnh sửa thông tin'}
                 labelSubmit={!isEditModal ? 'Thêm mới' : 'Cập nhật'}
                 formSubmitId="createRole"
                 processing={processing}
             >
                 <form onSubmit={!isEditModal ? handleCreate : handleUpdate} id="createRole" >
                     <div className="mt-1">
-                        <Input type="text" name="name" label="Tên vai trò" error={errors.name} value={data.name} onChange={(e) => setData('name', e.target.value)} autoComplete="on" />
+                        <Input type="text" name="name" label="Tên vai trò" error={errors.name} value={data.name} onBlur={() => clearErrors('name')} onChange={(e) => setData('name', e.target.value)} autoComplete="on" />
                         <p className="mt-1 text-gray-500">
                             VD: Admin,Post Manager...
                         </p>
                     </div>
 
                     <div className="mt-2">
-                        <Textarea name="desc" label="Mô tả" error={errors.desc} value={data.desc} onChange={(e) => setData('desc', e.target.value)} autoComplete="on" />
+                        <Textarea name="desc" label="Mô tả" error={errors.desc} value={data.desc} onBlur={() => clearErrors('desc')} onChange={(e) => setData('desc', e.target.value)} autoComplete="on" />
                     </div>
 
                     <div className="mt-2">
                         <div className="flex gap-2">
-                            <p className="font-semibold text-gray-800">
+                            <span className="font-semibold text-gray-800">
                                 Chọn quyền{' '}
-                            </p>
-                            <p className="text-gray-500">
+                            </span>
+                            <span className="text-gray-500">
                                 (Vai trò này có quyền gì?)
-                            </p>
-                            {errors.permissions && (
-                                <div className="text-red-600">
-                                    {errors.permissions}
-                                </div>
-                            )}
+                            </span>
+                            {errors.permissions && (<div className="text-red-600">({errors.permissions})</div>)}
                         </div>
+
                         <div className="max-h-48 overflow-y-auto pb-2">
                             {Object.values(permissions)?.length > 0 && (
                                 <>
-                                    {Object.entries(permissions).map(
-                                        ([module, items]) => (
-                                            <div key={module} className="mt-2 rounded-lg border border-gray-200 px-4 py-1">
-                                                <div className="flex items-center gap-2 py-2">
-                                                    <input onChange={(e) => handleCheckAll(items, e.target.checked,)}
-                                                        type="checkbox"
-                                                        name="checkAll"
-                                                        id={module}
-                                                        checked={items.every(item => data.permissions.includes(item.id))}
-                                                    />
-                                                    <label htmlFor={module} className="mb-0.5 font-medium text-blue-600 select-none">
-                                                        Module {module}
-                                                    </label>
-                                                </div>
-
-                                                <div className="mt-2 grid grid-cols-4 py-1">
-                                                    {items.map((item) => (
-                                                        <div key={item.id} className="flex gap-1">
-                                                            <input checked={data.permissions.includes(item.id,)}
-                                                                onChange={(e) => {
-                                                                    setData('permissions', e.target.checked
-                                                                        ? [...data.permissions, item.id,]
-                                                                        : data.permissions.filter((id) => id !== item.id,)
-                                                                    );
-                                                                }}
-                                                                type="checkbox"
-                                                                name="permissions"
-                                                                id={item.id}
-                                                                className="border-gray-200 bg-white"
-                                                            />
-                                                            <label htmlFor={item.id} className="select-none">
-                                                                {item.name}
-                                                            </label>
-                                                        </div>
-                                                    ))}
-                                                </div>
+                                    {Object.entries(permissions).map(([module, moduleItems]) => (
+                                        <div key={module} className="mt-2 rounded-lg border border-gray-200 px-4 py-1">
+                                            <div className="flex items-center gap-2 py-2">
+                                                <input onChange={(e) => handleCheckAll(e, moduleItems)}
+                                                    type="checkbox"
+                                                    name="checkAll"
+                                                    id={module}
+                                                    checked={moduleItems.every(item => data.permissions.includes(item.id))}
+                                                />
+                                                <label htmlFor={module} className="mb-0.5 font-medium text-blue-600 select-none">
+                                                    Module {module}
+                                                </label>
                                             </div>
-                                        ),
+
+                                            <div className="mt-2 grid grid-cols-4 py-1">
+                                                {moduleItems.map((item) => (
+                                                    <div key={item.id} className="flex gap-2">
+                                                        <input checked={data.permissions.includes(item.id,)}
+                                                            onChange={(e) => { handleCheckSingle(e, item.id) }}
+                                                            type="checkbox"
+                                                            name="permissions"
+                                                            id={item.id}
+                                                            className="border-gray-200 bg-white"
+                                                        />
+                                                        <label htmlFor={item.id} className="select-none">
+                                                            {item.name}
+                                                        </label>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ),
                                     )}
                                 </>
                             )}

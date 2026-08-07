@@ -101,17 +101,17 @@ export default function ReadConfig({ configs, total }: ReadProductConfigType) {
             >
                 <form onSubmit={!isEditModal ? handleCreate : handleUpdate} id="config">
                     <div>
-                        <Input type="text" name="group" label="Nhóm cấu hình" error={errors.group} value={data.group} onChange={(e) => setData('group', e.target.value)} autoComplete="on" />
+                        <Input type="text" name="group" label="Nhóm cấu hình" error={errors.group} value={data.group} onChange={(e) => setData('group', e.target.value)} onBlur={() => clearErrors("group")} autoComplete="on" />
                         <p className='mt-1 text-gray-500'>VD: RAM, CPU,... (Dùng để nhóm các cấu hình cùng loại)</p>
                     </div>
 
                     <div className='mt-2'>
-                        <Input type="text" name="name" label="Cấu hình" error={errors.name} value={data.name} onChange={(e) => setData('name', e.target.value)} autoComplete="on" />
+                        <Input type="text" name="name" label="Cấu hình" error={errors.name} value={data.name} onChange={(e) => setData('name', e.target.value)} onBlur={() => clearErrors("name")} autoComplete="on" />
                         <p className='mt-1 text-gray-500'>VD: 8GB, Đỏ, GTX-5060,...</p>
                     </div>
 
                     <div className='mt-2'>
-                        <Input type="number" name="price_include" label="Giá đi kèm" error={errors.price_include} value={data.price_include} onChange={(e) => setData('price_include', e.target.value)} autoComplete="on" />
+                        <Input type="number" name="price_include" label="Giá đi kèm" error={errors.price_include} value={data.price_include} onChange={(e) => setData('price_include', e.target.value)} onBlur={() => clearErrors("price_include")} autoComplete="on" />
                         <p className='mt-1 text-gray-500'>(Không bắt buộc)</p>
                     </div>
                 </form>

@@ -142,7 +142,7 @@ export default function Read({ users, search, filter, total, active, inactive, r
             >
                 <form onSubmit={!isEditModal ? handleCreate : handleUpdate} id="createUser">
                     {Object.keys(errors).length > 0 && (
-                        <ul className="rounded-lg bg-red-50 p-4 text-red-700">
+                        <ul className="rounded-lg bg-red-50 p-4 text-red-700 transition-all duration-150">
                             {Object.values(errors).map((error, index) => (
                                 <li key={index} className="mt-1 flex items-center gap-2 first-of-type:mt-0">
                                     <TriangleAlert size={16} strokeWidth={1.7} />
@@ -154,21 +154,21 @@ export default function Read({ users, search, filter, total, active, inactive, r
 
                     <div className="mt-2 grid gap-4 md:grid-cols-2">
                         <div>
-                            <Input type="text" name="name" label="Họ và tên" error={errors.name} showError={false} value={data.name} onChange={(e) => setData('name', e.target.value)} autoComplete="on" />
+                            <Input type="text" name="name" label="Họ và tên" error={errors.name} showError={false} value={data.name} onChange={(e) => setData('name', e.target.value)} onBlur={() => clearErrors('name')} autoComplete="on" />
                         </div>
 
                         <div>
-                            <Input type="tel" name="tel" label="Số điện thoại" error={errors.tel} showError={false} value={data.tel} onChange={(e) => setData('tel', e.target.value)} autoComplete="on" />
+                            <Input type="tel" name="tel" label="Số điện thoại" error={errors.tel} showError={false} value={data.tel} onChange={(e) => setData('tel', e.target.value)} onBlur={() => clearErrors('tel')} autoComplete="on" />
                         </div>
                     </div>
 
                     <div className="mt-2">
-                        <Input type="text" name="email" label="Email" error={errors.email} showError={false} value={data.email} onChange={(e) => setData('email', e.target.value)} autoComplete="username" />
+                        <Input type="text" name="email" label="Email" error={errors.email} showError={false} value={data.email} onChange={(e) => setData('email', e.target.value)} onBlur={() => clearErrors('email')} autoComplete="username" />
                     </div>
 
                     <div className="mt-2 grid gap-4 md:grid-cols-2">
                         <div>
-                            <Input type="password" name="password" label="Mật khẩu" error={errors.password} showError={false} value={data.password} onChange={(e) => setData('password', e.target.value)} autoComplete="current-password" />
+                            <Input type="password" name="password" label="Mật khẩu" error={errors.password} showError={false} value={data.password} onChange={(e) => setData('password', e.target.value)} onBlur={() => clearErrors('password')} autoComplete="current-password" />
                         </div>
 
                         <div>
@@ -346,13 +346,13 @@ export default function Read({ users, search, filter, total, active, inactive, r
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className={clsx('flex flex-col gap-2 md:flex-row',{
-                                                    'pointer-events-none opacity-50': item.id == String(user.id)
-                                                }
-                                            )}
+                                        <div className={clsx('flex flex-col gap-2 md:flex-row', {
+                                            'pointer-events-none opacity-50': item.id == String(user.id)
+                                        }
+                                        )}
                                         >
-                                            <ButtonEdit onEdit={() =>handleEdit(item)}/>
-                                            <ButtonDelete onDelete={() =>handleDelete(item.id)}/>
+                                            <ButtonEdit onEdit={() => handleEdit(item)} />
+                                            <ButtonDelete onDelete={() => handleDelete(item.id)} />
                                         </div>
                                     </div>
                                 </div>

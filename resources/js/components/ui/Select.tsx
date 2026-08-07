@@ -5,26 +5,22 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     error?: string;
     name: string;
     label: string;
-    children?: React.ReactNode;
-    onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
     showError?: boolean;
     className?: string;
-    onClearError?: any;
+    children?: React.ReactNode;
 }
 
-export default function Select({ children, label, name, error, onClearError, showError = true, onChange, className, ...props }: SelectProps) {
+export default function Select({ children, label, name, error, showError = true , className, ...props }: SelectProps) {
     return (
         <>
             <div className="relative">
-                <label
-                    htmlFor={name}
-                    className="block font-medium tracking-tight text-gray-800"
-                >
-                    {label}
+                <label htmlFor={name} className="flex gap-2 font-medium tracking-tight text-gray-800">
+                    <span>{label}</span>
+                    {error && (
+                        <span className="text-red-600">*</span>
+                    )}
                 </label>
                 <select
-                    onChange={onChange}
-                    onBlur={() => onClearError(name)}
                     name={name}
                     id={name}
                     className={clsx(`mt-2 w-full appearance-none rounded-lg border border-gray-200 px-2 py-1.75 transition-colors duration-150 focus:border-gray-400/70 focus:ring-3 focus:ring-gray-300/70 focus:ring-offset-blue-50 focus:outline-0 ${className}`, {

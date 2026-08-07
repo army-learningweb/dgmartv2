@@ -19,6 +19,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     position: "bottom-right"
                 }}
             />
+
             <div className="min-h-screen md:flex md:gap-4 bg-gray-100 md:p-4">
                 <aside className="w-[80%] md:w-[16%] shrink-0">
                     <Sidebar />

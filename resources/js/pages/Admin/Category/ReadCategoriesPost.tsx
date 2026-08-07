@@ -97,7 +97,7 @@ export default function ReadCategoriesPost({ categories, total, }: ReadCategorie
             >
                 <form onSubmit={!isEditModal ? handleCreate : handleUpdate} id="createCategory" >
                     <div className="mt-1">
-                        <Input type="text" name="name" label="Tên danh mục" error={errors.name} value={data.name} onChange={(e) => setData('name', e.target.value)} autoComplete="on" />
+                        <Input type="text" name="name" label="Tên danh mục" error={errors.name} value={data.name} onChange={(e) => setData('name', e.target.value)} onBlur={() => clearErrors("name")} autoComplete="on" />
                     </div>
                     <div className="mt-2">
                         <Select label="Trạng thái" name="status" value={data.status} onChange={(e) => setData('status', e.target.value as 'active' | 'inactive',)}>

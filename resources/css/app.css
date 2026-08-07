@@ -22,3 +22,8 @@ input[type=number] {
   -moz-appearance: textfield;
   appearance: textfield;
 }
+
+.tox-tinymce{
+    border: 1px solid rgba(206, 206, 206, 0.507) !important;
+    border-radius: 20px;
+}
