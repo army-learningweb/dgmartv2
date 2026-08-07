@@ -88,7 +88,7 @@ export type ReadEditPostType = {
 
 export type EditPostType = {
     file: File | null;
-    file_id : string | undefined,
+    old_file : string | undefined,
     title: string;
     desc: string;
     content: string;

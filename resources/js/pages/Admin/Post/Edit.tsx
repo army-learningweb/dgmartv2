@@ -1,4 +1,4 @@
-import { Head, Link, useForm, router } from "@inertiajs/react"
+import { Head, useForm, router } from "@inertiajs/react"
 import Textarea from "@/components/ui/Textarea"
 import toast from "react-hot-toast";
 
@@ -15,12 +15,12 @@ import ButtonBackLink from "@/components/Admin/TableManager/ButtonBackLink";
 export default function Edit({ post_info, post_categories }: ReadEditPostType) {
     const { data, setData, post, errors, processing, clearErrors, } = useForm<EditPostType>({
         file: null,
+        old_file: post_info.media?.object_id,
         title: post_info.title,
         desc: post_info.desc,
         content: post_info.content,
         status: post_info.status,
         category_id: post_info.category_id,
-        file_id: post_info.media?.object_id
     });
 
     const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>, id: string) => {

@@ -1,4 +1,4 @@
-import { Head, Link, useForm, router } from "@inertiajs/react"
+import { Head, useForm, router } from "@inertiajs/react"
 import { useState } from "react";
 import toast from "react-hot-toast";
 

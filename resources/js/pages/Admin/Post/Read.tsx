@@ -1,9 +1,7 @@
-import { Plus, Pen, Trash, CornerDownRight } from "lucide-react"
-import { Head, Link, router } from "@inertiajs/react"
+import { Head, router } from "@inertiajs/react"
 import { useState } from "react"
 import toast from "react-hot-toast"
 
-import Button from "@/components/ui/Button"
 import Badge from "@/components/ui/Badge"
 import SearchBar from "@/components/Admin/TableManager/SearchBar"
 import FilterTab from "@/components/Admin/TableManager/FilterTab"
@@ -17,7 +15,6 @@ import { ReadPostType } from "@/types/module/post"
 import ButtonDelete from "@/components/Admin/TableManager/ButtonDelete"
 import ButtonEditLink from "@/components/Admin/TableManager/ButtonEditLink"
 import Title from "@/components/Admin/TableManager/Title"
-import ButtonCreate from "@/components/Admin/TableManager/ButtonCreate"
 import ButtonCreateLink from "@/components/Admin/TableManager/ButtonCreateLink"
 
 export default function Read({ posts, total, active, inactive, filter, search }: ReadPostType) {

@@ -1,9 +1,7 @@
-import { Plus, Pen, Trash, CornerDownRight } from "lucide-react"
-import { Head, Link, router } from "@inertiajs/react"
+import { Head, router } from "@inertiajs/react"
 import { useState } from "react"
 import toast from "react-hot-toast"
 
-import Button from "@/components/ui/Button"
 import Badge from "@/components/ui/Badge"
 import SearchBar from "@/components/Admin/TableManager/SearchBar"
 import FilterTab from "@/components/Admin/TableManager/FilterTab"
