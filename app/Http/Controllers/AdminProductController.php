@@ -191,7 +191,9 @@ class AdminProductController extends Controller
                     ->select(['id', 'file_url', 'file_name', 'object_id', 'order'])
                     ->orderBy('order', 'asc');
             }
-        ])->first();
+        ])
+        ->where('id', $product->id)
+        ->first();
 
         return Inertia::render("Admin/Product/Edit", [
             'product_categories' => $product_categories,
@@ -202,7 +204,7 @@ class AdminProductController extends Controller
     public function update(Request $request, Product $product)
     {
         $rule_file = ["nullable"];
-        if ($request->input('file_id') == null && $request->file("file") == null) {
+        if ($request->input('old_file') == null && $request->file("file") == null) {
             $rule_file = ["required", "mimes:jpg,jpeg,png,avif,webp", "max:20480"];
         }
         $validated = $request->validate([
@@ -350,10 +352,5 @@ class AdminProductController extends Controller
                     'updated_at' => now()
                 ]);
         }
-    }
-
-    public function getConfigs(ProductConfigType $type)
-    {
-        return response()->json($type);
     }
 }

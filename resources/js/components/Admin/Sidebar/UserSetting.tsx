@@ -23,7 +23,7 @@ export default function UserSetting() {
     }, [isOpen])
 
     return (
-        <div ref={menuRef} onClick={() => setIsOpen(!isOpen)} className={clsx("select-none flex justify-between items-center gap-2 md:mb-8.5 p-2 rounded-xl transition-colors duration-150 relative", {
+        <div ref={menuRef} onClick={() => setIsOpen(!isOpen)} className={clsx("select-none flex justify-between items-center gap-2 p-1.5 rounded-xl transition-colors duration-150 relative", {
             "bg-white shadow-md md:shadow": isOpen,
             "hover:bg-white md:hover:shadow": !isOpen
         })}>
@@ -35,7 +35,7 @@ export default function UserSetting() {
             <ChevronsUpDown strokeWidth={1.75} size={17} />
 
             {/* user popup */}
-            <div className={clsx("absolute -top-27 right-0 bg-white border border-gray-200 shadow w-full rounded-xl transition-all duration-150", {
+            <div className={clsx("w-full absolute -top-27 right-0 bg-white border border-gray-200 shadow rounded-xl transition-all duration-150 ease-out", {
                 'opacity-0 scale-95 translate-y-2 pointer-events-none': !isOpen,
                 'opacity-100 scale-100 translate-y-0 pointer-events-auto': isOpen
             })}>

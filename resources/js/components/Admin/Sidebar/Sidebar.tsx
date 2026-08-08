@@ -10,21 +10,20 @@ export default function Sidebar() {
     const { url } = usePage();
 
     return (
-        <div className="w-[80%] md:w-[16%] bg-white md:bg-transparent min-h-screen fixed md:top-4 p-4 md:p-0 md:pt-1.25 md:inline-flex flex-col justify-between hidden">
-            <div className="relative">
+        <div className="sticky top-5">
+            <div className="relative py-1">
                 {/* close sidebar on mobile */}
-                <div className="absolute block md:hidden right-4 top-4 p-0.5 rounded-md">
+                {/* <div className="absolute block md:hidden right-4 top-4 p-0.5 rounded-md">
                     <X strokeWidth={1.5} className="text-gray-400" />
-                </div>
+                </div> */}
 
                 {/* Logo */}
                 <Link href="/admin/dashboard">
                     <Logo />
-                    <div className="text-gray-500">Trang quản lí Website</div>
                 </Link>
 
                 {/* nav */}
-                <div className="mt-3 md:mt-2 pr-3 md:pr-0 border-t pb-2 md:pb-0 md:border-0 border-gray-200 overflow-y-scroll overflow-x-hidden h-full md:overflow-y-hidden">
+                <div className="mt-4">
                     {/* Dashboard */}
                     <div>
                         <p className="my-2 text-xs font-medium text-gray-500">Tổng quan</p>
@@ -37,9 +36,10 @@ export default function Sidebar() {
                         {/* product */}
                         <NavLink urlActiveOpen={url.startsWith("/admin/products")} name="Sản phẩm" icon={<Package strokeWidth={1.75} size={17} />}>
                             <NavSubLink isActive={url === "/admin/products"} route="/admin/products" name="Danh sách sản phẩm" />
-                            <NavSubLink isActive={url.startsWith("/admin/products/categories")} route="/admin/products/categories" name="Danh mục sản phẩm" />
-                            <NavSubLink isActive={url === "/admin/products/configs"} route="/admin/products/configs" name="Danh sách cấu hình" />
-                            <NavSubLink isActive={url.startsWith("/admin/products/configsTypes")} route="/admin/products/configsTypes" name="Danh sách loại cấu hình" />
+                            <NavSubLink isActive={url === "/admin/products/categories"} route="/admin/products/categories" name="Danh mục sản phẩm" />
+                            <NavSubLink isActive={url === "/admin/products/variants"} route="/admin/products/variants" name="Cấu hình và biến thể" />
+                            <NavSubLink isActive={url === "/admin/products/configs"} route="/admin/products/configs" name="Thông tin cấu hình" />
+                            <NavSubLink isActive={url === "/admin/products/configsTypes"} route="/admin/products/configsTypes" name="Loại cấu hình" />
                         </NavLink>
 
                         {/* post */}
@@ -61,7 +61,9 @@ export default function Sidebar() {
             </div>
 
             {/* user setting */}
-            <UserSetting />
+            {/* <div className="fixed bottom-5 w-[13.75%]">
+                <UserSetting />
+            </div> */}
         </div>
     )
 }

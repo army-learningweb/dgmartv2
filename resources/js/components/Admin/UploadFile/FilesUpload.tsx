@@ -94,12 +94,12 @@ export default function FilesUpload({ setFilesReview, onClearErrors, onSetData, 
             <div className="mt-2 h-fit border-gray-500 bg-gray-100 rounded-xl p-1 flex items-center">
                 {/* images */}
                 {filesReview?.length > 0 && (
-                    <div className="grid grid-cols-4 gap-1 w-full">
+                    <div className="flex justify-between gap-1 w-full">
                         {filesReview.map((file, index) => (
                             <div key={file.id} draggable onDragOver={(e) => e.preventDefault()}
                                 onDragStart={(e) => handleDrag(e, index)}
                                 onDrop={(e) => handleDrop(e, index)}
-                                className={`transition-all duration-200 ease-out bg-white shadow-sm w-21 h-20 rounded-lg overflow-hidden border border-gray-100 flex items-center justify-center relative
+                                className={`transition-all duration-200 ease-out bg-white shadow-sm w-22 h-20 rounded-lg overflow-hidden border border-gray-100 flex items-center justify-center relative
                                     ${errors[`files.${index}`] && `cursor-not-allowed`}
                                     ${errors[`files.${index}`] && `ring-red-600/20 ring-3 border-red-600`}`}
                             >
@@ -113,7 +113,7 @@ export default function FilesUpload({ setFilesReview, onClearErrors, onSetData, 
 
                         {/* label */}
                         {Array.from({ length: 4 - filesReview.length }).map((item, index) => (
-                            <label htmlFor="files" key={index} className={`cursor-pointer w-21 h-20 flex items-center justify-center gap-1.25 border-2 border-dashed border-gray-300 rounded-lg`}>
+                            <label htmlFor="files" key={index} className={`cursor-pointer w-22 h-20 flex items-center justify-center gap-1.25 border-2 border-dashed border-gray-300 rounded-lg`}>
                                 <ImagePlus size={18} className="text-gray-400" />
                             </label>
                         ))}
@@ -122,9 +122,9 @@ export default function FilesUpload({ setFilesReview, onClearErrors, onSetData, 
 
                 {/* label */}
                 {filesReview?.length === 0 && (
-                    <div className="grid grid-cols-4 gap-1 w-full">
+                    <div className="flex justify-between gap-1 w-full">
                         {Array.from({ length: 4 }).map((item, index) => (
-                            <label htmlFor="files" key={index} className="cursor-pointer w-21 h-20 flex gap-1 items-center justify-center border-2 border-dashed border-gray-300 rounded-lg">
+                            <label htmlFor="files" key={index} className="cursor-pointer w-22 h-20 flex gap-1 items-center justify-center border-2 border-dashed border-gray-300 rounded-lg">
                                 <ImagePlus size={18} strokeWidth={1.7} className="text-gray-400" />
                             </label>
                         ))}

@@ -38,6 +38,8 @@ export default function Edit({ post_info, post_categories }: ReadEditPostType) {
         })
     }
 
+    console.log(data);
+
     return (
         <>
             <Head title="Chỉnh sửa bài viết" />

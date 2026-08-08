@@ -45,6 +45,8 @@ export default function Read({ products, total, active, inactive, filter, search
         }
     };
 
+   
+
     return (
         <>
             <Head title="Danh sách sản phẩm" />
@@ -101,13 +103,13 @@ export default function Read({ products, total, active, inactive, filter, search
                                     <td className="px-4 py-2">Người tạo</td>
                                     <td className="px-4 py-2">Ngày đăng</td>
                                     <td className="px-4 py-2">Trạng thái</td>
-                                    <td className="px-4 py-2">Tùy chỉnh</td>
+                                    <td className="px-4 py-2 text-center">Tùy chỉnh sản phẩm</td>
                                 </tr>
                             </thead>
                             <tbody>
                                 {products.data.map((item) => (
-                                    <tr key={item.id} className="border-b border-gray-200">
-                                        <td className="px-4 py-2">
+                                    <tr key={item.id} className="border-b border-gray-200 last-of-type:border-0">
+                                        <td className="px-4 py-1.75">
                                             <div className="flex items-center gap-5">
                                                 <a target="blank" href={item.main_image?.file_url} className="w-20 h-20">
                                                     <img src={item.main_image?.file_url} alt={item.main_image?.file_name} className="h-full w-full rounded-lg object-cover " />
@@ -118,28 +120,28 @@ export default function Read({ products, total, active, inactive, filter, search
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-4 py-2">
+                                        <td className="px-4 py-1.75">
                                             <div className="flex flex-col gap-1">
                                                 <div className="w-30 truncate">{item.category?.name}</div>
                                                 <div className="w-50 truncate text-gray-500">{item.slug}</div>
                                             </div>
                                         </td>
-                                        <td className="px-4 py-2">
+                                        <td className="px-4 py-1.75">
                                             <div className="w-30 truncate">
                                                 {item.user?.name}
                                             </div>
                                         </td>
-                                        <td className="px-4 py-2">
+                                        <td className="px-4 py-1.75">
                                             <div className="w-25 truncate">
                                                 {item.created_at}
                                             </div>
                                         </td>
-                                        <td className="px-4 py-2">
+                                        <td className="px-4 py-1.75">
                                             <div className="w-25">
                                                 <Badge status={item.status} />
                                             </div>
                                         </td>
-                                        <td className="px-4 py-2">
+                                        <td className="px-4 py-1.75">
                                             <div className="flex h-6.75 gap-2">
                                                 <ButtonEditLink route={`/admin/products/${item.id}/edit`} />
                                                 <ButtonDelete onDelete={() => handleDelete(item.id)} />

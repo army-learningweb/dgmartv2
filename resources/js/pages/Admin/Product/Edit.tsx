@@ -16,7 +16,7 @@ import { ReadEditProductType } from "@/types/module/products";
 import ButtonBackLink from "@/components/Admin/TableManager/ButtonBackLink";
 
 export default function Edit({ product_categories, product }: ReadEditProductType) {
-
+    console.log(product);
     const { data, setData, post, errors, processing, clearErrors } = useForm<EditProductType>({
         file: null,
         files: null,
@@ -67,7 +67,6 @@ export default function Edit({ product_categories, product }: ReadEditProductTyp
                             </div>
 
                             <div className="mt-2">
-                                <div className="font-semibold mb-2">Mô tả chi tiết sản phẩm</div>
                                 <MCEeditor onBlur={() => clearErrors("content")} value={data.content} onChange={(content) => setData("content", content)} typeImageContent="product" />
                             </div>
                         </div>

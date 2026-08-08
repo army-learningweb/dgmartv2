@@ -17,7 +17,8 @@ import ButtonBackLink from "@/components/Admin/TableManager/ButtonBackLink";
 
 
 export default function Create({ product_categories }: ReadProductType) {
-    const { data, setData, post, errors, processing, clearErrors, reset } = useForm<CreateProductType>({
+    
+    const { data, setData, post, errors, processing, clearErrors } = useForm<CreateProductType>({
         file: null,
         files: null,
         name: "",

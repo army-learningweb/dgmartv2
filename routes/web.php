@@ -9,6 +9,7 @@ use App\Http\Controllers\AdminProductCategoriesController;
 use App\Http\Controllers\AdminProductConfigController;
 use App\Http\Controllers\AdminProductConfigTypeController;
 use App\Http\Controllers\AdminProductController;
+use App\Http\Controllers\AdminProductVariantController;
 use App\Http\Controllers\AdminRoleController;
 use App\Http\Controllers\AdminUploadFileContentController;
 use App\Http\Controllers\AdminUserController;
@@ -53,7 +54,6 @@ Route::middleware(['auth'])->group( function(){
     Route::get('/admin/products/{product}/edit', [AdminProductController::class, 'edit']);
     Route::post('/admin/products/{product}/update', [AdminProductController::class, 'update']);
     Route::delete('/admin/products/{product}/delete', [AdminProductController::class, 'delete']);
-    Route::get('/admin/products/{type}/getConfigs', [AdminProductController::class , 'getConfigs']);
 
     //PRODUCT CATEGORY
     Route::get('/admin/products/categories', [AdminProductCategoriesController::class, 'read']);
@@ -73,6 +73,14 @@ Route::middleware(['auth'])->group( function(){
     Route::patch('/admin/products/configsTypes/{type}/update', [AdminProductConfigTypeController::class, 'update']);
     Route::delete('/admin/products/configsTypes/{type}/delete', [AdminProductConfigTypeController::class, 'delete']);
     Route::get('/admin/products/configsTypes/{type}/getConfigs', [AdminProductConfigTypeController::class, 'getConfigs']);
+
+    //PRODUCT VARIANT
+    Route::get('/admin/products/variants', [AdminProductVariantController::class, 'read']);
+    Route::get('/admin/products/variants/create', [AdminProductVariantController::class, 'create']);
+    Route::post('/admin/products/variants/store', [AdminProductVariantController::class, 'store']);
+    Route::patch('/admin/products/variants/{variant}/update', [AdminProductVariantController::class, 'update']);
+    Route::delete('/admin/products/variants/{variant}/delete', [AdminProductVariantController::class, 'delete']);
+    Route::get('/admin/products/variants/{type}/getConfigs', [AdminProductVariantController::class , 'getConfigs']);
 
     //POST
     Route::get('/admin/posts', [AdminPostController::class, 'read']);

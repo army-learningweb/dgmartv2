@@ -87,7 +87,7 @@ export default function ReadConfig({ configs, total }: ReadProductConfigType) {
 
     return (
         <>
-            <Head title="Danh sách cấu hình" />
+            <Head title="Thông tin cấu hình" />
 
             {/* Modal */}
             <Modal
@@ -124,7 +124,7 @@ export default function ReadConfig({ configs, total }: ReadProductConfigType) {
 
                 {/* title */}
                 <div className="flex items-center justify-between">
-                    <Title heading={`Danh sách cấu hình (${total})`} />
+                    <Title heading={`Thông tin cấu hình (${total})`} />
                     <ButtonCreate onOpenModal={handleOpenModal} />
                 </div>
 

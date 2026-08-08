@@ -159,7 +159,7 @@ class AdminPostController extends Controller
     {
 
         $rule_file = ["nullable"];
-        if ($request->input('file_id') == null && $request->file("file") == null) {
+        if ($request->input('old_file') == null && $request->file("file") == null) {
             $rule_file = ["required", "mimes:jpg,jpeg,png,avif,webp", "max:20480"];
         }
         $validated = $request->validate([
