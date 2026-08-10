@@ -4,16 +4,24 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 use App\Models\ProductConfig;
 use App\Models\ProductConfigType;
 use App\Models\ProductConfigTypeMap;
+use App\Models\ProductVariant;
 
 class AdminProductVariantController extends Controller
 {
     // Đọc
     public function read(){
-        return Inertia::render("Admin/Product/ReadVariant");
+        $variants = ProductVariant::with(['product:id,name','user:id,name'])
+        ->latest()
+        ->paginate(8);
+        
+        return Inertia::render("Admin/Product/ReadVariant",[
+            'variants' => $variants
+        ]);
     }
 
     public function create(){
@@ -32,13 +40,39 @@ class AdminProductVariantController extends Controller
     }
 
     // Thêm
-    public function store(){}
+    public function store(Request $request){
+        $validated = $request->validate([
+            'product_id' => ["required"],
+            'code' => ["required" ,"min:2", "max:50", "regex:/^[A-Z0-9\p{P}]+$/"],
+            'qty' => ["required"],
+            'price' => ["required"],
+            'discount' => ["nullable", "integer", "min:0", "max:100"],
+            'is_default' => ["required"],
+            'config_id' => ["required", "array"]
+        ],[
+            'product_id.required' => 'Chưa chọn sản phẩm.',
+            'discount.max' => ':attribute tối đa :max%.',
+            'discount.min' => ':attribute không hợp lệ.'
+        ],[
+            'discount' => 'Giảm giá'
+        ]);
+
+        if($validated['discount'] > 0) {
+            $validated['price_discount'] = $validated['price'] - (($validated['price'] / 100) * $validated['discount']);
+        }
+        $validated['user_id'] = Auth::user()->id;
+        $new_variant = ProductVariant::create($validated);
+        $new_variant->mapConfigs()->attach($validated['config_id']);
+    }
 
     // Sửa
     public function update(){}
 
     // Xóa
-    public function delete(){}
+    public function delete(ProductVariant $variant){
+        if(!$variant) return back()->withErrors("Lỗi, không thể xóa biến thể không tồn tại !");
+        $variant->delete();
+    }
 
     // Lấy cấu hình
     public function getConfigs(ProductConfigTypeMap $type)
