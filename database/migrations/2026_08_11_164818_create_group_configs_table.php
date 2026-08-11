@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('product_variants', function (Blueprint $table) {
-            $table->dropColumn('qty_available');
+        Schema::create('product_config_groups', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('desc');
+            $table->timestamps();
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('product_variants', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('product_config_groups');
     }
 };

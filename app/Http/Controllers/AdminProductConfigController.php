@@ -5,17 +5,24 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\ProductConfig;
+use App\Models\ProductConfigGroup;
 
 class AdminProductConfigController extends Controller
 {
     // Đọc
     public function read()
     {
-        $configs = ProductConfig::all()->groupBy('group');
+        $configs = ProductConfig::with('group:id,name')->get()->groupBy(function($value){
+            return $value->group->name;
+        });
+
         $total = ProductConfig::count();
+        $groupConfigs = ProductConfigGroup::get(['id','name']);
+
         return Inertia::render("Admin/Product/ReadConfig", [
             'configs' => $configs,
-            'total' => $total
+            'total' => $total,
+            'groupConfigs' => $groupConfigs
         ]);
     }
 
@@ -24,26 +31,19 @@ class AdminProductConfigController extends Controller
     {
         $validated = $request->validate(
             [
-                "group" => ["required", "min:2", "max:50", "regex:/^[\p{L}\p{N}\p{P}\s]+$/u"],
-                "name" => ["required", "min:2", "max:50", "regex:/^[\p{L}\p{N}\p{P}\s]+$/u", "unique:product_configs"],
-                "price_include" => ["nullable", "regex:/^[\p{N}]+$/"],
+                "group_id" => ["required", "exists:product_config_groups,id"],
+                "name" => ["required", "min:2", "max:255", "regex:/^[\p{L}\p{N}\p{P}\s]+$/u", "unique:product_configs"],
             ],
             [
                 "name.regex" => "Chữ cái đầu viết hoa, không chứa dấu và kí tự",
-                "group.regex" => "Chữ cái đầu viết hoa, không chứa dấu và kí tự"
             ],
             [
                 "name" => "Cấu hình",
-                "group" => "Nhóm cấu hình",
-                "price_include" => "Giá"
+                "group_id" => "Nhóm cấu hình",
             ]
         );
-        
+
         $validated['name'] = ucfirst($request->input('name'));
-        $validated['group'] = ucfirst(strtolower($request->input('group')));
-
-        if($validated['price_include'] == 0) $validated['price_include'] = null;
-
         ProductConfig::create($validated);
     }
 
@@ -51,23 +51,19 @@ class AdminProductConfigController extends Controller
     public function update(Request $request, ProductConfig $config) {
         $validated = $request->validate(
             [
-                "group" => ["required", "min:2", "max:50", "regex:/^[\p{L}\p{N}\p{P}\s]+$/u"],
-                "name" => ["required", "min:2", "max:50", "regex:/^[\p{L}\p{N}\p{P}\s]+$/u", "unique:product_configs,id,".$config->id],
-                "price_include" => ["nullable", "regex:/^[\p{N}]+$/"],
+                "group_id" => ["required", "exists:product_config_groups,id"],
+                "name" => ["required", "min:2", "max:255", "regex:/^[\p{L}\p{N}\p{P}\s]+$/u", "unique:product_configs,id,".$config->id],
             ],
             [
                 "name.regex" => "Chữ cái đầu viết hoa, không chứa dấu và kí tự",
-                "group.regex" => "Chữ cái đầu viết hoa, không chứa dấu và kí tự"
             ],
             [
                 "name" => "Cấu hình",
-                "group" => "Nhóm cấu hình",
-                "price_include" => "Giá"
+                "group_id" => "Nhóm cấu hình",
             ]
         );
 
         $validated['name'] = ucfirst($request->input('name'));
-        $validated['group'] = ucfirst(strtolower($request->input('group')));
         $validated['updated_at'] = now();
 
         $config->update($validated);

@@ -28,6 +28,7 @@ return [
         'file' => 'Ảnh',
         'qty' => 'Số lượng',
         'price' => 'Giá',
-        'code' => 'Mã'
+        'code' => 'Mã',
+        'qty' => 'Số lượng'
     ]
 ];

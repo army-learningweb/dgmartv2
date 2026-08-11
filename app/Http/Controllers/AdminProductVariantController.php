@@ -44,23 +44,40 @@ class AdminProductVariantController extends Controller
         $validated = $request->validate([
             'product_id' => ["required"],
             'code' => ["required" ,"min:2", "max:50", "regex:/^[A-Z0-9\p{P}]+$/"],
-            'qty' => ["required"],
-            'price' => ["required"],
+            'qty' => ["required", "integer", "min:0", "max:999"],
+            'price' => ["required", "integer", "min:1", "max:999999999"],
             'discount' => ["nullable", "integer", "min:0", "max:100"],
-            'is_default' => ["required"],
+            'is_default' => ["required", "exists:product_variants,id",function($attribute, $value, $fail) use ($request) {
+                if($value !== 'default') return;
+                $exists_default_variant = ProductVariant::where('product_id',$request->input('product_id'))
+                ->where('is_default','default')
+                ->get();
+
+                if($exists_default_variant){
+                    $fail("Lỗi, sản phẩm này đã có cấu hình mặc định");
+                }
+            }],
+
             'config_id' => ["required", "array"]
         ],[
             'product_id.required' => 'Chưa chọn sản phẩm.',
             'discount.max' => ':attribute tối đa :max%.',
-            'discount.min' => ':attribute không hợp lệ.'
+            'discount.min' => ':attribute không hợp lệ.',
+            'price.max' => ':attribute tối đa :max.',
+            'price.min' => ':attribute tối thiểu :min.',
+            'qty.max' => ':attribute tối đa :max.',
+            'qty.min' => ':attribute tối thiểu :min.',
+            'is_default.exists' => 'Sản phẩm đã có cấu hình mặc định.',
+            'is_default.required' => 'Chưa chọn vai trò cho cấu hình.'
         ],[
-            'discount' => 'Giảm giá'
+            'discount' => 'Giảm giá',
+            'config_id' => 'Cấu hình sản phẩm'
         ]);
 
         if($validated['discount'] > 0) {
             $validated['price_discount'] = $validated['price'] - (($validated['price'] / 100) * $validated['discount']);
         }
-        $validated['user_id'] = Auth::user()->id;
+        $validated['user_id'] = Auth::id();
         $new_variant = ProductVariant::create($validated);
         $new_variant->mapConfigs()->attach($validated['config_id']);
     }

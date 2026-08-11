@@ -13,9 +13,11 @@ class AdminProductConfigTypeController extends Controller
     // Đọc
     public function read()
     {
-        $configs = ProductConfig::all()
-            ->select(['id', 'name', 'group'])
-            ->groupBy('group');
+        $configs = ProductConfig::with('group:id,name')
+            ->get()
+            ->groupBy(function ($value) {
+                return $value->group->name;
+            });
 
         $types = ProductConfigType::all();
         $total = ProductConfigType::count();
@@ -45,7 +47,7 @@ class AdminProductConfigTypeController extends Controller
     public function update(Request $request, ProductConfigType $type)
     {
         $validated = $request->validate([
-            'name' => ["required", "min:2", "max:100", "regex:/^[\p{L}\p{N}\s]+$/u", "unique:product_config_types,id,".$type->id],
+            'name' => ["required", "min:2", "max:100", "regex:/^[\p{L}\p{N}\s]+$/u", "unique:product_config_types,id," . $type->id],
             'desc' => ["required", "min:2", "max:100", "regex:/^[\p{L}\p{N}\s]+$/u"],
             'configs' => ["required", "array"]
         ], [
@@ -54,7 +56,6 @@ class AdminProductConfigTypeController extends Controller
 
         $type->update($validated);
         $type->mapToConfig()->sync($validated['configs']);
-
     }
 
     // Xóa

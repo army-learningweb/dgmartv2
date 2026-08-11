@@ -18,6 +18,8 @@ import { EditProductConfigTypeS } from '@/types/module/product_config_type';
 import { ConfigType } from '@/types/module/product_config_type';
 
 export default function ReadConfigType({ types, configs, total }: ReadProductConfigTypeS) {
+
+    console.log(configs);
     const { data, setData, post, patch, errors, processing, reset, clearErrors, } = useForm<CreateProductConfigTypeS>({
         id: '',
         name: '',
@@ -50,7 +52,7 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
     // Thêm
     const handleCreate = (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post('/admin/products/configsTypes/store', {
+        post('/admin/products/configs/type/store', {
             onSuccess: () => {
                 setOpenModal(false);
                 reset();
@@ -63,7 +65,7 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
     // Sửa
     const handleUpdate = (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
-        patch(`/admin/products/configsTypes/${data.id}/update`, {
+        patch(`/admin/products/configs/type/${data.id}/update`, {
             onSuccess: () => {
                 setOpenModal(false);
                 reset();
@@ -74,10 +76,10 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
     };
 
     // Xóa
-    const handleDelete = (id: string) => {
+    const handleDelete = (id: string | number | null) => {
         if (confirm('Bạn có chắc muốn xóa cấu hình này ?')) {
             let toastID: string;
-            router.delete(`/admin/products/configsTypes/${id}/delete`, {
+            router.delete(`/admin/products/configs/type/${id}/delete`, {
                 onStart: () => {
                     toastID = toast.loading('Đang xóa...');
                 },
@@ -125,17 +127,12 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
                 <form onSubmit={!isEditModal ? handleCreate : handleUpdate} id="createConfigType">
                     <div>
                         <Input type="text" name="name" label="Tên loại" error={errors.name} value={data.name}
-                            onChange={(e) => setData('name', e.target.value)} onBlur={() => clearErrors("name")} autoComplete="on" />
-                        <p className="mt-1 text-gray-500">
-                            VD: Laptop, Phụ kiện,...
-                        </p>
+                            onChange={(e) => setData('name', e.target.value)} onBlur={() => clearErrors("name")} autoComplete="on" placeholder='Laptop'/>
                     </div>
 
                     <div className="mt-2">
-                        <Input type="text" name="desc" label="Mô tả" error={errors.desc} value={data.desc} onChange={(e) => setData('desc', e.target.value)} onBlur={() => clearErrors("desc")} autoComplete="on" />
-                        <p className="mt-1 text-gray-500">
-                            VD: Cấu hình cho sản phẩm Laptop
-                        </p>
+                        <Input type="text" name="desc" label="Mô tả" error={errors.desc} value={data.desc} onChange={(e) => setData('desc', e.target.value)} onBlur={() => clearErrors("desc")} autoComplete="on" 
+                        placeholder='Cấu hình cho sản phẩm Laptop'/>
                     </div>
 
                     <div className="mt-2">
@@ -148,9 +145,10 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
                                 </span>
                             )}
                         </div>
-
+                        
+                        {/* config */}
                         {Object.keys(configs)?.length > 0 && (
-                            <div className="mt-2 max-h-75 overflow-y-auto border-b border-gray-200">
+                            <div className="mt-2 max-h-85 overflow-y-auto">
                                 {Object.entries(configs).map(
                                     ([group, configItems]) => (
                                         <div key={group} className="mb-2 rounded-lg border border-gray-200 px-3 pt-1 pb-2" >
@@ -165,7 +163,7 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
                                                 <label htmlFor={group} className="font-medium text-blue-600 select-none">{group} </label>
                                             </div>
 
-                                            <div className="grid grid-cols-1 md:grid-cols-6 gap-y-4">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4">
                                                 {configItems.map((item) => (
                                                     <div key={item.id} className="flex items-center gap-2" >
                                                         <div>

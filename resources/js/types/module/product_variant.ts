@@ -47,7 +47,7 @@ export type CreateVariantType = {
     price: number | string;
     discount: number | string;
     qty: number | string;
-    is_default: 'default' | 'variant';
+    is_default: 'default' | 'variant' | string;
     status: 'active' | 'inactive';
     config_id: number[] | null;
 };

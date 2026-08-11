@@ -1,5 +1,5 @@
 interface ProductConfigTypeS {
-    id: string;
+    id: string | number | null;
     name: string;
     desc: string;
     created_at: string;
@@ -8,7 +8,7 @@ interface ProductConfigTypeS {
 }
 
 export interface ConfigType {
-    id: string;
+    id: string | number | null;
     name: string;
     group: string;
 }
@@ -16,11 +16,11 @@ export interface ConfigType {
 export type ReadProductConfigTypeS = {
     types: ProductConfigTypeS[]; 
     configs: Record<string,ConfigType[]>;
-    total: string;
+    total: string | number;
 }
 
 export type CreateProductConfigTypeS = {
-    id: string;
+    id: string | number | null;
     name: string;
     desc: string;
     configs: string[];

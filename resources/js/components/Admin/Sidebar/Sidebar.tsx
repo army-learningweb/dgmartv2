@@ -35,11 +35,12 @@ export default function Sidebar() {
                         <p className="my-2 text-xs font-medium text-gray-500">Quản lí hệ thống</p>
                         {/* product */}
                         <NavLink urlActiveOpen={url.startsWith("/admin/products")} name="Sản phẩm" icon={<Package strokeWidth={1.75} size={17} />}>
-                            <NavSubLink isActive={url === "/admin/products"} route="/admin/products" name="Danh sách sản phẩm" />
-                            <NavSubLink isActive={url === "/admin/products/categories"} route="/admin/products/categories" name="Danh mục sản phẩm" />
+                            <NavSubLink isActive={url === "/admin/products/configs/group"} route="/admin/products/configs/group" name="Nhóm cấu hình" />
+                            <NavSubLink isActive={url === "/admin/products/configs"} route="/admin/products/configs" name="Danh sách cấu hình" />
+                            <NavSubLink isActive={url === "/admin/products/configs/type"} route="/admin/products/configs/type" name="Loại cấu hình" />
                             <NavSubLink isActive={url === "/admin/products/variants"} route="/admin/products/variants" name="Cấu hình và biến thể" />
-                            <NavSubLink isActive={url === "/admin/products/configs"} route="/admin/products/configs" name="Thông tin cấu hình" />
-                            <NavSubLink isActive={url === "/admin/products/configsTypes"} route="/admin/products/configsTypes" name="Loại cấu hình" />
+                            <NavSubLink isActive={url === "/admin/products/categories"} route="/admin/products/categories" name="Danh mục sản phẩm" />
+                            <NavSubLink isActive={url === "/admin/products"} route="/admin/products" name="Danh sách sản phẩm" />
                         </NavLink>
 
                         {/* post */}
