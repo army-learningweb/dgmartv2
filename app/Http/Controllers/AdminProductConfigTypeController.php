@@ -51,7 +51,7 @@ class AdminProductConfigTypeController extends Controller
             'desc' => ["required", "min:2", "max:100", "regex:/^[\p{L}\p{N}\s]+$/u"],
             'configs' => ["required", "array"]
         ], [
-            'configs.required' => "Bạn chưa chọn cấu hình, hãy chọn ít nhất 1 đến 2 cấu hình cho loại này."
+            'configs.required' => "Bạn chưa chọn cấu hình, hãy chọn ít nhất 1 đến 2 cấu hình cho loại này"
         ]);
 
         $type->update($validated);

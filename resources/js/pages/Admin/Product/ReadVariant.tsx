@@ -1,19 +1,20 @@
 import { Head, router } from '@inertiajs/react';
+import { ChevronsDown, ArrowDownUp } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { ChevronsDown } from 'lucide-react';
 
 import Title from '@/components/Admin/TableManager/Title';
 import ButtonCreateLink from '@/components/Admin/TableManager/ButtonCreateLink';
 import ButtonDelete from '@/components/Admin/TableManager/ButtonDelete';
 import ButtonEditLink from '@/components/Admin/TableManager/ButtonEditLink';
 import BadgeVariant from '@/components/Admin/TableManager/BadgeVariant';
+import Pagination from '@/components/Admin/Pagination/Pagination';
+import Button from '@/components/ui/Button';
 
 import { ReadVariantType } from '@/types/module/product_variant';
 import { vndFormat } from '@/lib/currency_format';
-import clsx from 'clsx';
+import clsx from 'clsx';;
 
 export default function ReadVariant({ variants }: ReadVariantType) {
-    console.log(variants);
 
     // Xóa
     const handleDelete = (id: string | number) => {
@@ -41,11 +42,11 @@ export default function ReadVariant({ variants }: ReadVariantType) {
 
     return (
         <>
-            <Head title="Cấu hình và biến thể" />
+            <Head title="Cấu hình, biến thể" />
 
             <section>
                 <div className="flex justify-between items-center">
-                    <Title heading="Cấu hình và biến thể" />
+                    <Title heading="Cấu hình & biến thể" />
                     <ButtonCreateLink route="/admin/products/variants/create" />
                 </div>
 
@@ -56,46 +57,62 @@ export default function ReadVariant({ variants }: ReadVariantType) {
                         <table className="hidden w-full md:table">
                             <thead className="border-b border-gray-200 bg-gray-100 font-medium text-gray-800">
                                 <tr>
-                                    <td className="px-4 py-2">Sản phẩm</td>
-                                    <td className="px-4 py-2">Giá</td>
-                                    <td className="px-4 py-2 text-center">Số lượng</td>
-                                    <td className="px-4 py-2 text-center">Đã bán</td>
-                                    <td className="px-4 py-2">Vai trò</td>
-                                    <td className="px-4 py-2">Người tạo</td>
-                                    <td className="px-4 py-2">Tùy chỉnh</td>
+                                    <td className="px-4 py-1">Sản phẩm</td>
+                                    <td className="px-4 py-1">
+                                        <div className='flex gap-2 items-center'>
+                                            <span>Giá</span>
+                                            <Button size='small' variant='outline' animatePress={true}>
+                                                <ArrowDownUp size={15} strokeWidth={2} />
+                                            </Button>
+                                        </div>
+
+                                    </td>
+                                    <td className="px-4 text-center">
+                                        <div className='mr-3'>
+                                            Vai trò
+                                        </div>
+                                    </td>
+                                    <td className="px-4 py-1 text-center">Kho</td>
+                                    <td className="px-4 py-1 text-center">Đã bán</td>
+                                    <td className="px-4 py-1 text-center">Tùy chỉnh biến thể</td>
                                 </tr>
                             </thead>
                             <tbody>
                                 {variants.data.map((item) => (
                                     <tr key={item.id} className="transition-alls border-b border-gray-200 duration-150 last-of-type:border-0">
                                         {/* product */}
-                                        <td className="px-4 py-3">
-                                            <div className="flex flex-col gap-0.5">
-                                                <div className="truncate font-medium">
-                                                    {item.product.name}
+                                        <td className="px-4 py-0.75">
+                                            <div className='flex gap-5 items-center'>
+                                                <div className='w-20 h-20'>
+                                                    <img src={item.main_image.file_url} alt={item.main_image.file_name} className='w-full h-full object-cover' />
                                                 </div>
-                                                <div className="text-gray-500">
-                                                    Mã: {item.code}
+                                                <div className="flex flex-col gap-0.5">
+                                                    <div className="font-medium w-50 truncate">
+                                                        {item.product.name}
+                                                    </div>
+                                                    <div className="text-gray-500">
+                                                        Mã: {item.code}
+                                                    </div>
                                                 </div>
                                             </div>
+
                                         </td>
 
                                         {/* price & price_discount */}
-                                        <td className="px-4 py-3">
-                                            <div className='flex items-center gap-10'>
-                                                <div className="flex flex-col gap-0.5">
+                                        <td className="px-4 py-0.75">
+                                            <div className='flex items-center gap-3'>
+                                                <div className="flex flex-col gap-0.5 w-25 truncate">
+                                                    {item.price_discount && (
+                                                        <div className='font-medium'>
+                                                            {vndFormat(Number(item.price_discount))}
+                                                        </div>
+                                                    )}
+
                                                     <div className={clsx("", {
                                                         "line-through text-gray-500": item.discount !== null
                                                     })}>
                                                         {vndFormat(Number(item.price))}
                                                     </div>
-
-                                                    {item.price_discount && (
-                                                        <div>
-                                                            {vndFormat(Number(item.price_discount))}
-                                                        </div>
-                                                    )}
-
                                                 </div>
 
                                                 {item.discount && (
@@ -110,39 +127,31 @@ export default function ReadVariant({ variants }: ReadVariantType) {
                                                 )}
 
                                             </div>
+                                        </td>
 
+                                        {/* role */}
+                                        <td className="px-4 py-0.75">
+                                            <div className="w-30 flex justify-center">
+                                                <BadgeVariant role={item.is_default} />
+                                            </div>
                                         </td>
 
                                         {/* qty */}
-                                        <td className="px-4 py-3">
+                                        <td className="px-4 py-0.75">
                                             <div className="w-30 truncate text-center">
                                                 {item.qty}
                                             </div>
                                         </td>
 
                                         {/* qty_sold */}
-                                        <td className="px-4 py-3">
+                                        <td className="px-4 py-0.75">
                                             <div className="w-30 truncate text-center">
                                                 {item.qty_sold}
                                             </div>
                                         </td>
 
-                                        {/* role */}
-                                        <td className="px-4 py-3">
-                                            <div className="w-25">
-                                                <BadgeVariant role={item.is_default} />
-                                            </div>
-                                        </td>
-
-                                        {/* user */}
-                                        <td className="px-4 py-3">
-                                            <div className="w-30 truncate">
-                                                {item.user.name}
-                                            </div>
-                                        </td>
-
                                         {/* setting */}
-                                        <td className="px-4 py-3">
+                                        <td className="px-4 py-0.75">
                                             <div className="flex h-6.75 gap-2">
                                                 <ButtonEditLink route={`/admin/products/variants/${item.id}/edit`} />
                                                 <ButtonDelete onDelete={() => handleDelete(item.id)} />
@@ -194,16 +203,16 @@ export default function ReadVariant({ variants }: ReadVariantType) {
                 {/* {users.data?.length === 0 && <EmptyData showFallBack={true} />} */}
 
                 {/* pagination */}
-                {/* {users.data?.length > 0 && (
-                                    <Pagination
-                                        firstUrl={users.first_page_url}
-                                        lastUrl={users.last_page_url}
-                                        prevUrl={users.prev_page_url}
-                                        nextUrl={users.next_page_url}
-                                        currentPage={users.current_page}
-                                        lastPage={users.last_page}
-                                    />
-                                )} */}
+                {variants.data?.length > 0 && (
+                    <Pagination
+                        firstUrl={variants.first_page_url}
+                        lastUrl={variants.last_page_url}
+                        prevUrl={variants.prev_page_url}
+                        nextUrl={variants.next_page_url}
+                        currentPage={variants.current_page}
+                        lastPage={variants.last_page}
+                    />
+                )}
             </section>
         </>
     )

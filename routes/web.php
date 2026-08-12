@@ -79,11 +79,13 @@ Route::middleware(['auth'])->group( function(){
     Route::post('/admin/products/configs/type/store', [AdminProductConfigTypeController::class, 'store']);
     Route::patch('/admin/products/configs/type/{type}/update', [AdminProductConfigTypeController::class, 'update']);
     Route::delete('/admin/products/configs/type/{type}/delete', [AdminProductConfigTypeController::class, 'delete']);
+    Route::get('/admin/products/configs/type/{type}/getConfigs', [AdminProductConfigTypeController::class, 'getConfigs']);
 
     //PRODUCT VARIANT
     Route::get('/admin/products/variants', [AdminProductVariantController::class, 'read']);
     Route::get('/admin/products/variants/create', [AdminProductVariantController::class, 'create']);
     Route::post('/admin/products/variants/store', [AdminProductVariantController::class, 'store']);
+    Route::get('/admin/products/variants/{variant}/edit', [AdminProductVariantController::class, 'edit']);
     Route::patch('/admin/products/variants/{variant}/update', [AdminProductVariantController::class, 'update']);
     Route::delete('/admin/products/variants/{variant}/delete', [AdminProductVariantController::class, 'delete']);
     Route::get('/admin/products/variants/{type}/getConfigs', [AdminProductVariantController::class , 'getConfigs']);

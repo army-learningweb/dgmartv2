@@ -10,28 +10,31 @@ use App\Models\ProductConfig;
 use App\Models\ProductConfigType;
 use App\Models\ProductConfigTypeMap;
 use App\Models\ProductVariant;
+use App\Models\ProductVariantConfig;
 
 class AdminProductVariantController extends Controller
 {
     // Đọc
-    public function read(){
-        $variants = ProductVariant::with(['product:id,name','user:id,name'])
-        ->latest()
-        ->paginate(8);
-        
-        return Inertia::render("Admin/Product/ReadVariant",[
+    public function read()
+    {
+        $variants = ProductVariant::with(['product:id,name', 'user:id,name', 'mainImage:file_url,file_name,object_id'])
+            ->latest()
+            ->paginate(6);
+
+        return Inertia::render("Admin/Product/ReadVariant", [
             'variants' => $variants
         ]);
     }
 
-    public function create(){
+    // Thêm
+    public function create()
+    {
         $products = Product::with('category:id,name')
-        ->get(['id','name','category_id'])
-        ->groupBy(function($products){
-            return $products->category->name;
-        });
-
-        $product_config_types = ProductConfigType::get(['id','name']);
+            ->get(['id', 'name', 'category_id'])
+            ->groupBy(function ($products) {
+                return $products->category->name;
+            });
+        $product_config_types = ProductConfigType::get(['id', 'name']);
 
         return Inertia::render("Admin/Product/CreateVariant", [
             'products' => $products,
@@ -39,27 +42,18 @@ class AdminProductVariantController extends Controller
         ]);
     }
 
-    // Thêm
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $validated = $request->validate([
             'product_id' => ["required"],
-            'code' => ["required" ,"min:2", "max:50", "regex:/^[A-Z0-9\p{P}]+$/"],
+            'code' => ["required", "min:2", "max:50", "regex:/^[A-Z0-9\p{P}]+$/", "unique:product_variants"],
             'qty' => ["required", "integer", "min:0", "max:999"],
             'price' => ["required", "integer", "min:1", "max:999999999"],
             'discount' => ["nullable", "integer", "min:0", "max:100"],
-            'is_default' => ["required", "exists:product_variants,id",function($attribute, $value, $fail) use ($request) {
-                if($value !== 'default') return;
-                $exists_default_variant = ProductVariant::where('product_id',$request->input('product_id'))
-                ->where('is_default','default')
-                ->get();
-
-                if($exists_default_variant){
-                    $fail("Lỗi, sản phẩm này đã có cấu hình mặc định");
-                }
-            }],
-
-            'config_id' => ["required", "array"]
-        ],[
+            'is_default' => ["required"],
+            'config_id' => ["required", "array"],
+            'type_id' => ["required"]
+        ], [
             'product_id.required' => 'Chưa chọn sản phẩm.',
             'discount.max' => ':attribute tối đa :max%.',
             'discount.min' => ':attribute không hợp lệ.',
@@ -69,35 +63,109 @@ class AdminProductVariantController extends Controller
             'qty.min' => ':attribute tối thiểu :min.',
             'is_default.exists' => 'Sản phẩm đã có cấu hình mặc định.',
             'is_default.required' => 'Chưa chọn vai trò cho cấu hình.'
-        ],[
+        ], [
             'discount' => 'Giảm giá',
             'config_id' => 'Cấu hình sản phẩm'
         ]);
 
-        if($validated['discount'] > 0) {
+        if ($validated['is_default'] === 'default') {
+            $exists_default = ProductVariant::where('product_id', $validated['product_id'])->where('is_default', 'default')->exists();
+            if ($exists_default) return back()->withErrors(['is_default' => 'Sản phẩm đã có cấu hình mặc định']);
+        }
+
+        if ($validated['discount'] > 0) {
             $validated['price_discount'] = $validated['price'] - (($validated['price'] / 100) * $validated['discount']);
         }
+
         $validated['user_id'] = Auth::id();
         $new_variant = ProductVariant::create($validated);
         $new_variant->mapConfigs()->attach($validated['config_id']);
     }
 
     // Sửa
-    public function update(){}
+    public function edit(ProductVariant $variant)
+    {
+        $products = Product::with('category:id,name')
+            ->get(['id', 'name', 'category_id'])
+            ->groupBy(function ($products) {
+                return $products->category->name;
+            });
+        $product_config_types = ProductConfigType::get(['id', 'name']);
+        $config_ids = ProductConfigTypeMap::where('type_id', $variant->type_id)->pluck('config_id');
+        $dataConfig = ProductConfig::with('group:id,name')
+            ->whereIn('id', $config_ids)
+            ->get()
+            ->groupBy(function ($value) {
+                return $value->group->name;
+            });
+
+        $config_ids = ProductVariantConfig::where('variant_id', $variant->id)->pluck('config_id');
+        $configChecked = ProductConfig::with('group:id,name')
+            ->whereIn('id', $config_ids)
+            ->get();
+            
+        return Inertia::render("Admin/Product/EditVariant", [
+            'products' => $products,
+            'productConFigTypes' => $product_config_types,
+            'variant' => $variant,
+            'dataConfig' => $dataConfig,
+            'configChecked' => $configChecked
+        ]);
+    }
+
+    public function update(Request $request, ProductVariant $variant)
+    {
+        $validated = $request->validate([
+            'product_id' => ["required"],
+            'code' => ["required", "min:2", "max:50", "regex:/^[A-Z0-9\p{P}]+$/", "unique:product_variants,id,".$variant->id],
+            'qty' => ["required", "integer", "min:0", "max:999"],
+            'price' => ["required", "integer", "min:1", "max:999999999"],
+            'discount' => ["nullable", "integer", "min:0", "max:100"],
+            'is_default' => ["required"],
+            'config_id' => ["required", "array"],
+            'type_id' => ["required"]
+        ], [
+            'product_id.required' => 'Chưa chọn sản phẩm.',
+            'discount.max' => ':attribute tối đa :max%.',
+            'discount.min' => ':attribute không hợp lệ.',
+            'price.max' => ':attribute tối đa :max.',
+            'price.min' => ':attribute tối thiểu :min.',
+            'qty.max' => ':attribute tối đa :max.',
+            'qty.min' => ':attribute tối thiểu :min.',
+            'is_default.exists' => 'Sản phẩm đã có cấu hình mặc định.',
+            'is_default.required' => 'Chưa chọn vai trò cho cấu hình.'
+        ], [
+            'discount' => 'Giảm giá',
+            'config_id' => 'Cấu hình sản phẩm'
+        ]);
+
+        if ($validated['discount'] > 0) {
+            $validated['price_discount'] = $validated['price'] - (($validated['price'] / 100) * $validated['discount']);
+        }
+        $validated['updated_at'] = now();
+
+        $variant->update($validated);
+        $variant->mapConfigs()->sync($validated['config_id']);
+    }
 
     // Xóa
-    public function delete(ProductVariant $variant){
-        if(!$variant) return back()->withErrors("Lỗi, không thể xóa biến thể không tồn tại !");
+    public function delete(ProductVariant $variant)
+    {
+        if (!$variant) return back()->withErrors("Lỗi, không thể xóa biến thể không tồn tại !");
         $variant->delete();
     }
 
     // Lấy cấu hình
-    public function getConfigs(ProductConfigTypeMap $type)
+    public function getConfigs(ProductConfigType $type)
     {
-        $config_ids = ProductConfigTypeMap::where('type_id',$type->id)->pluck('config_id');
-        $configs = ProductConfig::whereIn('id',$config_ids)
-        ->get()
-        ->groupBy('group');
+        $config_ids = ProductConfigTypeMap::where('type_id', $type->id)->pluck('config_id');
+        $configs = ProductConfig::with('group:id,name')
+            ->whereIn('id', $config_ids)
+            ->get()
+            ->groupBy(function ($value) {
+                return $value->group->name;
+            });
+
         return response()->json($configs);
     }
 }

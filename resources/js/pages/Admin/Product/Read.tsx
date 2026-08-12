@@ -99,7 +99,7 @@ export default function Read({ products, total, active, inactive, filter, search
                             <thead className="border-b border-gray-200 bg-gray-100 font-medium text-gray-800">
                                 <tr>
                                     <td className="px-4 py-2">Sản phẩm</td>
-                                    <td className="px-4 py-2">Danh mục & Slug</td>
+                                    <td className="px-4 py-2">Slug (Friendly URL)</td>
                                     <td className="px-4 py-2">Người tạo</td>
                                     <td className="px-4 py-2">Ngày đăng</td>
                                     <td className="px-4 py-2">Trạng thái</td>
@@ -112,28 +112,29 @@ export default function Read({ products, total, active, inactive, filter, search
                                         <td className="px-4 py-1.75">
                                             <div className="flex items-center gap-5">
                                                 <a target="blank" href={item.main_image?.file_url} className="w-20 h-20">
-                                                    <img src={item.main_image?.file_url} alt={item.main_image?.file_name} className="h-full w-full rounded-lg object-cover " />
+                                                    <img src={item.main_image?.file_url} alt={item.main_image?.file_name} className="h-full w-full rounded-lg object-cover" />
                                                 </a>
-                                                <div className="flex flex-col gap-1">
-                                                    <p className="w-35 truncate font-medium">{item.name}</p>
-                                                    <p className="w-35 truncate text-gray-500">{item.desc}</p>
+                                                <div className="flex flex-col gap-1.5">
+                                                    <p className="w-50 truncate font-medium">{item.name}</p>
+                                                    <p className="w-fit truncate bg-blue-50 text-blue-600 py-1 px-3 rounded-md text-xs font-medium">
+                                                        {item.category?.name}
+                                                    </p>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-4 py-1.75">
-                                            <div className="flex flex-col gap-1">
-                                                <div className="w-30 truncate">{item.category?.name}</div>
-                                                <div className="w-50 truncate text-gray-500">{item.slug}</div>
+                                            <div className="flex flex-col gap-1">  
+                                                <div className="w-60 truncate text-gray-500">{item.slug}</div>
+                                            </div>
+                                        </td>
+                                        <td className="px-4 py-1.75">
+                                            <div className="w-30 truncate">
+                                                {item.created_at}
                                             </div>
                                         </td>
                                         <td className="px-4 py-1.75">
                                             <div className="w-30 truncate">
                                                 {item.user?.name}
-                                            </div>
-                                        </td>
-                                        <td className="px-4 py-1.75">
-                                            <div className="w-25 truncate">
-                                                {item.created_at}
                                             </div>
                                         </td>
                                         <td className="px-4 py-1.75">

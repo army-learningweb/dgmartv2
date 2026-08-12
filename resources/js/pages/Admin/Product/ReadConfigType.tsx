@@ -33,7 +33,7 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
     // Modal Edit Mode
     const handleEdit = async (configType: EditProductConfigTypeS) => {
         try {
-            const res = await axios.get(`/admin/products/configsTypes/${configType.id}/getConfigs`);
+            const res = await axios.get(`/admin/products/configs/type/${configType.id}/getConfigs`);
             setData({
                 id: configType.id,
                 name: configType.name,
@@ -44,7 +44,7 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
             setIsEditModal(true);
 
         } catch (error) {
-            toast.error('Lỗi chưa thể cập nhật loại này, vui lòng thử lại sau');
+            toast.error('Lỗi chưa thể cập nhật, vui lòng thử lại sau !');
             setOpenModal(false);
         }
     };
@@ -126,13 +126,29 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
             >
                 <form onSubmit={!isEditModal ? handleCreate : handleUpdate} id="createConfigType">
                     <div>
-                        <Input type="text" name="name" label="Tên loại" error={errors.name} value={data.name}
-                            onChange={(e) => setData('name', e.target.value)} onBlur={() => clearErrors("name")} autoComplete="on" placeholder='Laptop'/>
+                        <Input type="text" 
+                            name="name" 
+                            label="Tên loại" 
+                            error={errors.name} 
+                            value={data.name}
+                            onChange={(e) => setData('name', e.target.value)} 
+                            onBlur={() => clearErrors("name")} 
+                            autoComplete="on" 
+                            placeholder='Laptop'
+                        />
                     </div>
 
                     <div className="mt-2">
-                        <Input type="text" name="desc" label="Mô tả" error={errors.desc} value={data.desc} onChange={(e) => setData('desc', e.target.value)} onBlur={() => clearErrors("desc")} autoComplete="on" 
-                        placeholder='Cấu hình cho sản phẩm Laptop'/>
+                        <Input type="text" 
+                            name="desc" 
+                            label="Mô tả" 
+                            error={errors.desc} 
+                            value={data.desc} 
+                            onChange={(e) => setData('desc', e.target.value)} 
+                            onBlur={() => clearErrors("desc")} 
+                            autoComplete="on" 
+                            placeholder='Cấu hình cho sản phẩm Laptop'
+                        />
                     </div>
 
                     <div className="mt-2">
@@ -151,8 +167,8 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
                             <div className="mt-2 max-h-85 overflow-y-auto">
                                 {Object.entries(configs).map(
                                     ([group, configItems]) => (
-                                        <div key={group} className="mb-2 rounded-lg border border-gray-200 px-3 pt-1 pb-2" >
-                                            <div className="itemsc-enter mt-2 mb-4 flex w-fit gap-2 rounded-lg py-1">
+                                        <div key={group} className="rounded-lg border border-gray-200 p-3 mb-3" >
+                                            <div className="itemsc-enter flex w-fit gap-2 rounded-lg py-1">
                                                 <input onChange={(e) => handleCheckAll(e, configItems)}
                                                     checked={configItems.every((item) => data.configs?.includes(item.id,))}
                                                     type="checkbox"
@@ -163,7 +179,7 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
                                                 <label htmlFor={group} className="font-medium text-blue-600 select-none">{group} </label>
                                             </div>
 
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 mt-3">
                                                 {configItems.map((item) => (
                                                     <div key={item.id} className="flex items-center gap-2" >
                                                         <div>
@@ -174,7 +190,7 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
                                                                 id={item.id}
                                                             />
                                                         </div>
-                                                        <label className="mb-0.75 select-none" htmlFor={item.id} > {item.name} </label>
+                                                        <label className="mb-0.75 select-none w-95 truncate" htmlFor={item.id}> {item.name} </label>
                                                     </div>
                                                 ))}
                                             </div>

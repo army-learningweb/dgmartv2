@@ -8,6 +8,7 @@ class ProductVariant extends Model
 {
     protected $fillable = [
         'product_id',
+        'type_id',
         'code',
         'price',
         'discount',
@@ -37,5 +38,14 @@ class ProductVariant extends Model
 
     public function user(){
         return $this->belongsTo(User::class);
+    }
+
+    public function mainImage(){
+        return $this->hasOne(Media::class, 'object_id' ,'product_id')
+        ->where('role','main');
+    }
+
+    public function configChecked(){
+        return $this->hasMany(ProductVariantConfig::class, 'variant_id');
     }
 }

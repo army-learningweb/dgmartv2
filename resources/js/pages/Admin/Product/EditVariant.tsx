@@ -11,41 +11,42 @@ import SimpleBreadcrum from "@/components/Admin/TableManager/SimpleBreadcrum";
 import ButtonBackLink from "@/components/Admin/TableManager/ButtonBackLink";
 import Button from "@/components/ui/Button";
 
-import { CreateVariantDataType } from '@/types/module/product_variant';
-import { CreateVariantType } from "@/types/module/product_variant";
 import { ReadConfigType } from "@/types/module/product_variant";
+import { EditVariantDataType } from "@/types/module/product_variant";
+import { EditVariantType } from "@/types/module/product_variant";
 
-export default function CreateVariant({ products, productConFigTypes }: CreateVariantDataType) {
+export default function EditVariant({ products, productConFigTypes, variant, dataConfig, configChecked }: EditVariantDataType) {
 
-    const { data, setData, post, errors, processing, clearErrors, } = useForm<CreateVariantType>({
-        product_id: '',
-        code: '',
-        price: '',
-        discount: '',
-        qty: '',
-        is_default: '',
-        config_id: null,
-        type_id: null,
+    const { data, setData, patch, errors, processing, clearErrors, } = useForm<EditVariantType>({
+        product_id: variant.product_id,
+        type_id: variant.type_id,
+        code: variant.code,
+        price: variant.price,
+        discount: variant.discount ?? '',
+        qty: variant.qty ?? '',
+        is_default: variant.is_default,
+        config_id: [],
+        
     });
 
-    // Thêm
-    const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+    // Cập nhật
+    const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>, id:string|number) => {
         e.preventDefault();
         const config_ids = configData.map(config => config.id);
         setData("config_id", config_ids);
-        post("/admin/products/variants/store", {
+        patch(`/admin/products/variants/${id}/update`, {
             preserveScroll: true,
             preserveState: true,
             onSuccess: () => {
-                toast.success("Thêm mới thành công");
+                toast.success("Cập nhật thành công");
                 router.visit("/admin/products/variants");
             },
         })
     }
 
     // get configs
-    const [configs, setConfigs] = useState<ReadConfigType>({})
-    const handleGetConfigs = async (typeId: string) => {
+    const [configs, setConfigs] = useState<ReadConfigType>(dataConfig ?? {})
+    const handleGetConfigs = async (typeId: string | number) => {
         if (!typeId) {
             setConfigs({});
             return;
@@ -54,19 +55,26 @@ export default function CreateVariant({ products, productConFigTypes }: CreateVa
             const res = await axios.get(`/admin/products/variants/${typeId}/getConfigs`);
             const data = res.data;
             setConfigs(data)
-            setData('type_id', typeId ?? "")
+            setData('type_id', typeId);
         } catch (error) {
             toast.error("Lỗi không thể lấy cấu hình !");
         }
     }
 
-    //
+    // checked configs
     interface configDataState {
         group: string;
-        id: number;
+        id: string | number;
     }
 
-    const [configData, setConfigData] = useState<configDataState[]>([]);
+    const prevDataChecked = configChecked.map(item => {
+        return {
+            group: item.group.name,
+            id: item.id
+        }
+    })
+
+    const [configData, setConfigData] = useState<configDataState[]>(prevDataChecked ?? []);
     const handleConfigData = (group: string, id: number) => {
         setConfigData(prev => {
             const existsConfig = prev.some(config => config.group === group);
@@ -80,15 +88,15 @@ export default function CreateVariant({ products, productConFigTypes }: CreateVa
 
     return (
         <>
-            <Head title="Thêm cấu hình và biến thể" />
+            <Head title="Chỉnh sửa cấu hình và biến thể" />
             <section>
                 {/* title */}
                 <div className="flex items-center justify-between">
-                    <SimpleBreadcrum prevRoute="/admin/products/variants" prevPage="Cấu hình & biến thể" currentPage="Thêm cấu hình & biến thể" />
+                    <SimpleBreadcrum prevRoute="/admin/products/variants" prevPage="Cấu hình & biến thể" currentPage="Chỉnh sửa cấu hình & biến thể" />
                 </div>
 
                 {/* form */}
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={(e) => handleSubmit(e,variant.id)}>
                     <div className='flex gap-7'>
                         <div className="w-[31%]">
                             <div className="sticky top-8">
@@ -99,7 +107,11 @@ export default function CreateVariant({ products, productConFigTypes }: CreateVa
                                         name="types"
                                         onChange={(e) => handleGetConfigs(e.target.value)}
                                         onBlur={() => clearErrors('config_id')}
-                                        error={errors.config_id}
+                                        defaultValue={data.type_id ?? ''}
+                                        className={clsx("", {
+                                            "ring-3 ring-red-600/20 border-red-600 focus:ring-red-600/20 focus:border-red-600": errors.config_id,
+                                            "focus:ring-3 focus:ring-gray-300/70 focus:ring-offset-blue-50 focus:border-gray-400/70 ": !errors.config_id
+                                        })}
                                     >
                                         <option value="">-Chọn loại cấu hình-</option>
                                         {productConFigTypes?.length > 0 && (
@@ -111,8 +123,13 @@ export default function CreateVariant({ products, productConFigTypes }: CreateVa
                                             <option value="">Chưa có loại cấu hình nào</option>
                                         )}
                                     </Select>
-                                </div>
 
+                                    {errors.config_id && (<div className="mt-2 text-red-600">
+                                        {errors.config_id}
+                                    </div>
+                                    )}
+                                </div>
+                                
                                 {/* product */}
                                 <div className="mt-2">
                                     <Select
@@ -121,8 +138,12 @@ export default function CreateVariant({ products, productConFigTypes }: CreateVa
                                         label="Sản phẩm"
                                         name="product_id"
                                         error={errors.product_id}
-                                        defaultValue={data.product_id ?? ""}>
+                                        value={data.product_id ?? ""}
+                                        disabled={true}
+                                        className="bg-red-600/20 cursor-not-allowed"
+                                        >
                                         <option value="">-Chọn sản phẩm-</option>
+
                                         {Object.values(products)?.length > 0 && (
                                             Object.entries(products).map(([group, productItems]) => (
                                                 <Fragment key={group}>
@@ -133,12 +154,14 @@ export default function CreateVariant({ products, productConFigTypes }: CreateVa
                                                 </Fragment>
                                             ))
                                         )}
+
                                         {Object.values(products)?.length == 0 && (
                                             <option value="">Chưa có sản phẩm nào</option>
                                         )}
+
                                     </Select>
                                 </div>
-
+                                    
                                 {/* role */}
                                 <div className='mt-2'>
                                     <Select
@@ -147,14 +170,17 @@ export default function CreateVariant({ products, productConFigTypes }: CreateVa
                                         value={data.is_default}
                                         onChange={(e) => setData('is_default', e.target.value as 'default' | 'variant',)}
                                         onBlur={() => clearErrors('is_default')}
-                                        error={errors.is_default}
+                                        className={clsx("", {
+                                            "ring-3 ring-red-600/20 border-red-600 focus:ring-red-600/20 focus:border-red-600": errors.is_default || Object.values(errors)[0],
+                                            "focus:ring-3 focus:ring-gray-300/70 focus:ring-offset-blue-50 focus:border-gray-400/70 ": !errors.is_default || Object.values(errors)[0]
+                                        })}
                                     >
                                         <option value="">-Chọn vai trò cấu hình-</option>
                                         <option value="default">Chọn làm mặc định</option>
                                         <option value="variant">Chọn làm biến thể</option>
                                     </Select>
                                 </div>
-
+                                
                                 {/* code */}
                                 <div className='mt-2'>
                                     <Input
@@ -167,7 +193,7 @@ export default function CreateVariant({ products, productConFigTypes }: CreateVa
                                         onChange={(e) => setData('code', e.target.value)}
                                         onBlur={() => clearErrors('code')} autoComplete="on" />
                                 </div>
-
+                                
                                 {/* qty */}
                                 <div className='mt-2'>
                                     <Input
@@ -179,7 +205,7 @@ export default function CreateVariant({ products, productConFigTypes }: CreateVa
                                         onChange={(e) => setData('qty', e.target.value)}
                                         onBlur={() => clearErrors('qty')} autoComplete="on" />
                                 </div>
-
+                                
                                 {/* price */}
                                 <div className='mt-2'>
                                     <Input
@@ -191,7 +217,7 @@ export default function CreateVariant({ products, productConFigTypes }: CreateVa
                                         onChange={(e) => setData('price', e.target.value)}
                                         onBlur={() => clearErrors('price')} autoComplete="on" />
                                 </div>
-
+                                
                                 {/* sales_off */}
                                 <div className='mt-2'>
                                     <Input
@@ -208,12 +234,12 @@ export default function CreateVariant({ products, productConFigTypes }: CreateVa
                                     <ButtonBackLink route="/admin/products/variants" />
 
                                     <Button size="small" processing={processing} processingLabel="Đang xử lí..." animatePress={true}>
-                                        Thêm mới
+                                        Cập nhật
                                     </Button>
                                 </div>
                             </div>
                         </div>
-
+                        
                         {/* configs */}
                         <div className="flex-1 mt-7">
                             {Object.values(configs)?.length > 0 && (
@@ -227,15 +253,15 @@ export default function CreateVariant({ products, productConFigTypes }: CreateVa
                                                 {configItems.map(config => (
                                                     <label key={config.id} htmlFor={config.name}
                                                         className={clsx("cursor-pointer border border-gray-200 p-2 flex items-center gap-2 rounded-lg hover:border-gray-400", {
-                                                            "border-gray-400": configData.some(item => item.id === config.id)
+                                                            "border-gray-400" : configData.some(item => item.id === config.id)
                                                         })}>
                                                         <input type="radio" 
                                                             name={group} 
                                                             id={config.name} 
                                                             value={config.id} 
                                                             onChange={() => handleConfigData(group, config.id)}
-                                                            onBlur={() => clearErrors('config_id')} 
-                                                            />
+                                                            checked={configData.some(item => item.id === config.id)}  
+                                                        />
                                                         <div className="w-85 truncate mb-0.5">{config.name}</div>
                                                     </label>
                                                 ))}
