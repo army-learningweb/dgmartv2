@@ -15,14 +15,37 @@ use App\Models\ProductVariantConfig;
 class AdminProductVariantController extends Controller
 {
     // Đọc
-    public function read()
+    public function read(Request $request)
     {
-        $variants = ProductVariant::with(['product:id,name', 'user:id,name', 'mainImage:file_url,file_name,object_id'])
+        $variants = ProductVariant::query()
+            ->when($request->input('sort_price'), function ($query,$value) {
+                $query->orderBy('price', $value);
+            })
+            ->when($request->input('filter_role'), function ($query, $value) {
+                $query->where('is_default', $value);
+            })
+            ->when($request->input('filter_product'), function ($query, $value) {
+                $query->where('product_id', $value);
+            })
+            ->with(['product:id,name', 'user:id,name', 'mainImage:file_url,file_name,object_id'])
             ->latest()
-            ->paginate(6);
+            ->paginate(5)
+            ->withQueryString();
+        
+        $products = Product::get(['id','name']);
+        $total = ProductVariant::count();
+        $default = ProductVariant::where('is_default','default')->count();
+        $variant = ProductVariant::where('is_default','variant')->count();
 
         return Inertia::render("Admin/Product/ReadVariant", [
-            'variants' => $variants
+            'variants' => $variants,
+            'products' => $products,
+            'total' => $total,
+            'defaultCount' => $default,
+            'variant' => $variant,
+            'sort_price' => $request->input('sort_price'),
+            'filter_role' => $request->input('filter_role'),
+            'filter_product' => $request->input('filter_product'),
         ]);
     }
 

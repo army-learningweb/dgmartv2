@@ -70,14 +70,26 @@ interface MainImageProps {
     file_name: string;
 }
 
+interface ProductDataProps {
+    id: string | number;
+    name: string;
+}
+
 export type ReadVariantType = {
     variants: PaginatedData<
         VariantType & {
             product: ProductInVariantType;
             user: UserInVariantType;
-            main_image: MainImageProps 
+            main_image: MainImageProps;
         }
     >;
+    total: string | number;
+    defaultCount: string | number;
+    variant: string | number;
+    products: ProductDataProps[];
+    filter_role: string;
+    filter_product: string | number;
+    sort_price: string;
 };
 
 interface ProductConfigTypeEdit {

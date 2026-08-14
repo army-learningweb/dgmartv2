@@ -45,17 +45,18 @@ export default function Read({ users, search, filter, total, active, inactive, r
         current_page: users.current_page,
     });
     const { user } = usePage<{ auth: Auth }>().props.auth;
+
     const [queryFilter, setQueryFilter] = useState<null | string>(filter ?? null);
-    const [querySearch, setQuerySearch] = useState<string>(search ?? '');
+    const [querySearch, setQuerySearch] = useState<string>(search ?? "");
+
+    // Modal hooks
+    const { openModal, isEditModal, setOpenModal, setIsEditModal, handleOpenModal, handleCloseModal, } = useModal({ reset, clearErrors });
 
     // Lọc theo trạng thái
     const { handleQueryFilter } = useFilter({ querySearch, setQueryFilter, route: '/admin/users' });
 
     // Tìm kiếm
     const { isLoadingSearch, handleQuerySearch, handleClearSearch } = useSearch({ queryFilter, setQuerySearch, route: '/admin/users' });
-
-    // Modal hooks
-    const { openModal, isEditModal, setOpenModal, setIsEditModal, handleOpenModal, handleCloseModal, } = useModal({ reset, clearErrors });
 
     // Mở Modal mode edit
     const handleEdit = (user: EditUserType) => {
@@ -217,7 +218,7 @@ export default function Read({ users, search, filter, total, active, inactive, r
                     />
 
                     {/* stats */}
-                    <div className="hidden gap-1 rounded-xl bg-gray-100 p-1 tracking-tight md:grid md:grid-cols-3">
+                    <div className="hidden gap-1 rounded-xl bg-gray-100 p-1 tracking-tight md:flex">
                         <FilterTab
                             onFilter={() => handleQueryFilter(null)}
                             isActive={queryFilter === null}

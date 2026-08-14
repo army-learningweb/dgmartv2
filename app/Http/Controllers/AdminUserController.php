@@ -20,7 +20,7 @@ class AdminUserController extends Controller
                         ->orWhere("tel", "like", "%{$value}%");
                 });
             })
-            ->when($request->input('filter'), function ($query, $value) {
+            ->when($request->input('filter_status'), function ($query, $value) {
                 $query->where('status', $value);
             })
             ->select(["id", "name", "email", "tel", "status", "role_id", "created_at", "updated_at"])
