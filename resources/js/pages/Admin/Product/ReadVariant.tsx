@@ -10,6 +10,7 @@ import {
 import toast from 'react-hot-toast';
 import { vndFormat } from '@/lib/currency_format';
 import clsx from 'clsx';
+import { useState } from 'react';
 
 import Title from '@/components/Admin/TableManager/Title';
 import ButtonCreateLink from '@/components/Admin/TableManager/ButtonCreateLink';
@@ -19,10 +20,10 @@ import BadgeVariant from '@/components/Admin/TableManager/BadgeVariant';
 import Pagination from '@/components/Admin/Pagination/Pagination';
 import Button from '@/components/ui/Button';
 import FilterTab from '@/components/Admin/TableManager/FilterTab';
+import SearchBar from '@/components/Admin/TableManager/SearchBar';
 
 import { useFilter } from '@/hooks/use-filter';
 import { ReadVariantType } from '@/types/module/product_variant';
-import Select from '@/components/ui/Select';
 
 export default function ReadVariant({
     variants,
@@ -33,7 +34,9 @@ export default function ReadVariant({
     sort_price,
     filter_role,
     filter_product,
+    search,
 }: ReadVariantType) {
+
     // Xóa
     const handleDelete = (id: string | number) => {
         if (confirm('Bạn có chắc muốn xóa biến thể này ?')) {
@@ -56,17 +59,32 @@ export default function ReadVariant({
         }
     };
 
-    // Bộ lọc
-    const { handleQueryFilter } = useFilter({
+    // Bộ lọc tổng hợp
+    const { handleQueryFilter, loadingSearch, isCountResult } = useFilter({
         route: '/admin/products/variants',
         initialsFilter: {
             filter_role: filter_role,
             filter_product: filter_product,
             sort_price: sort_price,
+            search: search,
         },
         onlyLoad: ['variants', 'filter_role', 'filter_product', 'sort_price'],
+        debounce: ['search'],
     });
 
+    // Tìm kiếm
+    const [querySearch, setQuerySearch] = useState<string>(search ?? '');
+
+    const handleSetQuerySearch = (query: string) => {
+        setQuerySearch(query.toLocaleLowerCase());
+    };
+
+    const handleClearQuerySearch = () => {
+        setQuerySearch('');
+        handleQueryFilter({ search: '' }, true);
+    };
+
+    
     return (
         <>
             <Head title="Cấu hình, biến thể" />
@@ -90,35 +108,64 @@ export default function ReadVariant({
                                     />
                                     <input
                                         type="text"
-                                        name=""
-                                        id=""
+                                        name="search"
+                                        id="search"
+                                        onChange={(e) => {
+                                            handleQueryFilter({
+                                                search: e.target.value.toLowerCase(),
+                                            });
+                                            handleSetQuerySearch(
+                                                e.target.value,
+                                            );
+                                        }}
+                                        value={querySearch}
                                         className="flex-1 px-2 py-1.5 focus:outline-0"
                                         placeholder="Tìm kiếm theo tên sản phẩm..."
                                     />
 
-                                    <p className="text-xs font-semibold tracking-tight">
-                                        (1 kết quả)
-                                    </p>
+                                    {/* count result */}
+                                    {!loadingSearch && querySearch && isCountResult &&(
+                                        <p className="text-xs font-semibold tracking-tight">
+                                            (Tìm thấy {variants.data.length} kết
+                                            quả)
+                                        </p>
+                                    )}
 
-                                    <div className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-gray-500 border-t-transparent"></div>
+                                    {/* loading circle */}
+                                    {loadingSearch && querySearch && (
+                                        <div className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-gray-500 border-t-transparent"></div>
+                                    )}
 
-                                    <div className="flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-full bg-black/50 text-white hover:bg-gray-800 active:bg-black">
-                                        <X size={10} />
-                                    </div>
+                                    {/* delete query */}
+                                    {!loadingSearch && querySearch && (
+                                        <div
+                                            onClick={handleClearQuerySearch}
+                                            className="flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-full bg-black/50 text-white hover:bg-gray-800 active:bg-black"
+                                        >
+                                            <X size={10} />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
-                            <div className="absolute left-0 translate-y-1 w-full rounded-lg border border-gray-200 bg-white p-2 shadow-md">
-                                <p className="text-xs font-medium text-gray-500 px-1">
-                                    Mới thêm gần đây
-                                </p>
 
-                                <hr className='my-2 border-gray-100'/>
+                            {/* {products?.length > 0 && (
+                                <div className="absolute left-0 w-full translate-y-1 rounded-lg border border-gray-200 bg-white p-2 shadow-md">
+                                    <p className="px-1 text-xs font-medium text-gray-500">
+                                        Sản phẩm mới thêm gần đây
+                                    </p>
 
-                                {products?.length > 0 &&
-                                    products.map((item) => (
-                                        <div className='p-1 hover:bg-gray-100 rounded-md cursor-pointer'>{item.name}</div>
+                                    <hr className="my-2 border-gray-100" />
+
+                                    {products.map((item) => (
+                                        <div
+                                            key={item.id}
+                                            className="cursor-pointer rounded-md p-1 hover:bg-gray-100"
+                                        >
+                                            {item.name}
+                                        </div>
                                     ))}
-                            </div>
+                                </div>
+                            )} */}
                         </div>
 
                         {/* <Select name='product'

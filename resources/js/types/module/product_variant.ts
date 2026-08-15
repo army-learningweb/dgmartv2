@@ -90,6 +90,7 @@ export type ReadVariantType = {
     filter_role: string;
     filter_product: string | number;
     sort_price: string;
+    search: string;
 };
 
 interface ProductConfigTypeEdit {

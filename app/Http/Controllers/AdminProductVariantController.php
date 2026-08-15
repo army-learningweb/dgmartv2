@@ -27,12 +27,16 @@ class AdminProductVariantController extends Controller
             ->when($request->input('filter_product'), function ($query, $value) {
                 $query->where('product_id', $value);
             })
+            ->when($request->input('search'), function ($query, $value) {
+                $products_search = Product::where('name','like',"%{$value}%")->get('id');
+                $query->whereIn('product_id', $products_search);
+            })
             ->with(['product:id,name', 'user:id,name', 'mainImage:file_url,file_name,object_id'])
             ->latest()
             ->paginate(5)
             ->withQueryString();
         
-        $products = Product::get(['id','name']);
+        $products = Product::latest()->take(5)->get(['id','name']);
         $total = ProductVariant::count();
         $default = ProductVariant::where('is_default','default')->count();
         $variant = ProductVariant::where('is_default','variant')->count();
@@ -46,6 +50,7 @@ class AdminProductVariantController extends Controller
             'sort_price' => $request->input('sort_price'),
             'filter_role' => $request->input('filter_role'),
             'filter_product' => $request->input('filter_product'),
+            'search' => $request->input('search')
         ]);
     }
 
