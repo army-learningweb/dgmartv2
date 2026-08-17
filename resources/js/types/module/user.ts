@@ -21,6 +21,11 @@ export type User = {
     role: Role
 };
 
+interface suggestUsersProps {
+    id: string | number;
+    name: string;
+}
+
 // Read
 export type UsersReadType = {
     users: PaginatedData<
@@ -37,12 +42,13 @@ export type UsersReadType = {
             | 'role'
         >
     >;
-    search: string | null;
-    filter: 'active' | 'inactive' | null;
+    suggest_users: suggestUsersProps[];
+    search: string;
+    filter_status: string;
     total: string;
     active: string;
     inactive: string;
-    roles: Role[]
+    roles: Role[];
 };
 
 // Create

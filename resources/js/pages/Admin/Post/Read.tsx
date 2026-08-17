@@ -1,28 +1,85 @@
-import { Head, router } from "@inertiajs/react"
-import { useState } from "react"
-import toast from "react-hot-toast"
+import { Head, router } from '@inertiajs/react';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
 
-import Badge from "@/components/ui/Badge"
-import SearchBar from "@/components/Admin/TableManager/SearchBar"
-import FilterTab from "@/components/Admin/TableManager/FilterTab"
-import Pagination from "@/components/Admin/Pagination/Pagination"
-import EmptyData from "@/components/Admin/Empty/EmptyData"
+import Badge from '@/components/ui/Badge';
+import SearchBar from '@/components/Admin/TableManager/SearchBar';
+import FilterTab from '@/components/Admin/TableManager/FilterTab';
+import Pagination from '@/components/Admin/Pagination/Pagination';
+import EmptyData from '@/components/Admin/Empty/EmptyData';
+import FilterTabGroup from '@/components/Admin/TableManager/FilterTabGroup';
 
-import { useSearch } from "@/hooks/use-search"
-import { useFilter } from "@/hooks/use-filter"
+import { useSearch } from '@/hooks/use-search';
+import { useFilter } from '@/hooks/use-filter';
 
-import { ReadPostType } from "@/types/module/post"
-import ButtonDelete from "@/components/Admin/TableManager/ButtonDelete"
-import ButtonEditLink from "@/components/Admin/TableManager/ButtonEditLink"
-import Title from "@/components/Admin/TableManager/Title"
-import ButtonCreateLink from "@/components/Admin/TableManager/ButtonCreateLink"
+import { ReadPostType } from '@/types/module/post';
+import ButtonDelete from '@/components/Admin/TableManager/ButtonDelete';
+import ButtonEditLink from '@/components/Admin/TableManager/ButtonEditLink';
+import Title from '@/components/Admin/TableManager/Title';
+import ButtonCreateLink from '@/components/Admin/TableManager/ButtonCreateLink';
 
-export default function Read({ posts, total, active, inactive, filter, search }: ReadPostType) {
+export default function Read({
+    posts,
+    posts_suggest,
+    total,
+    active,
+    inactive,
+    filter_status,
+    search,
+}: ReadPostType) {
+    // Bộ lọc tổng hợp
+    const { handleQueryFilter } = useFilter({
+        route: '/admin/posts',
+        initialsFilter: {
+            filter_status,
+            search,
+            page: posts.current_page,
+        },
+        onlyLoad: ['posts', 'filter_status'],
+    });
 
-    const [queryFilter, setQueryFilter] = useState<null | string>(filter ?? null);
-    const [querySearch, setQuerySearch] = useState<string>(search ?? '');
-    const { handleQueryFilter } = useFilter({ querySearch, setQueryFilter, route: "/admin/posts" });
-    const { isLoadingSearch, handleQuerySearch, handleClearSearch } = useSearch({ queryFilter, setQuerySearch, route: "/admin/posts" });
+    // Tìm kiếm
+    const {
+        querySearch,
+        loadingSearch,
+        dataSuggest,
+        openSuggest,
+        placeholderSearch,
+        handleQuerySearch,
+        handleClearQuerySearch,
+        handleSetPlaceHolder,
+        handleFocusSearch,
+        handleBlurSearch,
+        handleChoose,
+        handleLeave,
+    } = useSearch({
+        handleQueryFilter,
+        search,
+        initialData: posts_suggest,
+        placeholder: 'Tìm kiếm theo tiêu đề...',
+        routeGetData: '/admin/posts/getPosts',
+    });
+
+    const filterTabData = [
+        {
+            label: 'Tất cả',
+            onFilter: () => handleQueryFilter({ filter_status: null }),
+            countData: total,
+            isActive: filter_status === null,
+        },
+        {
+            label: 'Hoạt động',
+            onFilter: () => handleQueryFilter({ filter_status: 'active' }),
+            countData: active,
+            isActive: filter_status === 'active',
+        },
+        {
+            label: 'Vô hiệu hóa',
+            onFilter: () => handleQueryFilter({ filter_status: 'inactive' }),
+            countData: inactive,
+            isActive: filter_status === 'inactive',
+        },
+    ];
 
     // Xóa
     const handleDelete = (id: string) => {
@@ -32,7 +89,7 @@ export default function Read({ posts, total, active, inactive, filter, search }:
                 data: {
                     total: total,
                     current_page: posts?.current_page,
-                    post_on_page: posts?.data?.length
+                    post_on_page: posts?.data?.length,
                 },
                 onStart: () => {
                     toastID = toast.loading('Đang xóa...');
@@ -40,7 +97,7 @@ export default function Read({ posts, total, active, inactive, filter, search }:
                 onSuccess: () => {
                     toast.success('Xóa thành công', { id: toastID });
                 },
-            })
+            });
         }
     };
 
@@ -56,37 +113,25 @@ export default function Read({ posts, total, active, inactive, filter, search }:
 
                 {/* filter & search */}
                 <div className="mt-4 flex items-center justify-between">
-                    {/* search */}
+                    {/* filter & search */}
+
                     <SearchBar
-                        onSearch={handleQuerySearch}
-                        onClear={handleClearSearch}
+                        onChange={handleQuerySearch}
+                        onClearQuery={handleClearQuerySearch}
+                        onFocus={handleFocusSearch}
+                        onBlur={handleBlurSearch}
+                        onMouseDown={handleChoose}
+                        onMouseEnter={handleSetPlaceHolder}
+                        onMouseLeave={handleLeave}
+                        dataSuggest={dataSuggest}
                         querySearch={querySearch}
-                        loadingSearch={isLoadingSearch}
-                        resultCount={posts.data.length}
-                        placeHolder="Tìm kiếm theo tiêu đề..."
+                        placeHolderSearch={placeholderSearch}
+                        loadingSearch={loadingSearch}
+                        openSuggest={openSuggest}
                     />
 
                     {/* stats */}
-                    <div className="hidden gap-1 rounded-xl bg-gray-100 p-1 tracking-tight md:grid md:grid-cols-3">
-                        <FilterTab
-                            onFilter={() => handleQueryFilter(null)}
-                            isActive={queryFilter === null}
-                            countData={total}
-                            label="Tất cả"
-                        />
-                        <FilterTab
-                            onFilter={() => handleQueryFilter('active')}
-                            isActive={queryFilter === 'active'}
-                            countData={active}
-                            label="Hoạt động"
-                        />
-                        <FilterTab
-                            onFilter={() => handleQueryFilter('inactive')}
-                            isActive={queryFilter === 'inactive'}
-                            countData={inactive}
-                            label="Vô hiệu hóa"
-                        />
-                    </div>
+                    <FilterTabGroup data={filterTabData} />
                 </div>
 
                 {posts.data?.length > 0 && (
@@ -96,7 +141,9 @@ export default function Read({ posts, total, active, inactive, filter, search }:
                             <thead className="border-b border-gray-200 bg-gray-100 font-medium text-gray-800">
                                 <tr>
                                     <td className="px-4 py-2">Bài viết</td>
-                                    <td className="px-4 py-2">Danh mục & Slug</td>
+                                    <td className="px-4 py-2">
+                                        Danh mục & Slug
+                                    </td>
                                     <td className="px-4 py-2">Người tạo</td>
                                     <td className="px-4 py-2">Ngày đăng</td>
                                     <td className="px-4 py-2">Trạng thái</td>
@@ -105,22 +152,45 @@ export default function Read({ posts, total, active, inactive, filter, search }:
                             </thead>
                             <tbody>
                                 {posts.data.map((item) => (
-                                    <tr key={item.id} className="border-b border-gray-200">
+                                    <tr
+                                        key={item.id}
+                                        className="border-b border-gray-200"
+                                    >
                                         <td className="px-4 py-2.75">
                                             <div className="flex items-center gap-5">
-                                                <a target="blank" href={item.media?.file_url}>
-                                                    <img src={item.media?.file_url} alt={item.media?.file_name} className="h-18 w-30 rounded-lg object-cover" />
+                                                <a
+                                                    target="blank"
+                                                    href={item.media?.file_url}
+                                                >
+                                                    <img
+                                                        src={
+                                                            item.media?.file_url
+                                                        }
+                                                        alt={
+                                                            item.media
+                                                                ?.file_name
+                                                        }
+                                                        className="h-18 w-30 rounded-lg object-cover"
+                                                    />
                                                 </a>
                                                 <div className="flex flex-col gap-1">
-                                                    <p className="w-35 truncate font-medium">{item.title}</p>
-                                                    <p className="w-35 truncate text-gray-500">{item.desc}</p>
+                                                    <p className="w-35 truncate font-medium">
+                                                        {item.title}
+                                                    </p>
+                                                    <p className="w-35 truncate text-gray-500">
+                                                        {item.desc}
+                                                    </p>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-4 py-2.75">
                                             <div className="flex flex-col gap-1">
-                                                <div className="w-30 truncate">{item.category?.name}</div>
-                                                <div className="w-50 truncate text-gray-500">{item.slug}</div>
+                                                <div className="w-30 truncate">
+                                                    {item.category?.name}
+                                                </div>
+                                                <div className="w-50 truncate text-gray-500">
+                                                    {item.slug}
+                                                </div>
                                             </div>
                                         </td>
                                         <td className="px-4 py-2.75">
@@ -140,8 +210,14 @@ export default function Read({ posts, total, active, inactive, filter, search }:
                                         </td>
                                         <td className="px-4 py-2.75">
                                             <div className="flex h-6.75 gap-2">
-                                                <ButtonEditLink route={`/admin/posts/${item.id}/edit`} />
-                                                <ButtonDelete onDelete={() => handleDelete(item.id)} />
+                                                <ButtonEditLink
+                                                    route={`/admin/posts/${item.id}/edit`}
+                                                />
+                                                <ButtonDelete
+                                                    onDelete={() =>
+                                                        handleDelete(item.id)
+                                                    }
+                                                />
                                             </div>
                                         </td>
                                     </tr>
@@ -150,30 +226,50 @@ export default function Read({ posts, total, active, inactive, filter, search }:
                         </table>
 
                         {/* mobile */}
-                        <div className="md:hidden inline-flex flex-col gap-2 w-full">
-                            {posts.data.map(item => (
-                                <div key={item.id} className="border-b border-gray-200 p-3 w-full flex justify-between h-24">
+                        <div className="inline-flex w-full flex-col gap-2 md:hidden">
+                            {posts.data.map((item) => (
+                                <div
+                                    key={item.id}
+                                    className="flex h-24 w-full justify-between border-b border-gray-200 p-3"
+                                >
                                     <div className="relative">
                                         <div className="flex items-center gap-5">
-                                            <a target="blank" href={item.media?.file_url}>
-                                                <img src={item.media?.file_url} alt={item.media?.file_name} className="h-18 w-30 rounded-lg object-cover" />
+                                            <a
+                                                target="blank"
+                                                href={item.media?.file_url}
+                                            >
+                                                <img
+                                                    src={item.media?.file_url}
+                                                    alt={item.media?.file_name}
+                                                    className="h-18 w-30 rounded-lg object-cover"
+                                                />
                                             </a>
                                             <div className="flex flex-col gap-1">
-                                                <p className="w-30 truncate font-medium">{item.title}</p>
-                                                <p className="w-30 truncate text-gray-500">{item.desc}</p>
+                                                <p className="w-30 truncate font-medium">
+                                                    {item.title}
+                                                </p>
+                                                <p className="w-30 truncate text-gray-500">
+                                                    {item.desc}
+                                                </p>
                                             </div>
                                         </div>
                                         {item.status === 'active' && (
-                                            <div className="absolute left-28 -bottom-1 h-3 w-3 rounded-full bg-green-600"></div>
+                                            <div className="absolute -bottom-1 left-28 h-3 w-3 rounded-full bg-green-600"></div>
                                         )}
                                         {item.status === 'inactive' && (
-                                            <div className="absolute left-28 -bottom-1 h-3 w-3 rounded-full bg-red-600"></div>
+                                            <div className="absolute -bottom-1 left-28 h-3 w-3 rounded-full bg-red-600"></div>
                                         )}
                                     </div>
 
-                                    <div className="flex flex-col h-6.75 gap-2">
-                                        <ButtonEditLink route={`/admin/posts/${item.id}/edit`} />
-                                        <ButtonDelete onDelete={() => handleDelete(item.id)} />
+                                    <div className="flex h-6.75 flex-col gap-2">
+                                        <ButtonEditLink
+                                            route={`/admin/posts/${item.id}/edit`}
+                                        />
+                                        <ButtonDelete
+                                            onDelete={() =>
+                                                handleDelete(item.id)
+                                            }
+                                        />
                                     </div>
                                 </div>
                             ))}
@@ -201,5 +297,5 @@ export default function Read({ posts, total, active, inactive, filter, search }:
                 )}
             </section>
         </>
-    )
+    );
 }

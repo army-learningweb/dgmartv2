@@ -38,7 +38,7 @@ export default function Edit({ post_info, post_categories }: ReadEditPostType) {
         })
     }
 
-    console.log(data);
+    console.log(post_info);
 
     return (
         <>

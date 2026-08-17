@@ -27,6 +27,8 @@ class AdminUserController extends Controller
             ->paginate(7)
             ->withQueryString();
 
+        $suggest_users = User::latest()->take(5)->get(['id','name']);
+
         $total = User::count();
         $active = User::where('status','active')->count();
         $inactive = User::where('status','inactive')->count();
@@ -34,8 +36,9 @@ class AdminUserController extends Controller
         $roles = Role::get(['id','name']);
         return Inertia::render("Admin/User/Read", [
             "users" => $users,
+            "suggest_users" => $suggest_users,
             "search" => $request->input("search"),
-            "filter" => $request->input("filter"),
+            "filter_status" => $request->input("filter_status"),
             "total" => $total,
             "active" => $active,
             "inactive" => $inactive,
@@ -95,5 +98,12 @@ class AdminUserController extends Controller
             return redirect("/admin/users?page={$prev_page}");
         }
         return redirect("/admin/users?page={$request->input('current_page')}");
+    }
+
+    // Lấy thông tin gợi ý user
+   public function getUsers(Request $request){
+        $query = $request->input('search');
+        $users = User::where('name','like',"%{$query}%")->get(['id','name']);
+        return response()->json($users);
     }
 }

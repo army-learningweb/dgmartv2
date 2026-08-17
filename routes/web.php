@@ -34,6 +34,7 @@ Route::middleware(['auth'])->group( function(){
     Route::post('/admin/users/store', [AdminUserController::class, 'store']);
     Route::patch('/admin/users/{user}/update', [AdminUserController::class, 'update']);
     Route::delete('/admin/users/{user}/delete', [AdminUserController::class, 'delete']);
+    Route::get('/admin/users/getUsers', [AdminUserController::class , 'getUsers']);
 
     //PERMISSION
     Route::get('/admin/users/permissions', [AdminPermissionController::class, 'read']);
@@ -89,6 +90,7 @@ Route::middleware(['auth'])->group( function(){
     Route::patch('/admin/products/variants/{variant}/update', [AdminProductVariantController::class, 'update']);
     Route::delete('/admin/products/variants/{variant}/delete', [AdminProductVariantController::class, 'delete']);
     Route::get('/admin/products/variants/{type}/getConfigs', [AdminProductVariantController::class , 'getConfigs']);
+    Route::get('/admin/products/variants/getProducts', [AdminProductVariantController::class , 'getProducts']);
 
     //POST
     Route::get('/admin/posts', [AdminPostController::class, 'read']);
@@ -97,6 +99,7 @@ Route::middleware(['auth'])->group( function(){
     Route::get('/admin/posts/{post}/edit', [AdminPostController::class, 'edit']);
     Route::post('/admin/posts/{post}/update', [AdminPostController::class, 'update']);
     Route::delete('/admin/posts/{post}/delete', [AdminPostController::class, 'delete']);
+    Route::get('/admin/users/getPosts', [AdminPostController::class , 'getPosts']);
 
     //POST CATEGORY
     Route::get('/admin/posts/categories', [AdminPostCategoriesController::class, 'read']);

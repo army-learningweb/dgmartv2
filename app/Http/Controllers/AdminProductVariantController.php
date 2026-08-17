@@ -196,4 +196,11 @@ class AdminProductVariantController extends Controller
 
         return response()->json($configs);
     }
+
+    // Lấy sản phẩm theo gợi ý tìm kiếm
+    public function getProducts(Request $request){
+        $query = $request->input('search');
+        $products = Product::where('name','like',"%{$query}%")->get(['id','name']);
+        return response()->json($products);
+    }
 }

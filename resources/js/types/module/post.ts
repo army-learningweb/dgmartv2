@@ -41,6 +41,11 @@ export type ReadPostCategoriesType = {
     post_categories: PostCategoriesType[];
 };
 
+interface PostSuggestProps {
+    id:string | number;
+    name: string;
+}
+
 // Đọc
 export type ReadPostType = {
     posts: PaginatedData<
@@ -60,10 +65,11 @@ export type ReadPostType = {
             | 'created_at'
         >
     >;
+    posts_suggest: PostSuggestProps[];
     total: string;
     active: string;
     inactive: string;
-    filter: string;
+    filter_status: string;
     search: string;
 };
 

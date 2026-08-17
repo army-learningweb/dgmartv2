@@ -1,6 +1,5 @@
 import { Head, useForm, usePage, router } from '@inertiajs/react';
 import { TriangleAlert } from 'lucide-react';
-import { useState } from 'react';
 import toast from 'react-hot-toast';
 import clsx from 'clsx';
 
@@ -14,11 +13,11 @@ import ButtonEdit from '@/components/Admin/TableManager/ButtonEdit';
 import ButtonDelete from '@/components/Admin/TableManager/ButtonDelete';
 import ButtonCreate from '@/components/Admin/TableManager/ButtonCreate';
 import SearchBar from '@/components/Admin/TableManager/SearchBar';
-import FilterTab from '@/components/Admin/TableManager/FilterTab';
 import UserAvatar from '@/components/Admin/TableManager/UserAvatar';
 import Pagination from '@/components/Admin/Pagination/Pagination';
 import Modal from '@/components/Admin/Modal/Modal';
 import EmptyData from '@/components/Admin/Empty/EmptyData';
+import FilterTabGroup from '@/components/Admin/TableManager/FilterTabGroup';
 
 import { useSearch } from '@/hooks/use-search';
 import { useFilter } from '@/hooks/use-filter';
@@ -29,9 +28,26 @@ import { CreateUserType } from '@/types/module/user';
 import { EditUserType } from '@/types/module/user';
 import { Auth } from '@/types';
 
-export default function Read({ users, search, filter, total, active, inactive, roles, }: UsersReadType) {
-
-    const { data, setData, post, patch, errors, processing, reset, clearErrors, } = useForm<CreateUserType>({
+export default function Read({
+    users,
+    suggest_users,
+    search,
+    filter_status,
+    total,
+    active,
+    inactive,
+    roles,
+}: UsersReadType) {
+    const {
+        data,
+        setData,
+        post,
+        patch,
+        errors,
+        processing,
+        reset,
+        clearErrors,
+    } = useForm<CreateUserType>({
         id: '',
         name: '',
         email: '',
@@ -44,19 +60,72 @@ export default function Read({ users, search, filter, total, active, inactive, r
         last_page: users.last_page,
         current_page: users.current_page,
     });
+
     const { user } = usePage<{ auth: Auth }>().props.auth;
 
-    const [queryFilter, setQueryFilter] = useState<null | string>(filter ?? null);
-    const [querySearch, setQuerySearch] = useState<string>(search ?? "");
-
     // Modal hooks
-    const { openModal, isEditModal, setOpenModal, setIsEditModal, handleOpenModal, handleCloseModal, } = useModal({ reset, clearErrors });
+    const {
+        openModal,
+        isEditModal,
+        setOpenModal,
+        setIsEditModal,
+        handleOpenModal,
+        handleCloseModal,
+    } = useModal({ reset, clearErrors });
 
-    // Lọc theo trạng thái
-    const { handleQueryFilter } = useFilter({ querySearch, setQueryFilter, route: '/admin/users' });
+    // Bộ lọc tổng hợp
+    const { handleQueryFilter } = useFilter({
+        route: '/admin/users',
+        initialsFilter: {
+            filter_status,
+            search,
+            page: users.current_page,
+        },
+        onlyLoad: ['users', 'filter_status'],
+    });
 
     // Tìm kiếm
-    const { isLoadingSearch, handleQuerySearch, handleClearSearch } = useSearch({ queryFilter, setQuerySearch, route: '/admin/users' });
+    const {
+        querySearch,
+        loadingSearch,
+        dataSuggest,
+        openSuggest,
+        placeholderSearch,
+        handleQuerySearch,
+        handleClearQuerySearch,
+        handleSetPlaceHolder,
+        handleFocusSearch,
+        handleBlurSearch,
+        handleChoose,
+        handleLeave,
+    } = useSearch({
+        handleQueryFilter,
+        search,
+        initialData: suggest_users,
+        placeholder: 'Tìm kiếm theo tên, số điện thoại...',
+        routeGetData: '/admin/users/getUsers',
+    });
+
+    const filterTabData = [
+        {
+            label: 'Tất cả',
+            onFilter: () => handleQueryFilter({ filter_status: null }),
+            countData: total,
+            isActive: filter_status === null,
+        },
+        {
+            label: 'Hoạt động',
+            onFilter: () => handleQueryFilter({ filter_status: 'active' }),
+            countData: active,
+            isActive: filter_status === 'active',
+        },
+        {
+            label: 'Vô hiệu hóa',
+            onFilter: () => handleQueryFilter({ filter_status: 'inactive' }),
+            countData: inactive,
+            isActive: filter_status === 'inactive',
+        },
+    ];
 
     // Mở Modal mode edit
     const handleEdit = (user: EditUserType) => {
@@ -136,17 +205,28 @@ export default function Read({ users, search, filter, total, active, inactive, r
                 onClose={handleCloseModal}
                 isOpen={openModal}
                 processing={processing}
-                title={!isEditModal ? 'Thêm mới thành viên' : 'Chỉnh sửa thông tin'}
+                title={
+                    !isEditModal ? 'Thêm mới thành viên' : 'Chỉnh sửa thông tin'
+                }
                 labelSubmit={!isEditModal ? 'Thêm mới' : 'Cập nhật'}
                 formSubmitId="createUser"
                 customSize="w-[90%] md:w-[38%] min-h-[50%]"
             >
-                <form onSubmit={!isEditModal ? handleCreate : handleUpdate} id="createUser">
+                <form
+                    onSubmit={!isEditModal ? handleCreate : handleUpdate}
+                    id="createUser"
+                >
                     {Object.keys(errors).length > 0 && (
                         <ul className="rounded-lg bg-red-50 p-4 text-red-700 transition-all duration-150">
                             {Object.values(errors).map((error, index) => (
-                                <li key={index} className="mt-1 flex items-center gap-2 first-of-type:mt-0">
-                                    <TriangleAlert size={16} strokeWidth={1.7} />
+                                <li
+                                    key={index}
+                                    className="mt-1 flex items-center gap-2 first-of-type:mt-0"
+                                >
+                                    <TriangleAlert
+                                        size={16}
+                                        strokeWidth={1.7}
+                                    />
                                     {error}
                                 </li>
                             ))}
@@ -155,30 +235,92 @@ export default function Read({ users, search, filter, total, active, inactive, r
 
                     <div className="mt-2 grid gap-4 md:grid-cols-2">
                         <div>
-                            <Input type="text" name="name" label="Họ và tên" error={errors.name} showError={false} value={data.name} onChange={(e) => setData('name', e.target.value)} onBlur={() => clearErrors('name')} autoComplete="on" />
+                            <Input
+                                type="text"
+                                name="name"
+                                label="Họ và tên"
+                                error={errors.name}
+                                showError={false}
+                                value={data.name}
+                                onChange={(e) =>
+                                    setData('name', e.target.value)
+                                }
+                                onBlur={() => clearErrors('name')}
+                                autoComplete="on"
+                            />
                         </div>
 
                         <div>
-                            <Input type="tel" name="tel" label="Số điện thoại" error={errors.tel} showError={false} value={data.tel} onChange={(e) => setData('tel', e.target.value)} onBlur={() => clearErrors('tel')} autoComplete="on" />
+                            <Input
+                                type="tel"
+                                name="tel"
+                                label="Số điện thoại"
+                                error={errors.tel}
+                                showError={false}
+                                value={data.tel}
+                                onChange={(e) => setData('tel', e.target.value)}
+                                onBlur={() => clearErrors('tel')}
+                                autoComplete="on"
+                            />
                         </div>
                     </div>
 
                     <div className="mt-2">
-                        <Input type="text" name="email" label="Email" error={errors.email} showError={false} value={data.email} onChange={(e) => setData('email', e.target.value)} onBlur={() => clearErrors('email')} autoComplete="username" />
+                        <Input
+                            type="text"
+                            name="email"
+                            label="Email"
+                            error={errors.email}
+                            showError={false}
+                            value={data.email}
+                            onChange={(e) => setData('email', e.target.value)}
+                            onBlur={() => clearErrors('email')}
+                            autoComplete="username"
+                        />
                     </div>
 
                     <div className="mt-2 grid gap-4 md:grid-cols-2">
                         <div>
-                            <Input type="password" name="password" label="Mật khẩu" error={errors.password} showError={false} value={data.password} onChange={(e) => setData('password', e.target.value)} onBlur={() => clearErrors('password')} autoComplete="current-password" />
+                            <Input
+                                type="password"
+                                name="password"
+                                label="Mật khẩu"
+                                error={errors.password}
+                                showError={false}
+                                value={data.password}
+                                onChange={(e) =>
+                                    setData('password', e.target.value)
+                                }
+                                onBlur={() => clearErrors('password')}
+                                autoComplete="current-password"
+                            />
                         </div>
 
                         <div>
-                            <Input type="password" name="password_confirmation" label="Xác nhận mật khẩu" value={data.password_confirmation} onChange={(e) => setData('password_confirmation', e.target.value,)} autoComplete="new-password" />
+                            <Input
+                                type="password"
+                                name="password_confirmation"
+                                label="Xác nhận mật khẩu"
+                                value={data.password_confirmation}
+                                onChange={(e) =>
+                                    setData(
+                                        'password_confirmation',
+                                        e.target.value,
+                                    )
+                                }
+                                autoComplete="new-password"
+                            />
                         </div>
                     </div>
 
                     <div className="mt-2">
-                        <Select onChange={(e) => setData('role_id', e.target.value)} label="Phân vai trò" name="role_id" error={errors.role_id} value={data.role_id}>
+                        <Select
+                            onChange={(e) => setData('role_id', e.target.value)}
+                            label="Phân vai trò"
+                            name="role_id"
+                            error={errors.role_id}
+                            value={data.role_id}
+                        >
                             <option value="">-Chọn vai trò-</option>
                             {roles.map((role) => (
                                 <option key={role.id} value={role.id}>
@@ -190,7 +332,17 @@ export default function Read({ users, search, filter, total, active, inactive, r
                     </div>
 
                     <div className="mt-2">
-                        <Select label="Trạng thái" name="status" onChange={(e) => setData('status', e.target.value as 'active' | 'inactive',)} value={data.status}>
+                        <Select
+                            label="Trạng thái"
+                            name="status"
+                            onChange={(e) =>
+                                setData(
+                                    'status',
+                                    e.target.value as 'active' | 'inactive',
+                                )
+                            }
+                            value={data.status}
+                        >
                             <option value="active">Hoạt động</option>
                             <option value="inactive">Vô hiệu hóa</option>
                         </Select>
@@ -207,37 +359,25 @@ export default function Read({ users, search, filter, total, active, inactive, r
 
                 {/* filter & search */}
                 <div className="mt-4 flex items-center justify-between">
-                    {/* search */}
+                    {/* filter & search */}
+
                     <SearchBar
-                        onSearch={handleQuerySearch}
-                        onClear={handleClearSearch}
+                        onChange={handleQuerySearch}
+                        onClearQuery={handleClearQuerySearch}
+                        onFocus={handleFocusSearch}
+                        onBlur={handleBlurSearch}
+                        onMouseDown={handleChoose}
+                        onMouseEnter={handleSetPlaceHolder}
+                        onMouseLeave={handleLeave}
+                        dataSuggest={dataSuggest}
                         querySearch={querySearch}
-                        loadingSearch={isLoadingSearch}
-                        resultCount={users.data.length}
-                        placeHolder="Tìm kiếm theo tên, số điện thoại,..."
+                        placeHolderSearch={placeholderSearch}
+                        loadingSearch={loadingSearch}
+                        openSuggest={openSuggest}
                     />
 
                     {/* stats */}
-                    <div className="hidden gap-1 rounded-xl bg-gray-100 p-1 tracking-tight md:flex">
-                        <FilterTab
-                            onFilter={() => handleQueryFilter(null)}
-                            isActive={queryFilter === null}
-                            countData={total}
-                            label="Tất cả"
-                        />
-                        <FilterTab
-                            onFilter={() => handleQueryFilter('active')}
-                            isActive={queryFilter === 'active'}
-                            countData={active}
-                            label="Hoạt động"
-                        />
-                        <FilterTab
-                            onFilter={() => handleQueryFilter('inactive')}
-                            isActive={queryFilter === 'inactive'}
-                            countData={inactive}
-                            label="Vô hiệu hóa"
-                        />
-                    </div>
+                    <FilterTabGroup data={filterTabData} />
                 </div>
 
                 {/* data */}
@@ -248,7 +388,9 @@ export default function Read({ users, search, filter, total, active, inactive, r
                             <thead className="border-b border-gray-200 bg-gray-100 font-medium text-gray-800">
                                 <tr>
                                     <td className="px-4 py-2">Thành viên</td>
-                                    <td className="px-4 py-2">Email & Số điện thoại</td>
+                                    <td className="px-4 py-2">
+                                        Email & Số điện thoại
+                                    </td>
                                     <td className="px-4 py-2">Ngày tạo</td>
                                     <td className="px-4 py-2">Cập nhật</td>
                                     <td className="px-4 py-2">Trạng thái</td>
@@ -257,7 +399,10 @@ export default function Read({ users, search, filter, total, active, inactive, r
                             </thead>
                             <tbody>
                                 {users.data.map((item) => (
-                                    <tr key={item.id} className="transition-alls border-b border-gray-200 duration-150 last-of-type:border-0">
+                                    <tr
+                                        key={item.id}
+                                        className="transition-alls border-b border-gray-200 duration-150 last-of-type:border-0"
+                                    >
                                         {/* user */}
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-3">
@@ -268,7 +413,11 @@ export default function Read({ users, search, filter, total, active, inactive, r
                                                     </div>
 
                                                     {item.role && (
-                                                        <RoleBadge name={item.role.name} />
+                                                        <RoleBadge
+                                                            name={
+                                                                item.role.name
+                                                            }
+                                                        />
                                                     )}
 
                                                     {!item.role && (
@@ -315,9 +464,26 @@ export default function Read({ users, search, filter, total, active, inactive, r
 
                                         {/* setting */}
                                         <td className="px-4 py-3">
-                                            <div className={clsx('flex h-6.75 gap-2', { 'pointer-events-none opacity-50': item.id == String(user.id) })}>
-                                                <ButtonEdit onEdit={() => handleEdit(item,)} />
-                                                <ButtonDelete onDelete={() => handleDelete(item.id)} />
+                                            <div
+                                                className={clsx(
+                                                    'flex h-6.75 gap-2',
+                                                    {
+                                                        'pointer-events-none opacity-50':
+                                                            item.id ==
+                                                            String(user.id),
+                                                    },
+                                                )}
+                                            >
+                                                <ButtonEdit
+                                                    onEdit={() =>
+                                                        handleEdit(item)
+                                                    }
+                                                />
+                                                <ButtonDelete
+                                                    onDelete={() =>
+                                                        handleDelete(item.id)
+                                                    }
+                                                />
                                             </div>
                                         </td>
                                     </tr>
@@ -328,7 +494,10 @@ export default function Read({ users, search, filter, total, active, inactive, r
                         {/* mobile */}
                         <div className="inline-flex w-full flex-col gap-1 md:hidden">
                             {users.data.map((item) => (
-                                <div key={item.id} className="border-b border-gray-200 p-3">
+                                <div
+                                    key={item.id}
+                                    className="border-b border-gray-200 p-3"
+                                >
                                     <div className="flex items-center justify-between">
                                         <div className="relative flex items-center gap-3">
                                             {item.status === 'active' && (
@@ -347,13 +516,24 @@ export default function Read({ users, search, filter, total, active, inactive, r
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className={clsx('flex flex-col gap-2 md:flex-row', {
-                                            'pointer-events-none opacity-50': item.id == String(user.id)
-                                        }
-                                        )}
+                                        <div
+                                            className={clsx(
+                                                'flex flex-col gap-2 md:flex-row',
+                                                {
+                                                    'pointer-events-none opacity-50':
+                                                        item.id ==
+                                                        String(user.id),
+                                                },
+                                            )}
                                         >
-                                            <ButtonEdit onEdit={() => handleEdit(item)} />
-                                            <ButtonDelete onDelete={() => handleDelete(item.id)} />
+                                            <ButtonEdit
+                                                onEdit={() => handleEdit(item)}
+                                            />
+                                            <ButtonDelete
+                                                onDelete={() =>
+                                                    handleDelete(item.id)
+                                                }
+                                            />
                                         </div>
                                     </div>
                                 </div>

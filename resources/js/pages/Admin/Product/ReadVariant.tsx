@@ -4,13 +4,11 @@ import {
     ArrowDownUp,
     ArrowUpNarrowWide,
     ArrowDownWideNarrow,
-    Search,
-    X,
 } from 'lucide-react';
-import toast from 'react-hot-toast';
+
 import { vndFormat } from '@/lib/currency_format';
 import clsx from 'clsx';
-import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 import Title from '@/components/Admin/TableManager/Title';
 import ButtonCreateLink from '@/components/Admin/TableManager/ButtonCreateLink';
@@ -19,10 +17,13 @@ import ButtonEditLink from '@/components/Admin/TableManager/ButtonEditLink';
 import BadgeVariant from '@/components/Admin/TableManager/BadgeVariant';
 import Pagination from '@/components/Admin/Pagination/Pagination';
 import Button from '@/components/ui/Button';
-import FilterTab from '@/components/Admin/TableManager/FilterTab';
 import SearchBar from '@/components/Admin/TableManager/SearchBar';
+import FilterTabGroup from '@/components/Admin/TableManager/FilterTabGroup';
+import EmptyData from '@/components/Admin/Empty/EmptyData';
 
 import { useFilter } from '@/hooks/use-filter';
+import { useSearch } from '@/hooks/use-search';
+
 import { ReadVariantType } from '@/types/module/product_variant';
 
 export default function ReadVariant({
@@ -60,36 +61,67 @@ export default function ReadVariant({
     };
 
     // Bộ lọc tổng hợp
-    const { handleQueryFilter, loadingSearch, isCountResult } = useFilter({
+    const { handleQueryFilter } = useFilter({
         route: '/admin/products/variants',
         initialsFilter: {
-            filter_role: filter_role,
-            filter_product: filter_product,
-            sort_price: sort_price,
-            search: search,
+            filter_role,
+            filter_product,
+            sort_price,
+            search,
+            page: variants.current_page,
         },
         onlyLoad: ['variants', 'filter_role', 'filter_product', 'sort_price'],
-        debounce: ['search'],
     });
 
     // Tìm kiếm
-    const [querySearch, setQuerySearch] = useState<string>(search ?? '');
+    const {
+        querySearch,
+        loadingSearch,
+        dataSuggest,
+        openSuggest,
+        placeholderSearch,
+        handleQuerySearch,
+        handleClearQuerySearch,
+        handleSetPlaceHolder,
+        handleFocusSearch,
+        handleBlurSearch,
+        handleChoose,
+        handleLeave,
+    } = useSearch({
+        handleQueryFilter,
+        search,
+        initialData: products,
+        placeholder: 'Tìm kiếm theo tên sản phẩm...',
+        routeGetData: '/admin/products/variants/getProducts',
+    });
 
-    const handleSetQuerySearch = (query: string) => {
-        setQuerySearch(query.toLocaleLowerCase());
-    };
+    const filterTabData = [
+        {
+            label: 'Tất cả',
+            onFilter: () => handleQueryFilter({ filter_role: null }),
+            countData: total,
+            isActive: filter_role === null,
+        },
+        {
+            label: 'Mặc định',
+            onFilter: () => handleQueryFilter({ filter_role: 'default' }),
+            countData: defaultCount,
+            isActive: filter_role === 'default',
+        },
+        {
+            label: 'Biến thể',
+            onFilter: () => handleQueryFilter({ filter_role: 'variant' }),
+            countData: variant,
+            isActive: filter_role === 'variant',
+        },
+    ];
 
-    const handleClearQuerySearch = () => {
-        setQuerySearch('');
-        handleQueryFilter({ search: '' }, true);
-    };
-
-    
     return (
         <>
             <Head title="Cấu hình, biến thể" />
 
             <section>
+                {/* heading */}
                 <div className="flex items-center justify-between">
                     <Title heading="Cấu hình & biến thể" />
                     <ButtonCreateLink route="/admin/products/variants/create" />
@@ -97,124 +129,28 @@ export default function ReadVariant({
 
                 {/* filter & search */}
                 <div className="mt-4 flex items-center justify-between">
-                    <div>
-                        <div className="relative">
-                            <div className="focus-within:border-ring flex w-90 items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-2 transition-all duration-150 ease-out focus-within:border-gray-400 focus-within:ring-3 focus-within:ring-gray-300/70">
-                                <div className="flex w-full items-center gap-1">
-                                    <Search
-                                        size={18}
-                                        strokeWidth={2}
-                                        className="shrink-0 text-gray-600"
-                                    />
-                                    <input
-                                        type="text"
-                                        name="search"
-                                        id="search"
-                                        onChange={(e) => {
-                                            handleQueryFilter({
-                                                search: e.target.value.toLowerCase(),
-                                            });
-                                            handleSetQuerySearch(
-                                                e.target.value,
-                                            );
-                                        }}
-                                        value={querySearch}
-                                        className="flex-1 px-2 py-1.5 focus:outline-0"
-                                        placeholder="Tìm kiếm theo tên sản phẩm..."
-                                    />
-
-                                    {/* count result */}
-                                    {!loadingSearch && querySearch && isCountResult &&(
-                                        <p className="text-xs font-semibold tracking-tight">
-                                            (Tìm thấy {variants.data.length} kết
-                                            quả)
-                                        </p>
-                                    )}
-
-                                    {/* loading circle */}
-                                    {loadingSearch && querySearch && (
-                                        <div className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-gray-500 border-t-transparent"></div>
-                                    )}
-
-                                    {/* delete query */}
-                                    {!loadingSearch && querySearch && (
-                                        <div
-                                            onClick={handleClearQuerySearch}
-                                            className="flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-full bg-black/50 text-white hover:bg-gray-800 active:bg-black"
-                                        >
-                                            <X size={10} />
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* {products?.length > 0 && (
-                                <div className="absolute left-0 w-full translate-y-1 rounded-lg border border-gray-200 bg-white p-2 shadow-md">
-                                    <p className="px-1 text-xs font-medium text-gray-500">
-                                        Sản phẩm mới thêm gần đây
-                                    </p>
-
-                                    <hr className="my-2 border-gray-100" />
-
-                                    {products.map((item) => (
-                                        <div
-                                            key={item.id}
-                                            className="cursor-pointer rounded-md p-1 hover:bg-gray-100"
-                                        >
-                                            {item.name}
-                                        </div>
-                                    ))}
-                                </div>
-                            )} */}
-                        </div>
-
-                        {/* <Select name='product'
-                            onChange={(e) => handleQueryFilter({ filter_product: e.target.value })}
-                            value={filter_product ?? ''}
-                        >
-                            <option value="">-Theo sản phẩm-</option>
-                            {products?.length > 0 && (
-                                products.map(product => (
-                                    <option key={product.id} value={product.id}>
-                                        {product.name}
-                                    </option>
-                                ))
-                            )}
-                        </Select> */}
-                    </div>
+                    <SearchBar
+                        onChange={handleQuerySearch}
+                        onClearQuery={handleClearQuerySearch}
+                        onFocus={handleFocusSearch}
+                        onBlur={handleBlurSearch}
+                        onMouseDown={handleChoose}
+                        onMouseEnter={handleSetPlaceHolder}
+                        onMouseLeave={handleLeave}
+                        dataSuggest={dataSuggest}
+                        querySearch={querySearch}
+                        placeHolderSearch={placeholderSearch}
+                        loadingSearch={loadingSearch}
+                        openSuggest={openSuggest}
+                    />
 
                     {/* stats */}
-                    <div className="hidden gap-1.5 rounded-xl bg-gray-100 p-1 tracking-tight md:flex">
-                        <FilterTab
-                            onFilter={() =>
-                                handleQueryFilter({ filter_role: null })
-                            }
-                            isActive={filter_role === null}
-                            countData={total}
-                            label="Tất cả"
-                        />
-                        <FilterTab
-                            onFilter={() =>
-                                handleQueryFilter({ filter_role: 'default' })
-                            }
-                            isActive={filter_role === 'default'}
-                            countData={defaultCount}
-                            label="Mặc định"
-                        />
-                        <FilterTab
-                            onFilter={() =>
-                                handleQueryFilter({ filter_role: 'variant' })
-                            }
-                            isActive={filter_role === 'variant'}
-                            countData={variant}
-                            label="Biến thể"
-                        />
-                    </div>
+                    <FilterTabGroup data={filterTabData} />
                 </div>
 
                 {/* data */}
                 {variants.data?.length > 0 && (
-                    <div className="mt-4 h-full overflow-hidden rounded-xl border border-gray-200">
+                    <div className="relative mt-4 h-full overflow-hidden rounded-xl border border-gray-200">
                         {/* desktop */}
                         <table className="hidden w-full md:table">
                             <thead className="border-b border-gray-200 bg-gray-100 font-medium text-gray-800">
@@ -223,7 +159,6 @@ export default function ReadVariant({
                                     <td className="px-4 py-1">
                                         <div className="flex items-center gap-2">
                                             <span>Giá</span>
-
                                             {sort_price === null && (
                                                 <Button
                                                     onClick={() =>
@@ -241,7 +176,6 @@ export default function ReadVariant({
                                                     />
                                                 </Button>
                                             )}
-
                                             {sort_price === 'asc' && (
                                                 <Button
                                                     onClick={() =>
@@ -259,7 +193,6 @@ export default function ReadVariant({
                                                     />
                                                 </Button>
                                             )}
-
                                             {sort_price === 'desc' && (
                                                 <Button
                                                     onClick={() =>
@@ -277,7 +210,6 @@ export default function ReadVariant({
                                                     />
                                                 </Button>
                                             )}
-
                                             {sort_price !== null && (
                                                 <div
                                                     onClick={() =>
@@ -428,44 +360,59 @@ export default function ReadVariant({
                         </table>
 
                         {/* mobile */}
-                        {/* <div className="inline-flex w-full flex-col gap-1 md:hidden">
-                                            {users.data.map((item) => (
-                                                <div key={item.id} className="border-b border-gray-200 p-3">
-                                                    <div className="flex items-center justify-between">
-                                                        <div className="relative flex items-center gap-3">
-                                                            {item.status === 'active' && (
-                                                                <div className="absolute -bottom-0.5 left-8 h-3 w-3 rounded-full bg-green-600"></div>
-                                                            )}
-                                                            {item.status === 'inactive' && (
-                                                                <div className="absolute -bottom-0.5 left-8 h-3 w-3 rounded-full bg-red-600"></div>
-                                                            )}
-                                                            <UserAvatar name={item.name} />
-                                                            <div className="flex flex-col">
-                                                                <div className="w-30 truncate">
-                                                                    {item.name}
-                                                                </div>
-                                                                <div className="w-30 truncate text-gray-500">
-                                                                    {item.email}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className={clsx('flex flex-col gap-2 md:flex-row', {
-                                                            'pointer-events-none opacity-50': item.id == String(user.id)
-                                                        }
-                                                        )}
-                                                        >
-                                                            <ButtonEdit onEdit={() => handleEdit(item)} />
-                                                            <ButtonDelete onDelete={() => handleDelete(item.id)} />
-                                                        </div>
-                                                    </div>
+                        <div className="inline-flex w-full flex-col gap-1 md:hidden">
+                            {variants.data.map((item) => (
+                                <div
+                                    key={item.id}
+                                    className="border-b border-gray-200 p-3"
+                                >
+                                    <div className="flex justify-between">
+                                        <div className='flex items-center gap-5'>
+                                            <div className="h-15 w-15">
+                                                <img
+                                                    src={
+                                                        item.main_image.file_url
+                                                    }
+                                                    alt={
+                                                        item.main_image
+                                                            .file_name
+                                                    }
+                                                    className="h-full w-full object-cover"
+                                                />
+                                            </div>
+                                            <div className="flex flex-col gap-0.5">
+                                                <div className="w-40 truncate font-medium">
+                                                    {item.product.name}
                                                 </div>
-                                            ))}
-                                        </div> */}
+                                                <div className="text-gray-500">
+                                                    Mã: {item.code}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col gap-2">
+                                            <ButtonEditLink
+                                                route={`/admin/products/variants/${item.id}/edit`}
+                                            />
+                                            <ButtonDelete
+                                                onDelete={() =>
+                                                    handleDelete(item.id)
+                                                }
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 )}
 
                 {/* empty */}
-                {/* {users.data?.length === 0 && <EmptyData showFallBack={true} />} */}
+                {variants.data?.length === 0 && (
+                    <EmptyData showFallBack={true}>
+                        <ButtonCreateLink route="/admin/products/variants/create" />
+                    </EmptyData>
+                )}
 
                 {/* pagination */}
                 {variants.data?.length > 0 && (

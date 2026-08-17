@@ -24,7 +24,7 @@ class AdminPostController extends Controller
             ->when($request->input('search'), function ($query, $value) {
                 $query->where('title', 'like', "%{$value}%");
             })
-            ->when($request->input('filter'), function ($query, $value) {
+            ->when($request->input('filter_status'), function ($query, $value) {
                 $query->where('status', $value);
             })
             ->select(['id', 'title', 'desc', 'status', 'user_id', 'category_id', 'created_at', 'slug'])
@@ -32,16 +32,19 @@ class AdminPostController extends Controller
             ->paginate(5)
             ->withQueryString();
 
+        $posts_suggest = Post::latest()->take(5)->get(['id','title as name']);
+
         $total = Post::count();
         $active = Post::where('status', 'active')->count();
         $inactive = Post::where('status', 'inactive')->count();
 
         return Inertia::render("Admin/Post/Read", [
             'posts' => $posts,
+            'posts_suggest' => $posts_suggest,
             'total' => $total,
             'active' => $active,
             'inactive' => $inactive,
-            'filter' => $request->input('filter'),
+            'filter_status' => $request->input('filter_status'),
             'search' => $request->input('search')
         ]);
     }
@@ -144,14 +147,15 @@ class AdminPostController extends Controller
     public function edit(Post $post)
     {
         $post_categories = PostCategory::get(['id', 'name']);
-        $post = $post->with(['media' => function ($querry) {
-            $querry->where('object_type', 'post')
+        $post_info = $post->load(['media' => function ($query) use ($post) {
+            $query->where('object_type', 'post')
+                ->where('object_id', $post->id)
                 ->where('role', 'main');
-        }])->first();
+        }]);
 
         return Inertia::render("Admin/Post/Edit", [
             'post_categories' => $post_categories,
-            'post_info' => $post
+            'post_info' => $post_info
         ]);
     }
 
@@ -239,5 +243,12 @@ class AdminPostController extends Controller
                     'updated_at' => now()
                 ]);
         }
+    }
+
+    // Lấy thông tin post gợi ý tìm kiếm
+    public function getPosts(Request $request){
+        $query = $request->input('search');
+        $posts = Post::where('title','like',"%{$query}%")->get(['id','title as name']);
+        return response()->json($posts);
     }
 }
