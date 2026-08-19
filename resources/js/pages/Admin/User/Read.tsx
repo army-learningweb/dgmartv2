@@ -358,7 +358,7 @@ export default function Read({
                 </div>
 
                 {/* filter & search */}
-                <div className="mt-4 flex items-center justify-between">
+                <div className="mt-4 flex flex-col md:flex-row items-center justify-between">
                     {/* filter & search */}
 
                     <SearchBar

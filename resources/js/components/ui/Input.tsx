@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { forwardRef } from "react";
 
 interface InputProps extends React.ComponentPropsWithRef<"input"> {
-    label: string;
+    label?: string;
     error?: string;
     showError?: boolean;
 }
@@ -12,10 +12,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({ type, name, label, err
     return (
         <>
             {/* label */}
-            <label htmlFor={name} className="font-medium text-gray-800 tracking-tight flex gap-1">
-                {label} {error && (<div className="text-red-600">*</div>)}
-            </label>
-
+            {label && (
+                <label htmlFor={name} className="font-medium text-gray-800 tracking-tight flex gap-1">
+                    {label} {error && (<div className="text-red-600">*</div>)}
+                </label>
+            )}
+            
             {/* field */}
             <input type={type} name={name} id={name} ref={ref}
                 className={clsx("mt-2 border border-gray-200 w-full px-2 py-1.75 rounded-lg focus:outline-0 transition-colors duration-150", {

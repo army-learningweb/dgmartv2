@@ -25,7 +25,6 @@ export default function Create({ post_categories }: ReadPostCategoriesType) {
     const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         post("/admin/posts/store", {
-            preserveScroll: true,
             preserveState: true,
             onSuccess: () => {
                 clearErrors();

@@ -52,7 +52,7 @@ export default function SearchBar({
                         onFocus={onFocus}
                         onBlur={onBlur}
                         value={querySearch}
-                        className="flex-1 px-2 py-1.5 focus:outline-0"
+                        className="flex-1 px-2 py-1.5 focus:outline-0 truncate"
                         placeholder={placeHolderSearch}
                         autoComplete="off"
                     />
@@ -118,7 +118,7 @@ export default function SearchBar({
                         onMouseDown={() => onMouseDown(item.name)}
                         onMouseEnter={() => onMouseEnter(item.name)}
                         onMouseLeave={onMouseLeave}
-                        className="cursor-pointer rounded-md p-1 hover:bg-gray-100"
+                        className="cursor-pointer rounded-md p-1 hover:bg-gray-100 truncate"
                     >
                         {item.name}
                     </div>

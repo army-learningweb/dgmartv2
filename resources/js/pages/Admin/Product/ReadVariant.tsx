@@ -128,7 +128,7 @@ export default function ReadVariant({
                 </div>
 
                 {/* filter & search */}
-                <div className="mt-4 flex items-center justify-between">
+                <div className="mt-4 flex flex-col md:flex-row items-center justify-between">
                     <SearchBar
                         onChange={handleQuerySearch}
                         onClearQuery={handleClearQuerySearch}

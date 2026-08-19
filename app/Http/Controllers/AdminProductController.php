@@ -7,7 +7,7 @@ use Inertia\Inertia;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\Media;
-use App\Models\ProductConfigType;
+use App\Models\ProductVariant;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -26,13 +26,19 @@ class AdminProductController extends Controller
             ->when($request->input('search'), function ($query, $value) {
                 $query->where('name', 'like', "%{$value}%");
             })
-            ->when($request->input('filter'), function ($query, $value) {
+            ->when($request->input('filter_status'), function ($query, $value) {
                 $query->where('status', $value);
+            })
+            ->when($request->input('filter_category'), function ($query, $value) {
+                $query->where('category_id', $value);
             })
             ->select(['id', 'name', 'desc', 'status', 'user_id', 'category_id', 'created_at', 'slug'])
             ->latest()
             ->paginate(5)
             ->withQueryString();
+        
+        $products_suggest = Product::latest()->take(5)->get(['id','name']);
+        $products_categories = ProductCategory::whereNot('id',1)->get(['id','name', 'parent_id']);
 
         $total = Product::count();
         $active = Product::where('status', 'active')->count();
@@ -40,10 +46,13 @@ class AdminProductController extends Controller
 
         return Inertia::render("Admin/Product/Read", [
             'products' => $products,
+            'products_categories' => $products_categories,
+            'products_suggest' => $products_suggest,
             'total' => $total,
-            'active' => $active,
+            'active' => $active,    
             'inactive' => $inactive,
-            'filter' => $request->input('filter'),
+            'filter_status' => $request->input('filter_status'),
+            'filter_category' => $request->input('filter_category'),
             'search' => $request->input('search')
         ]);
     }
@@ -165,12 +174,14 @@ class AdminProductController extends Controller
 
         // Xóa sản phẩm
         $product->delete();
-
         if ($request->input('product_on_page') === 1) {
             $current_page = (int) $request->input('current_page') - 1;
-            return redirect("/admin/product?page={$current_page}");
+            if($current_page === 0) {
+                return redirect("/admin/products");
+            }
+            return redirect("/admin/products?page={$current_page}");
         }
-        return redirect("/admin/product?page={$request->input('current_page')}");
+        return redirect("/admin/products?page={$request->input('current_page')}");
     }
 
     // Sửa
@@ -352,5 +363,26 @@ class AdminProductController extends Controller
                     'updated_at' => now()
                 ]);
         }
+    }
+
+    // Lấy sản phẩm theo gợi ý tìm kiếm
+    public function getProducts(Request $request){
+        $query = $request->input('search');
+        $products = Product::where('name','like',"%{$query}%")->get(['id','name']);
+        return response()->json($products);
+    }
+
+    // Lấy cấu hình của sản phẩm
+    public function getConfigs(string $id){
+
+        $products_variant = ProductVariant::where('product_id',$id)->get(['id','code','price','price_discount','discount','qty','qty_sold','is_default']);
+
+        $product_name = Product::where('id',$id)->value('name');
+
+        $data = [
+            'products_variant' => $products_variant,
+            'product_name' => $product_name,
+        ];
+        return response()->json($data);
     }
 }

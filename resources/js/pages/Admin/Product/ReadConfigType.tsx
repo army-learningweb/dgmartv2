@@ -18,8 +18,6 @@ import { EditProductConfigTypeS } from '@/types/module/product_config_type';
 import { ConfigType } from '@/types/module/product_config_type';
 
 export default function ReadConfigType({ types, configs, total }: ReadProductConfigTypeS) {
-
-    console.log(configs);
     const { data, setData, post, patch, errors, processing, reset, clearErrors, } = useForm<CreateProductConfigTypeS>({
         id: '',
         name: '',

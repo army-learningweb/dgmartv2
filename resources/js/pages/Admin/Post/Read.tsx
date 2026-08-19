@@ -1,30 +1,37 @@
-import { Head, router } from '@inertiajs/react';
-import { useState } from 'react';
+import { Head, router, Link } from '@inertiajs/react';
 import toast from 'react-hot-toast';
+import { ArrowDownUp, CalendarArrowUp, CalendarArrowDown } from 'lucide-react';
 
 import Badge from '@/components/ui/Badge';
 import SearchBar from '@/components/Admin/TableManager/SearchBar';
-import FilterTab from '@/components/Admin/TableManager/FilterTab';
 import Pagination from '@/components/Admin/Pagination/Pagination';
 import EmptyData from '@/components/Admin/Empty/EmptyData';
 import FilterTabGroup from '@/components/Admin/TableManager/FilterTabGroup';
+import Select from '@/components/ui/Select';
+import ButtonDelete from '@/components/Admin/TableManager/ButtonDelete';
+import ButtonEditLink from '@/components/Admin/TableManager/ButtonEditLink';
+import Title from '@/components/Admin/TableManager/Title';
+import ButtonCreateLink from '@/components/Admin/TableManager/ButtonCreateLink';
+import ButtonResetFilter from '@/components/Admin/TableManager/ButtonResetFilter';
+import ButtonResetFilterMobile from '@/components/Admin/TableManager/ButtonResetFilterMobile';
+import Button from '@/components/ui/Button';
 
 import { useSearch } from '@/hooks/use-search';
 import { useFilter } from '@/hooks/use-filter';
 
 import { ReadPostType } from '@/types/module/post';
-import ButtonDelete from '@/components/Admin/TableManager/ButtonDelete';
-import ButtonEditLink from '@/components/Admin/TableManager/ButtonEditLink';
-import Title from '@/components/Admin/TableManager/Title';
-import ButtonCreateLink from '@/components/Admin/TableManager/ButtonCreateLink';
 
 export default function Read({
     posts,
     posts_suggest,
+    posts_categories,
     total,
     active,
     inactive,
     filter_status,
+    filter_category,
+    filter_date,
+    sort_date,
     search,
 }: ReadPostType) {
     // Bộ lọc tổng hợp
@@ -32,10 +39,19 @@ export default function Read({
         route: '/admin/posts',
         initialsFilter: {
             filter_status,
+            filter_category,
+            filter_date,
+            sort_date,
             search,
             page: posts.current_page,
         },
-        onlyLoad: ['posts', 'filter_status'],
+        onlyLoad: [
+            'posts',
+            'filter_status',
+            'filter_category',
+            'filter_date',
+            'sort_date',
+        ],
     });
 
     // Tìm kiếm
@@ -112,28 +128,80 @@ export default function Read({
                 </div>
 
                 {/* filter & search */}
-                <div className="mt-4 flex items-center justify-between">
-                    {/* filter & search */}
+                <div className="mt-4 flex flex-col items-center justify-between md:flex-row">
+                    <div className="flex w-full flex-1 flex-col gap-2 md:flex-row">
+                        {/* search */}
+                        <SearchBar
+                            onChange={handleQuerySearch}
+                            onClearQuery={handleClearQuerySearch}
+                            onFocus={handleFocusSearch}
+                            onBlur={handleBlurSearch}
+                            onMouseDown={handleChoose}
+                            onMouseEnter={handleSetPlaceHolder}
+                            onMouseLeave={handleLeave}
+                            dataSuggest={dataSuggest}
+                            querySearch={querySearch}
+                            placeHolderSearch={placeholderSearch}
+                            loadingSearch={loadingSearch}
+                            openSuggest={openSuggest}
+                        />
 
-                    <SearchBar
-                        onChange={handleQuerySearch}
-                        onClearQuery={handleClearQuerySearch}
-                        onFocus={handleFocusSearch}
-                        onBlur={handleBlurSearch}
-                        onMouseDown={handleChoose}
-                        onMouseEnter={handleSetPlaceHolder}
-                        onMouseLeave={handleLeave}
-                        dataSuggest={dataSuggest}
-                        querySearch={querySearch}
-                        placeHolderSearch={placeholderSearch}
-                        loadingSearch={loadingSearch}
-                        openSuggest={openSuggest}
-                    />
+                        {/* filter */}
+                        <Select
+                            name="filter-category"
+                            onChange={(e) =>
+                                handleQueryFilter({
+                                    filter_category: e.target.value,
+                                })
+                            }
+
+                            value={filter_category ?? ''}
+                        >
+                            <option value="">Theo danh mục</option>
+                            {posts_categories?.length > 0 &&
+                                posts_categories.map((item) => (
+                                    <option key={item.id} value={item.id}>
+                                        {item.name}
+                                    </option>
+                                ))}
+
+                            {posts_categories?.length === 0 && (
+                                <option value="">
+                                    Chưa danh có danh mục nào !
+                                </option>
+                            )}
+                        </Select>
+
+                        {/* filter date */}
+                        <input
+                            type="date"
+                            name="filter-date"
+                            id="filter-date"
+                            className="w-full rounded-lg border border-gray-200 px-2 py-1.75 transition-colors duration-150 focus:outline-0 md:w-fit"
+                            min="2026-08-18"
+                            max="2030-12-31"
+                            onChange={(e) =>
+                                handleQueryFilter({
+                                    filter_date: e.target.value,
+                                })
+                            }
+                            value={filter_date ?? ''}
+                        />
+
+                        {/* button reset on desktop */}
+                        {(filter_category || filter_status || search || sort_date) && (
+                            <ButtonResetFilter route="/admin/posts" />
+                        )}
+                    </div>
 
                     {/* stats */}
                     <FilterTabGroup data={filterTabData} />
-                </div>
 
+                    {/* button reset on mobile */}
+                    {(filter_category || filter_status || search) && (
+                        <ButtonResetFilterMobile route="/admin/posts" />
+                    )}
+                </div>
                 {posts.data?.length > 0 && (
                     <div className="mt-4 h-full overflow-hidden rounded-xl border border-gray-200">
                         {/* desktop */}
@@ -145,7 +213,62 @@ export default function Read({
                                         Danh mục & Slug
                                     </td>
                                     <td className="px-4 py-2">Người tạo</td>
-                                    <td className="px-4 py-2">Ngày đăng</td>
+                                    <td className="px-4 py-2">
+                                        <div className="flex items-center gap-2">
+                                            <span>Ngày tạo</span>
+                                            {sort_date === null && (
+                                                <Button
+                                                    onClick={() =>
+                                                        handleQueryFilter({
+                                                            sort_date: 'asc',
+                                                        })
+                                                    }
+                                                    size="small"
+                                                    variant="outline"
+                                                    animatePress={true}
+                                                >
+                                                    <ArrowDownUp
+                                                        size={15}
+                                                        strokeWidth={2}
+                                                    />
+                                                </Button>
+                                            )}
+                                            {sort_date === 'asc' && (
+                                                <Button
+                                                    onClick={() =>
+                                                        handleQueryFilter({
+                                                            sort_date: 'desc',
+                                                        })
+                                                    }
+                                                    size="small"
+                                                    variant="outline"
+                                                    animatePress={true}
+                                                >
+                                                    <CalendarArrowUp
+                                                        size={15}
+                                                        strokeWidth={2}
+                                                    />
+                                                </Button>
+                                            )}
+                                            {sort_date === 'desc' && (
+                                                <Button
+                                                    onClick={() =>
+                                                        handleQueryFilter({
+                                                            sort_date: 'asc',
+                                                        })
+                                                    }
+                                                    size="small"
+                                                    variant="outline"
+                                                    animatePress={true}
+                                                >
+                                                    <CalendarArrowDown
+                                                        size={15}
+                                                        strokeWidth={2}
+                                                    />
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </td>
                                     <td className="px-4 py-2">Trạng thái</td>
                                     <td className="px-4 py-2">Tùy chỉnh</td>
                                 </tr>
@@ -174,9 +297,12 @@ export default function Read({
                                                     />
                                                 </a>
                                                 <div className="flex flex-col gap-1">
-                                                    <p className="w-35 truncate font-medium">
+                                                    <Link
+                                                        href={`/admin/posts/${item.id}/edit`}
+                                                        className="w-35 truncate font-medium hover:underline"
+                                                    >
                                                         {item.title}
-                                                    </p>
+                                                    </Link>
                                                     <p className="w-35 truncate text-gray-500">
                                                         {item.desc}
                                                     </p>

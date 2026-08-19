@@ -46,7 +46,6 @@ export const useSearch = ({
                         params: { search: query },
                     },
                 );
-
                 setDataSuggest(res.data);
                 setLoadingSearch(false);
             } catch (error) {
@@ -78,7 +77,6 @@ export const useSearch = ({
         const lowerName = name.toLowerCase();
         handleQueryFilter({ search: lowerName });
         setQuerySearch(lowerName);
-
         try {
             const res = await axios.get(
                 routeGetData,

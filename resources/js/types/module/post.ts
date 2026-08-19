@@ -46,6 +46,11 @@ interface PostSuggestProps {
     name: string;
 }
 
+interface PostCategoryProps {
+    id:string | number;
+    name: string;
+}
+
 // Đọc
 export type ReadPostType = {
     posts: PaginatedData<
@@ -66,10 +71,14 @@ export type ReadPostType = {
         >
     >;
     posts_suggest: PostSuggestProps[];
+    posts_categories: PostCategoryProps[];
     total: string;
     active: string;
     inactive: string;
     filter_status: string;
+    filter_category: string | number;
+    filter_date: string | number;
+    sort_date: string;
     search: string;
 };
 

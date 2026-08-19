@@ -34,7 +34,8 @@ export default function Select({ children, label, name, error, showError = true 
                 >
                     {children}
                 </select>
-                <div className={clsx('absolute right-2', {
+
+                <div className={clsx('absolute right-1 pointer-events-none', {
                     'top-2.5' : !label,
                     'top-9.5' : label
                 })}>

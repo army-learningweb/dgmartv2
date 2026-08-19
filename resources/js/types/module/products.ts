@@ -33,9 +33,9 @@ interface ProductType {
 }
 
 interface ProductCategories {
-    id: string;
+    id: string | number;
     name: string;
-    parent_id: string;
+    parent_id: string | number;
 }
 
 interface ReadEditProductMediaType {
@@ -56,15 +56,22 @@ interface ReadEditProduct {
     medias: ReadEditProductMediaType[] | null;
 }
 
+interface ProductSuggestProps {
+    id: string | number;
+    name: string;
+}
+
 export type ReadProductType = {
     products: PaginatedData<ProductType>;
-    product_categories: ProductCategories[];
+    products_suggest : ProductSuggestProps[];
+    products_categories: ProductCategories[];
     total: string;
     active: string;
     inactive: string;
     curent_page: number;
     product_on_page: number;
-    filter: string;
+    filter_status: string;
+    filter_category: string | number;
     search: string;
 };
 

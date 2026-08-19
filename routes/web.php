@@ -14,8 +14,9 @@ use App\Http\Controllers\AdminProductConfigGroupController;
 use App\Http\Controllers\AdminRoleController;
 use App\Http\Controllers\AdminUploadFileContentController;
 use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\HomeController;
 
-Route::inertia('/', 'welcome')->name('home');
+Route::get('/',[HomeController::class, 'read']);
 
 //AUTH
 Route::get('/admin/login', [AdminAuthController::class, 'login'])->name('login');
@@ -47,7 +48,7 @@ Route::middleware(['auth'])->group( function(){
     Route::post('/admin/users/roles/store', [AdminRoleController::class, 'store']);
     Route::patch('/admin/users/roles/{role}/update', [AdminRoleController::class, 'update']);
     Route::delete('/admin/users/roles/{role}/delete', [AdminRoleController::class, 'delete']);
-    ROute::get('/admin/users/roles/{role}/getPermissions', [AdminRoleController::class, 'getPermissions']);
+    Route::get('/admin/users/roles/{role}/getPermissions', [AdminRoleController::class, 'getPermissions']);
 
     //PRODUCT
     Route::get('/admin/products', [AdminProductController::class, 'read']);
@@ -56,6 +57,8 @@ Route::middleware(['auth'])->group( function(){
     Route::get('/admin/products/{product}/edit', [AdminProductController::class, 'edit']);
     Route::post('/admin/products/{product}/update', [AdminProductController::class, 'update']);
     Route::delete('/admin/products/{product}/delete', [AdminProductController::class, 'delete']);
+    Route::get('/admin/products/getProducts', [AdminProductController::class , 'getProducts']);
+    Route::get('/admin/products/{id}/getConfigs', [AdminProductController::class , 'getConfigs']);
 
     //PRODUCT CATEGORY
     Route::get('/admin/products/categories', [AdminProductCategoriesController::class, 'read']);
@@ -99,7 +102,7 @@ Route::middleware(['auth'])->group( function(){
     Route::get('/admin/posts/{post}/edit', [AdminPostController::class, 'edit']);
     Route::post('/admin/posts/{post}/update', [AdminPostController::class, 'update']);
     Route::delete('/admin/posts/{post}/delete', [AdminPostController::class, 'delete']);
-    Route::get('/admin/users/getPosts', [AdminPostController::class , 'getPosts']);
+    Route::get('/admin/posts/getPosts', [AdminPostController::class , 'getPosts']);
 
     //POST CATEGORY
     Route::get('/admin/posts/categories', [AdminPostCategoriesController::class, 'read']);

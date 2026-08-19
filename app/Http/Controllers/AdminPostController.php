@@ -27,12 +27,22 @@ class AdminPostController extends Controller
             ->when($request->input('filter_status'), function ($query, $value) {
                 $query->where('status', $value);
             })
+            ->when($request->input('filter_category'), function ($query, $value) {
+                $query->where('category_id', $value);
+            })
+            ->when($request->input('filter_date'), function ($query, $value) {
+                $query->whereDate('created_at',$value);
+            })
+            ->when($request->input('sort_date'), function ($query, $value) {
+                $query->orderBy('created_at',$value);
+            })
             ->select(['id', 'title', 'desc', 'status', 'user_id', 'category_id', 'created_at', 'slug'])
             ->latest()
             ->paginate(5)
             ->withQueryString();
 
         $posts_suggest = Post::latest()->take(5)->get(['id','title as name']);
+        $posts_categories = PostCategory::get(['id','name']);
 
         $total = Post::count();
         $active = Post::where('status', 'active')->count();
@@ -45,7 +55,11 @@ class AdminPostController extends Controller
             'active' => $active,
             'inactive' => $inactive,
             'filter_status' => $request->input('filter_status'),
-            'search' => $request->input('search')
+            'filter_category' => $request->input('filter_category'),
+            'filter_date' => $request->input('filter_date'),
+            'sort_date' => $request->input('sort_date'),
+            'search' => $request->input('search'),
+            'posts_categories' => $posts_categories
         ]);
     }
 
@@ -137,6 +151,11 @@ class AdminPostController extends Controller
 
         if ($request->input('post_on_page') === 1) {
             $current_page = (int) $request->input('current_page') - 1;
+
+            if($current_page === 0) {
+                return redirect("/admin/posts");
+            }
+
             return redirect("/admin/posts?page={$current_page}");
         }
 

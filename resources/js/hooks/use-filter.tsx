@@ -26,6 +26,7 @@ export const useFilter = ({
 
         router.get(route, requestFilters, {
             preserveState: true,
+            preserveScroll: true,
             only: onlyLoad,
         });
     };

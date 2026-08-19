@@ -92,97 +92,159 @@ export default function EditVariant({ products, productConFigTypes, variant, dat
             <section>
                 {/* title */}
                 <div className="flex items-center justify-between">
-                    <SimpleBreadcrum prevRoute="/admin/products/variants" prevPage="Cấu hình & biến thể" currentPage="Chỉnh sửa cấu hình & biến thể" />
+                    <SimpleBreadcrum
+                        prevRoute="/admin/products/variants"
+                        prevPage="Cấu hình & biến thể"
+                        currentPage="Chỉnh sửa"
+                    />
                 </div>
 
                 {/* form */}
-                <form onSubmit={(e) => handleSubmit(e,variant.id)}>
-                    <div className='flex gap-7'>
-                        <div className="w-[31%]">
+                <form onSubmit={(e) => handleSubmit(e, variant.id)}>
+                    <div className="flex flex-col gap-7 md:flex-row">
+                        <div className="order-2 md:order-1 md:w-[31%]">
                             <div className="sticky top-8">
                                 {/* type config */}
-                                <div className='mt-2'>
+                                <div className="mt-2 hidden md:block">
                                     <Select
                                         label="Loại cấu hình"
                                         name="types"
-                                        onChange={(e) => handleGetConfigs(e.target.value)}
+                                        onChange={(e) =>
+                                            handleGetConfigs(e.target.value)
+                                        }
                                         onBlur={() => clearErrors('config_id')}
                                         defaultValue={data.type_id ?? ''}
-                                        className={clsx("", {
-                                            "ring-3 ring-red-600/20 border-red-600 focus:ring-red-600/20 focus:border-red-600": errors.config_id,
-                                            "focus:ring-3 focus:ring-gray-300/70 focus:ring-offset-blue-50 focus:border-gray-400/70 ": !errors.config_id
+                                        className={clsx('', {
+                                            'border-red-600 ring-3 ring-red-600/20 focus:border-red-600 focus:ring-red-600/20':
+                                                errors.config_id,
+                                            'focus:border-gray-400/70 focus:ring-3 focus:ring-gray-300/70 focus:ring-offset-blue-50':
+                                                !errors.config_id,
                                         })}
                                     >
-                                        <option value="">-Chọn loại cấu hình-</option>
-                                        {productConFigTypes?.length > 0 && (
-                                            productConFigTypes.map(type => (
-                                                <option key={type.id} value={type.id}>{type.name}</option>
-                                            ))
-                                        )}
+                                        <option value="">
+                                            -Chọn loại cấu hình-
+                                        </option>
+                                        {productConFigTypes?.length > 0 &&
+                                            productConFigTypes.map((type) => (
+                                                <option
+                                                    key={type.id}
+                                                    value={type.id}
+                                                >
+                                                    {type.name}
+                                                </option>
+                                            ))}
                                         {productConFigTypes?.length === 0 && (
-                                            <option value="">Chưa có loại cấu hình nào</option>
+                                            <option value="">
+                                                Chưa có loại cấu hình nào
+                                            </option>
                                         )}
                                     </Select>
 
-                                    {errors.config_id && (<div className="mt-2 text-red-600">
-                                        {errors.config_id}
-                                    </div>
+                                    {errors.config_id && (
+                                        <div className="mt-2 text-red-600">
+                                            {errors.config_id}
+                                        </div>
                                     )}
                                 </div>
-                                
+
                                 {/* product */}
-                                <div className="mt-2">
+                                <div className="md:mt-2">
                                     <Select
-                                        onChange={(e) => setData('product_id', e.target.value)}
+                                        onChange={(e) =>
+                                            setData(
+                                                'product_id',
+                                                e.target.value,
+                                            )
+                                        }
                                         onBlur={() => clearErrors('product_id')}
                                         label="Sản phẩm"
                                         name="product_id"
                                         error={errors.product_id}
-                                        value={data.product_id ?? ""}
+                                        value={data.product_id ?? ''}
                                         disabled={true}
-                                        className="bg-red-600/20 cursor-not-allowed"
-                                        >
-                                        <option value="">-Chọn sản phẩm-</option>
+                                        className="cursor-not-allowed bg-red-600/20"
+                                    >
+                                        <option value="">
+                                            -Chọn sản phẩm-
+                                        </option>
 
-                                        {Object.values(products)?.length > 0 && (
-                                            Object.entries(products).map(([group, productItems]) => (
-                                                <Fragment key={group}>
-                                                    <option value={group} className='font-medium text-black' disabled>{group}</option>
-                                                    {productItems.map(product => (
-                                                        <option key={product.id} value={product.id}>{product.name}</option>
-                                                    ))}
-                                                </Fragment>
-                                            ))
+                                        {Object.values(products)?.length > 0 &&
+                                            Object.entries(products).map(
+                                                ([group, productItems]) => (
+                                                    <Fragment key={group}>
+                                                        <option
+                                                            value={group}
+                                                            className="font-medium text-black"
+                                                            disabled
+                                                        >
+                                                            {group}
+                                                        </option>
+                                                        {productItems.map(
+                                                            (product) => (
+                                                                <option
+                                                                    key={
+                                                                        product.id
+                                                                    }
+                                                                    value={
+                                                                        product.id
+                                                                    }
+                                                                >
+                                                                    {
+                                                                        product.name
+                                                                    }
+                                                                </option>
+                                                            ),
+                                                        )}
+                                                    </Fragment>
+                                                ),
+                                            )}
+
+                                        {Object.values(products)?.length ==
+                                            0 && (
+                                            <option value="">
+                                                Chưa có sản phẩm nào
+                                            </option>
                                         )}
-
-                                        {Object.values(products)?.length == 0 && (
-                                            <option value="">Chưa có sản phẩm nào</option>
-                                        )}
-
                                     </Select>
                                 </div>
-                                    
+
                                 {/* role */}
-                                <div className='mt-2'>
+                                <div className="mt-2">
                                     <Select
                                         label="Vai trò cấu hình"
                                         name="is_default"
                                         value={data.is_default}
-                                        onChange={(e) => setData('is_default', e.target.value as 'default' | 'variant',)}
+                                        onChange={(e) =>
+                                            setData(
+                                                'is_default',
+                                                e.target.value as
+                                                    'default' | 'variant',
+                                            )
+                                        }
                                         onBlur={() => clearErrors('is_default')}
-                                        className={clsx("", {
-                                            "ring-3 ring-red-600/20 border-red-600 focus:ring-red-600/20 focus:border-red-600": errors.is_default || Object.values(errors)[0],
-                                            "focus:ring-3 focus:ring-gray-300/70 focus:ring-offset-blue-50 focus:border-gray-400/70 ": !errors.is_default || Object.values(errors)[0]
+                                        className={clsx('', {
+                                            'border-red-600 ring-3 ring-red-600/20 focus:border-red-600 focus:ring-red-600/20':
+                                                errors.is_default ||
+                                                Object.values(errors)[0],
+                                            'focus:border-gray-400/70 focus:ring-3 focus:ring-gray-300/70 focus:ring-offset-blue-50':
+                                                !errors.is_default ||
+                                                Object.values(errors)[0],
                                         })}
                                     >
-                                        <option value="">-Chọn vai trò cấu hình-</option>
-                                        <option value="default">Chọn làm mặc định</option>
-                                        <option value="variant">Chọn làm biến thể</option>
+                                        <option value="">
+                                            -Chọn vai trò cấu hình-
+                                        </option>
+                                        <option value="default">
+                                            Chọn làm mặc định
+                                        </option>
+                                        <option value="variant">
+                                            Chọn làm biến thể
+                                        </option>
                                     </Select>
                                 </div>
-                                
+
                                 {/* code */}
-                                <div className='mt-2'>
+                                <div className="mt-2">
                                     <Input
                                         type="text"
                                         name="code"
@@ -190,93 +252,201 @@ export default function EditVariant({ products, productConFigTypes, variant, dat
                                         placeholder="DG#123"
                                         error={errors.code}
                                         value={data.code}
-                                        onChange={(e) => setData('code', e.target.value)}
-                                        onBlur={() => clearErrors('code')} autoComplete="on" />
+                                        onChange={(e) =>
+                                            setData('code', e.target.value)
+                                        }
+                                        onBlur={() => clearErrors('code')}
+                                        autoComplete="on"
+                                    />
                                 </div>
-                                
+
                                 {/* qty */}
-                                <div className='mt-2'>
+                                <div className="mt-2">
                                     <Input
                                         type="text"
                                         name="qty"
                                         label="Số lượng"
                                         error={errors.qty}
                                         value={data.qty}
-                                        onChange={(e) => setData('qty', e.target.value)}
-                                        onBlur={() => clearErrors('qty')} autoComplete="on" />
+                                        onChange={(e) =>
+                                            setData('qty', e.target.value)
+                                        }
+                                        onBlur={() => clearErrors('qty')}
+                                        autoComplete="on"
+                                    />
                                 </div>
-                                
+
                                 {/* price */}
-                                <div className='mt-2'>
+                                <div className="mt-2">
                                     <Input
                                         type="number"
                                         name="price"
                                         label="Giá"
                                         error={errors.price}
                                         value={data.price}
-                                        onChange={(e) => setData('price', e.target.value)}
-                                        onBlur={() => clearErrors('price')} autoComplete="on" />
+                                        onChange={(e) =>
+                                            setData('price', e.target.value)
+                                        }
+                                        onBlur={() => clearErrors('price')}
+                                        autoComplete="on"
+                                    />
                                 </div>
-                                
+
                                 {/* sales_off */}
-                                <div className='mt-2'>
+                                <div className="mt-2">
                                     <Input
                                         type="number"
                                         name="discount"
                                         label="Giảm giá %"
                                         error={errors.discount}
                                         value={data.discount}
-                                        onChange={(e) => setData('discount', e.target.value)}
-                                        onBlur={() => clearErrors('discount')} autoComplete="on" />
+                                        onChange={(e) =>
+                                            setData('discount', e.target.value)
+                                        }
+                                        onBlur={() => clearErrors('discount')}
+                                        autoComplete="on"
+                                    />
                                 </div>
-
+                                
+                                {/* button */}
                                 <div className="mt-4 flex justify-end gap-2">
                                     <ButtonBackLink route="/admin/products/variants" />
 
-                                    <Button size="small" processing={processing} processingLabel="Đang xử lí..." animatePress={true}>
+                                    <Button
+                                        size="small"
+                                        processing={processing}
+                                        processingLabel="Đang xử lí..."
+                                        animatePress={true}
+                                    >
                                         Cập nhật
                                     </Button>
                                 </div>
                             </div>
                         </div>
-                        
+
                         {/* configs */}
-                        <div className="flex-1 mt-7">
+                        <div className="flex-1 md:mt-7 order-1 md:order-2">
+                            <div className="mt-2">
+                                <Select
+                                    label="Loại cấu hình"
+                                    name="types"
+                                    onChange={(e) =>
+                                        handleGetConfigs(e.target.value)
+                                    }
+                                    onBlur={() => clearErrors('config_id')}
+                                    defaultValue={data.type_id ?? ''}
+                                    className={clsx('', {
+                                        'border-red-600 ring-3 ring-red-600/20 focus:border-red-600 focus:ring-red-600/20':
+                                            errors.config_id,
+                                        'focus:border-gray-400/70 focus:ring-3 focus:ring-gray-300/70 focus:ring-offset-blue-50':
+                                            !errors.config_id,
+                                    })}
+                                >
+                                    <option value="">
+                                        -Chọn loại cấu hình-
+                                    </option>
+                                    {productConFigTypes?.length > 0 &&
+                                        productConFigTypes.map((type) => (
+                                            <option
+                                                key={type.id}
+                                                value={type.id}
+                                            >
+                                                {type.name}
+                                            </option>
+                                        ))}
+                                    {productConFigTypes?.length === 0 && (
+                                        <option value="">
+                                            Chưa có loại cấu hình nào
+                                        </option>
+                                    )}
+                                </Select>
+
+                                {errors.config_id && (
+                                    <div className="mt-2 text-red-600">
+                                        {errors.config_id}
+                                    </div>
+                                )}
+                            </div>
+
                             {Object.values(configs)?.length > 0 && (
-                                <div className="h-full w-full rounded-lg mt-1.5">
-                                    {Object.entries(configs).map(([group, configItems]) => (
-                                        <div key={group} className="mb-5">
-                                            <div className="font-medium first-of-type:mt-0 bg-gray-100 border border-gray-100 p-2 rounded-lg">
-                                                {group.toUpperCase()}
+                                <div className="mt-1.5 h-full w-full rounded-lg">
+                                    {Object.entries(configs).map(
+                                        ([group, configItems]) => (
+                                            <div key={group} className="mb-5">
+                                                <div className="rounded-lg border border-gray-100 bg-gray-100 p-2 font-medium first-of-type:mt-0">
+                                                    {group.toUpperCase()}
+                                                </div>
+                                                <div className="my-4 grid grid-cols-2 gap-2">
+                                                    {configItems.map(
+                                                        (config) => (
+                                                            <label
+                                                                key={config.id}
+                                                                htmlFor={
+                                                                    config.name
+                                                                }
+                                                                className={clsx(
+                                                                    'flex cursor-pointer items-center gap-2 rounded-lg border border-gray-200 p-2 hover:border-gray-400',
+                                                                    {
+                                                                        'border-gray-400':
+                                                                            configData.some(
+                                                                                (
+                                                                                    item,
+                                                                                ) =>
+                                                                                    item.id ===
+                                                                                    config.id,
+                                                                            ),
+                                                                    },
+                                                                )}
+                                                            >
+                                                                <input
+                                                                    type="radio"
+                                                                    name={group}
+                                                                    id={
+                                                                        config.name
+                                                                    }
+                                                                    value={
+                                                                        config.id
+                                                                    }
+                                                                    onChange={() =>
+                                                                        handleConfigData(
+                                                                            group,
+                                                                            config.id,
+                                                                        )
+                                                                    }
+                                                                    checked={configData.some(
+                                                                        (
+                                                                            item,
+                                                                        ) =>
+                                                                            item.id ===
+                                                                            config.id,
+                                                                    )}
+                                                                />
+                                                                <div className="mb-0.5 w-85 truncate">
+                                                                    {
+                                                                        config.name
+                                                                    }
+                                                                </div>
+                                                            </label>
+                                                        ),
+                                                    )}
+                                                </div>
                                             </div>
-                                            <div className="grid grid-cols-2 gap-2 my-4">
-                                                {configItems.map(config => (
-                                                    <label key={config.id} htmlFor={config.name}
-                                                        className={clsx("cursor-pointer border border-gray-200 p-2 flex items-center gap-2 rounded-lg hover:border-gray-400", {
-                                                            "border-gray-400" : configData.some(item => item.id === config.id)
-                                                        })}>
-                                                        <input type="radio" 
-                                                            name={group} 
-                                                            id={config.name} 
-                                                            value={config.id} 
-                                                            onChange={() => handleConfigData(group, config.id)}
-                                                            checked={configData.some(item => item.id === config.id)}  
-                                                        />
-                                                        <div className="w-85 truncate mb-0.5">{config.name}</div>
-                                                    </label>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    ))}
+                                        ),
+                                    )}
                                 </div>
                             )}
 
                             {Object.values(configs)?.length === 0 && (
-                                <div className="text-center font-medium text-gray-500 flex flex-col items-center justify-center gap-2 h-150">
-                                    <div className="bg-gray-200 p-1.5 rounded-lg"><Cog size={25} /></div>
+                                <div className="flex h-150 flex-col items-center justify-center gap-2 text-center font-medium text-gray-500">
+                                    <div className="rounded-lg bg-gray-200 p-1.5">
+                                        <Cog size={25} />
+                                    </div>
                                     <div>
                                         <p>Chưa chọn loại cấu hình</p>
-                                        <p>Các cấu hình sản phẩm sẽ được hiển thị tại đây</p>
+                                        <p>
+                                            Các cấu hình sản phẩm sẽ được hiển
+                                            thị tại đây
+                                        </p>
                                     </div>
                                 </div>
                             )}
@@ -285,5 +455,5 @@ export default function EditVariant({ products, productConFigTypes, variant, dat
                 </form>
             </section>
         </>
-    )
+    );
 }

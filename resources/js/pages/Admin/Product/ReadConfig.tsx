@@ -19,7 +19,6 @@ import { ReadProductConfigType } from "@/types/module/product_config"
 
 export default function ReadConfig({ configs, total, groupConfigs }: ReadProductConfigType) {
 
-    console.log(configs);
     const { data, setData, post, patch, errors, processing, reset, clearErrors, } = useForm<CreateProductConfigType>({
         id: '',
         name: '',
@@ -92,7 +91,7 @@ export default function ReadConfig({ configs, total, groupConfigs }: ReadProduct
             <Modal
                 onClose={handleCloseModal}
                 isOpen={openModal}
-                customSize="w-[90%] md:w-[30%] min-h-[40%]"
+                customSize="w-[90%] md:w-[30%] md:min-h-[40%]"
                 title={!isEditModal ? 'Thêm mới cấu hình' : 'Chỉnh sửa thông tin'}
                 labelSubmit={!isEditModal ? 'Thêm mới' : 'Cập nhật'}
                 formSubmitId="config"
