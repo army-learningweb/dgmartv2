@@ -169,7 +169,7 @@ export default function Read({
             {/* Modal review config */}
             <div
                 className={clsx(
-                    'fixed top-0 left-0 z-40 flex h-full w-full items-center justify-center bg-black/20 backdrop-blur-xs transition-all duration-150',
+                    'fixed top-0 left-0 z-50 flex h-full w-full items-center justify-center bg-black/20 backdrop-blur-xs transition-all duration-150',
                     {
                         'pointer-events-none opacity-0': !isOpen,
                         'pointer-events-auto opacity-100': isOpen,
@@ -407,7 +407,7 @@ export default function Read({
 
                             {/* empty variants */}
                             {variantData?.length === 0 && !loadingVariant && (
-                                <div className="flex h-full flex-col items-center justify-center gap-2 rounded-xl bg-gray-100">
+                                <div className="mt-4 flex h-117 flex-col items-center justify-center gap-2 rounded-xl bg-gray-100">
                                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200">
                                         <SlidersHorizontal size={18} />
                                     </div>

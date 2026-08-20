@@ -40,4 +40,8 @@ class Product extends Model
     public function mainImage(){
         return $this->hasOne(Media::class, 'object_id');
     }
+
+    public function basePrice(){
+        return $this->hasOne(ProductVariant::class, 'product_id')->where('is_default','default');
+    }
 }
