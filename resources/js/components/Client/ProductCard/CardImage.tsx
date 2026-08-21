@@ -7,11 +7,11 @@ interface CardImageProps {
 
 export default function CardImage({dataImage} : CardImageProps) {
     return (
-        <div className="item-center flex h-45 w-full justify-center">
+        <div className="item-center w-full h-60 flex items-center justify-center">
             <img
                 src={dataImage.file_url}
                 alt={dataImage.file_name}
-                className="h-44 w-44 object-cover"
+                className="w-50 h-50 object-cover"
             />
         </div>
     );

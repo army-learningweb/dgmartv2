@@ -6,25 +6,28 @@ import SliderButton from './SliderButton';
 import SliderTitle from './SliderTitle';
 import { useState } from 'react';
 import clsx from 'clsx';
+import { useSlider } from '@/hooks/use-slider';
 
 interface SliderProductProp {
     data: ProductDataProp[];
     title: string;
+    isShowBadgeNew?: boolean;
+    isShowBadgeDiscount?: boolean;
 }
 
-export default function SliderProduct({ data, title }: SliderProductProp) {
+export default function SliderProduct({
+    data,
+    title,
+    isShowBadgeDiscount = false,
+    isShowBadgeNew = false,
 
-    const sliderTurn = Math.floor(data.length / 5);
-    const mobilityIndex = 259
-    const [index, setIndex] = useState<number>(0)
-
-    const handleSlide = (action : 'plus' | 'minus') => {
-        if(action === 'plus'){
-            setIndex((prev) => Math.min(prev + 1, sliderTurn));
-        }else{
-            setIndex((prev) => Math.max(prev - 1, 0));
-        }
-    }
+}: SliderProductProp) {
+    
+    const { sliderTurn, mobilityIndex, index, handleSlide } = useSlider({
+        data,
+        itemVisibleAllowed : 4,
+        mobilityIndexProp : 316,
+    });
 
     return (
         <>
@@ -38,7 +41,8 @@ export default function SliderProduct({ data, title }: SliderProductProp) {
                         <div className="flex items-center gap-2">
                             <SliderButton
                                 className={clsx('', {
-                                    'pointer-events-none opacity-50': index === 0
+                                    'pointer-events-none opacity-50':
+                                        index === 0,
                                 })}
                                 onClick={() => handleSlide('minus')}
                             >
@@ -47,10 +51,7 @@ export default function SliderProduct({ data, title }: SliderProductProp) {
 
                             <SliderButton
                                 className={clsx('', {
-                                    'pointer-events-none opacity-50': Math.min(
-                                        index,
-                                        sliderTurn,
-                                    ),
+                                    'pointer-events-none opacity-50': index === sliderTurn,
                                 })}
                                 onClick={() => handleSlide('plus')}
                             >
@@ -70,8 +71,8 @@ export default function SliderProduct({ data, title }: SliderProductProp) {
                             <Card
                                 key={item.id}
                                 dataItem={item}
-                                showBadgeNew
-                                showBadgeDiscount
+                                showBadgeDiscount={isShowBadgeDiscount}
+                                showBadgeNew={isShowBadgeNew}
                             />
                         ))}
                     </div>

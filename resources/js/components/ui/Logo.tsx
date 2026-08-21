@@ -1,6 +1,6 @@
 export default function Logo() {
     return (
-        <div className="font-bold text-3xl pb-px tracking-tight text-blue-600">
+        <div className="font-bold text-3xl pb-px tracking-tight text-blue-600 select-none">
             Digimart
         </div>
     )

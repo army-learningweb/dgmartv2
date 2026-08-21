@@ -3,5 +3,5 @@ interface SliderTitleProps {
 }
 
 export default function SliderTitle({title} : SliderTitleProps){
-    return <h1 className="text-2xl font-medium">{title}</h1>;
+    return <h1 className="text-3xl font-medium tracking-tight select-none">{title}</h1>;
 }
