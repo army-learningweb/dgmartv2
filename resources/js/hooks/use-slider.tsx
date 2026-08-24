@@ -12,15 +12,15 @@ export const useSlider = ({
     mobilityIndexProp,
 }: useSliderProps) => {
 
-    const sliderTurn = Math.round(data.length / itemVisibleAllowed);
+    const sliderTurn = data.length - itemVisibleAllowed;
     const mobilityIndex = mobilityIndexProp;
     const [index, setIndex] = useState<number>(0);
 
     const handleSlide = (action: 'plus' | 'minus') => {
         if (action === 'plus') {
-            setIndex((prev) => Math.min(prev + 1, sliderTurn));
+            setIndex((prev) => prev + 1);
         } else {
-            setIndex((prev) => Math.max(prev - 1, 0));
+            setIndex((prev) => prev - 1);
         }
     };
 

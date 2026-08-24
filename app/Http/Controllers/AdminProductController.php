@@ -38,7 +38,7 @@ class AdminProductController extends Controller
             ->withQueryString();
         
         $products_suggest = Product::latest()->take(5)->get(['id','name']);
-        $products_categories = ProductCategory::whereNot('id',1)->get(['id','name', 'parent_id']);
+        $product_categories = ProductCategory::whereNot('id',1)->whereNot('parent_id',0)->get(['id','name', 'parent_id']);
 
         $total = Product::count();
         $active = Product::where('status', 'active')->count();
@@ -46,7 +46,7 @@ class AdminProductController extends Controller
 
         return Inertia::render("Admin/Product/Read", [
             'products' => $products,
-            'products_categories' => $products_categories,
+            'product_categories' => $product_categories,
             'products_suggest' => $products_suggest,
             'total' => $total,
             'active' => $active,    
@@ -60,7 +60,7 @@ class AdminProductController extends Controller
     // Thêm
     public function create()
     {
-        $product_categories = ProductCategory::whereNot('id', 1)->get(['id', 'name', 'parent_id']);
+        $product_categories = ProductCategory::whereNot('id', 1)->whereNot('parent_id',0)->get(['id', 'name', 'parent_id']);
         return Inertia::render("Admin/Product/Create", [
             "product_categories" => $product_categories
         ]);
@@ -77,7 +77,10 @@ class AdminProductController extends Controller
             'category_id' => ["required"],
         ], [
             "category_id.required" => "Danh mục sản phẩm không được để trống.",
-            "files.*" => "Lỗi ! không thể upload ảnh vui lòng kiểm tra lại định đạng hoặc kích cỡ File"
+            "files.*" => "Lỗi ! không thể upload ảnh vui lòng kiểm tra lại định đạng hoặc kích cỡ File",
+            "name.required" => ":attribute không được để trống"
+        ], [
+            "name" => "Tên sản phẩm"
         ]);
 
         $parent_category_slug = ProductCategory::where('id', $validated['category_id'])->value("slug");

@@ -2,7 +2,7 @@ import Logo from "@/components/ui/Logo";
 
 export default function Footer() {
     return (
-        <footer className="py-10">
+        <footer className="py-10 max-w-312 mx-auto">
             <div className="grid grid-cols-3 py-4">
                 <div className="col-span-1">
                     <Logo />

@@ -16,7 +16,7 @@ interface ModalLayoutProps {
 export default function ModalLayout({ customSize, title, labelSubmit, children, onClose, isOpen, formSubmitId, processing}: ModalLayoutProps) {
     return (
         <div className={clsx(
-            'transition-all duration-150 fixed top-0 left-0 z-40 flex h-full w-full items-center justify-center bg-black/20 backdrop-blur-xs ',
+            'transition-all duration-150 fixed top-0 left-0 z-50 flex h-full w-full items-center justify-center bg-black/20 backdrop-blur-xs ',
             {
                 'pointer-events-none opacity-0': !isOpen,
                 'pointer-events-auto opacity-100': isOpen,

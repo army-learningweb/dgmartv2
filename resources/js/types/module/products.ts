@@ -64,7 +64,7 @@ interface ProductSuggestProps {
 export type ReadProductType = {
     products: PaginatedData<ProductType>;
     products_suggest : ProductSuggestProps[];
-    products_categories: ProductCategories[];
+    product_categories: ProductCategories[];
     total: string;
     active: string;
     inactive: string;

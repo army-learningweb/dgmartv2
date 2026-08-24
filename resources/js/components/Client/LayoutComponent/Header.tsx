@@ -1,16 +1,16 @@
-import { Link } from "@inertiajs/react";
-import Logo from "@/components/ui/Logo";
+import { Link } from '@inertiajs/react';
+import Logo from '@/components/ui/Logo';
 import { Search, ShoppingBag } from 'lucide-react';
 
-export default function Header(){
+export default function Header() {
     return (
-        <header className="flex justify-between py-4">
-            <div className="flex gap-15">
+        <header className="mx-auto flex max-w-312 items-center justify-between py-4">
+            <div className="flex gap-10">
                 <Link href="/">
                     <Logo />
                 </Link>
 
-                <nav className="mt-1">
+                <nav className="mt-1 mr-10">
                     <ul className="flex gap-5">
                         <li>
                             <Link href="" className="inline-block py-2">

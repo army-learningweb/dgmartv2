@@ -7,13 +7,15 @@ interface HomeLayoutProps {
 
 export default function HomeLayout({ children }: HomeLayoutProps) {
     return (
-        <div className="bg-gray-100">
-            <div className="mx-auto flex min-h-screen max-w-312 flex-col">
+        <div className="bg-white">
+            <div className="min-h-screen">
                 {/* header */}
                 <Header />
-                
+
                 {/* main */}
-                <main className="mt-12 flex-1 space-y-10">{children}</main>
+                <main className="flex-1 space-y-15">
+                    {children}
+                </main>
 
                 {/* footer */}
                 <Footer />

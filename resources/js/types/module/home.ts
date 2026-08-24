@@ -3,17 +3,6 @@ export interface ProductDataProp {
     name: string;
     desc: string;
     slug: string;
-    status: string;
-    user_id: string | number;
-    category_id: string | number;
-    category : {
-        id: string | number;
-        name: string
-    }
-    user: {
-        id: string | number;
-        name: string;
-    }
     main_image: {
         object_id : string | number;
         file_url : string;
@@ -28,6 +17,25 @@ export interface ProductDataProp {
     }
 }
 
+export interface PostDataProp {
+    id: string | number;
+    name: string;
+    desc: string;
+    slug: string;
+    user_id: string | number;
+    created_at: string;
+    category_id: string | number;
+    category: {
+        id: string | number;
+        name: string;
+    };
+    user: {
+        id: string | number;
+        name: string;
+    };
+}
+
 export type ReadDataProduct = {
-    new_products : ProductDataProp[]
+    new_products : ProductDataProp[],
+    posts : PostDataProp[]
 }

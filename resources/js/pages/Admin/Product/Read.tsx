@@ -30,7 +30,7 @@ import axios from 'axios';
 export default function Read({
     products,
     products_suggest,
-    products_categories,
+    product_categories,
     total,
     active,
     inactive,
@@ -460,22 +460,17 @@ export default function Read({
                             value={filter_category ?? ''}
                         >
                             <option value="">Theo danh mục</option>
-                            {products_categories?.length > 0 &&
-                                products_categories.map((item) => (
+                            {product_categories?.length > 0 &&
+                                product_categories.map((item) => (
                                     <option
                                         key={item.id}
                                         value={item.id}
-                                        disabled={item.parent_id === 0}
-                                        className={clsx('', {
-                                            'font-medium text-gray-900':
-                                                item.parent_id === 0,
-                                        })}
                                     >
                                         {item.name}
                                     </option>
                                 ))}
 
-                            {products_categories?.length === 0 && (
+                            {product_categories?.length === 0 && (
                                 <option value="">
                                     Chưa danh có danh mục nào !
                                 </option>
@@ -484,7 +479,7 @@ export default function Read({
 
                         {/* button reset on desktop */}
                         {(filter_category || filter_status || search) && (
-                            <ButtonResetFilter route="/admin/products"/>
+                            <ButtonResetFilter route="/admin/products" />
                         )}
                     </div>
 
@@ -493,7 +488,7 @@ export default function Read({
 
                     {/* button reset on mobile */}
                     {(filter_category || filter_status || search) && (
-                        <ButtonResetFilterMobile route="/admin/products"/>
+                        <ButtonResetFilterMobile route="/admin/products" />
                     )}
                 </div>
 

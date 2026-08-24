@@ -5,7 +5,7 @@ export default function CategoryCard({dataItem, dataIndex} : any){
     return (
         <Link
             className={clsx(
-                'relative w-101 shrink-0 overflow-hidden rounded-2xl shadow hover:scale-101 hover:shadow-lg transition-all duration-250 ease-out',
+                'relative w-101 shrink-0 overflow-hidden rounded-2xl shadow hover:scale-[1.02] hover:shadow-lg transition-all duration-250 ease-out border border-gray-200 inline-block',
                 {
                     'bg-white': dataIndex % 2 === 0,
                     'bg-black text-gray-200': dataIndex % 2 !== 0,

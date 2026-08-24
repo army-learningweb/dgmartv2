@@ -6,7 +6,7 @@ interface TitleSectionProps {
 export default function SliderTitle({ title, className }: TitleSectionProps) {
     return (
         <h1
-            className={`text-5xl font-medium tracking-tight select-none ${className}`}
+            className={`text-4xl font-bold tracking-tight select-none inline-block${className}`}
         >
             {title}
         </h1>
