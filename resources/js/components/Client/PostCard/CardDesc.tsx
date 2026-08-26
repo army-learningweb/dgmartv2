@@ -7,7 +7,7 @@ interface CardDescProps {
 export default function CardDesc({ desc, route }: CardDescProps) {
     return (
         <div className="flex flex-col items-start">
-            <p className="line-clamp-3 text-gray-600">{desc}</p>
+            <p className="line-clamp-2 text-gray-600">{desc}</p>
                 <Link
                     href={route}
                     className="mt-2 text-sm text-blue-600 hover:underline"

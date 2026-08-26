@@ -7,10 +7,14 @@ export function BadgeNew() {
 }
 
 
-export function BadgeDiscount({ discountNum }: { discountNum : string | number}) {
+export function BadgeDiscount({ discountNum }: { discountNum : number}) {
     return (
-        <div className="w-fit rounded-full font-medium text-red-600 text-xs bg-red-50 px-2 py-0.75">
-            Giảm {discountNum}%
-        </div>
+        <>
+            {discountNum > 0 && (
+                <div className="w-fit rounded-full bg-red-50 px-2 py-0.75 text-xs font-medium text-red-600">
+                    Giảm {discountNum}%
+                </div>
+            )}
+        </>
     );
 }

@@ -40,6 +40,7 @@ export type ReadConfigType = Record<string, ConfigType[]> | {};
 export type CreateVariantDataType = {
     products: Record<string, Product[]>;
     productConFigTypes: ProductConfigType[];
+    productID: string | number;
 };
 
 export type CreateVariantType = {
@@ -119,6 +120,7 @@ export type EditVariantDataType = {
     products: Record<string, Product[]>;
     productConFigTypes: ProductConfigType[];
     dataConfig: Record<string,ProductConfigTypeEdit[]>
+    current_page : string | number;
 }
 
 export type EditVariantType = CreateVariantType;

@@ -15,8 +15,12 @@ use App\Http\Controllers\AdminRoleController;
 use App\Http\Controllers\AdminUploadFileContentController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProductController;
 
 Route::get('/',[HomeController::class, 'read']);
+
+//HOME
+Route::get('/laptop', [ProductController::class, 'read']);
 
 //AUTH
 Route::get('/admin/login', [AdminAuthController::class, 'login'])->name('login');

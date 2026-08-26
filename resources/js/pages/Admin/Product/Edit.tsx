@@ -15,8 +15,8 @@ import { EditProductType } from "@/types/module/products";
 import { ReadEditProductType } from "@/types/module/products";
 import ButtonBackLink from "@/components/Admin/TableManager/ButtonBackLink";
 
-export default function Edit({ product_categories, product }: ReadEditProductType) {
-    console.log(product);
+export default function Edit({ product_categories, product, current_page }: ReadEditProductType) {
+    
     const { data, setData, post, errors, processing, clearErrors } = useForm<EditProductType>({
         file: null,
         files: null,
@@ -27,7 +27,6 @@ export default function Edit({ product_categories, product }: ReadEditProductTyp
         content: product.content,
         status: product.status,
         category_id: product.category_id,
-
     });
 
     const [filesReview, setFilesReview] = useState<any[]>(product.medias ?? []);
@@ -40,7 +39,8 @@ export default function Edit({ product_categories, product }: ReadEditProductTyp
             preserveScroll: true,
             onSuccess: () => {
                 toast.success("Cập nhật thành công");
-                router.visit("/admin/products");
+                router.visit(`/admin/products?page=${current_page}`);
+                
             },
         })
     }

@@ -128,10 +128,12 @@ export default function Read({
     const [isOpen, setIsOpen] = useState(false);
     const [variantData, setVariantData] = useState<VariantDataProps[]>([]);
     const [productName, setProductName] = useState<null | string>(null);
+    const [productID, setProductID] = useState<string | number>('');
     const [loadingVariant, setLoadingVariant] = useState(false);
     const handleOpenModal = async (id: string | number) => {
         setIsOpen(true);
         setLoadingVariant(true);
+        setProductID(id);
         const timeOut = Date.now();
         try {
             const res = await axios.get(`/admin/products/${id}/getConfigs`);
@@ -252,6 +254,7 @@ export default function Read({
                                                     <td className="px-4 py-2">
                                                         {item.code}
                                                     </td>
+
                                                     <td className="px-4 py-2">
                                                         <div className="flex items-center gap-3">
                                                             <div className="flex flex-col gap-0.5 truncate">
@@ -282,24 +285,30 @@ export default function Read({
                                                                     )}
                                                                 </div>
                                                             </div>
-                                                            {!item.discount && (
-                                                                <div className="text-center">
-                                                                    --------
-                                                                </div>
-                                                            )}
                                                         </div>
                                                     </td>
 
                                                     <td className="px-4 py-2">
-                                                        <div className="flex">
-                                                            <ChevronsDown
-                                                                size={20}
-                                                                className="text-red-600"
-                                                            />
-                                                            <span>
-                                                                {item.discount}%
-                                                            </span>
-                                                        </div>
+                                                        {item.discount && (
+                                                            <div className="flex">
+                                                                <ChevronsDown
+                                                                    size={20}
+                                                                    className="text-red-600"
+                                                                />
+                                                                <span>
+                                                                    {
+                                                                        item.discount
+                                                                    }
+                                                                    %
+                                                                </span>
+                                                            </div>
+                                                        )}
+
+                                                        {!item.discount && (
+                                                            <div>
+                                                                ----------
+                                                            </div>
+                                                        )}
                                                     </td>
 
                                                     <td className="px-4 py-1.75">
@@ -414,7 +423,10 @@ export default function Read({
                                     <p>
                                         Sản phẩm này hiện chưa có cấu hình nào
                                     </p>
-                                    <ButtonCreateLink route="/admin/products/variants/create" />
+                                    <ButtonCreateLink
+                                        data={{ product: productID }}
+                                        route="/admin/products/variants/create"
+                                    />
                                 </div>
                             )}
                         </main>
@@ -462,10 +474,7 @@ export default function Read({
                             <option value="">Theo danh mục</option>
                             {product_categories?.length > 0 &&
                                 product_categories.map((item) => (
-                                    <option
-                                        key={item.id}
-                                        value={item.id}
-                                    >
+                                    <option key={item.id} value={item.id}>
                                         {item.name}
                                     </option>
                                 ))}
@@ -577,6 +586,9 @@ export default function Read({
                                                     Cấu hình & Giá
                                                 </Button>
                                                 <ButtonEditLink
+                                                    data={{
+                                                        current_page: products.current_page,
+                                                    }}
                                                     route={`/admin/products/${item.id}/edit`}
                                                 />
                                                 <ButtonDelete

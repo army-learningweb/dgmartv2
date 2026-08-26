@@ -18,7 +18,7 @@ interface SliderCategoryProps {
 }
 
 export default function SliderCategory({ data = [] }: SliderCategoryProps) {
-    const itemVisible = 3;
+    const itemVisible = 4;
     const { sliderTurn, mobilityIndex, index, handleSlide } = useSlider({
         data,
         itemVisibleAllowed: itemVisible,
@@ -46,12 +46,11 @@ export default function SliderCategory({ data = [] }: SliderCategoryProps) {
                         onClick={handleSlide}
                         itemVisible={itemVisible}
                         index={index}
-                        sliderTurn={sliderTurn}
-                        
+                        sliderTurn={sliderTurn}   
                     />
 
                     {/* data */}
-                    <SliderData mobilityIndex={mobilityIndex} index={index} height={`h-120`}>
+                    <SliderData mobilityIndex={mobilityIndex} index={index} height={`h-80`}>
                         {data.map((item, index) => (
                             <CategoryCard
                                 key={item.title}

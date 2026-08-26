@@ -15,11 +15,11 @@ interface SliderPostProps {
 
 export default function SliderPost({ data, title, desc }: SliderPostProps) {
 
-    const ItemVisible = 4
+    const ItemVisible = 5
     const { sliderTurn, mobilityIndex, index, handleSlide } = useSlider({
         data,
         itemVisibleAllowed: ItemVisible,
-        mobilityIndexProp: 316,
+        mobilityIndexProp: 256,
     });
 
     return (

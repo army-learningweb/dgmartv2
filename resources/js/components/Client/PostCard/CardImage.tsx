@@ -10,11 +10,11 @@ interface CardImageProps {
 
 export default function CardImage({dataImage, route} : CardImageProps) {
     return (
-        <Link href={route} className="item-center w-full h-40 overflow-hidden inline-block">
+        <Link href={route} className="item-center w-full overflow-hidden inline-block">
             <img
                 src={dataImage.file_url}
                 alt={dataImage.file_name}
-                className="object-contain rounded-xl"
+                className="object-cover rounded-xl h-32 w-full"
             />
         </Link>
     );

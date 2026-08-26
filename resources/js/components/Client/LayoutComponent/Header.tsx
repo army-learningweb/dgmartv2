@@ -13,32 +13,32 @@ export default function Header() {
                 <nav className="mt-1 mr-10">
                     <ul className="flex gap-5">
                         <li>
-                            <Link href="" className="inline-block py-2">
+                            <Link href="/" className="inline-block py-2">
                                 Trang chủ
                             </Link>
                         </li>
                         <li>
-                            <Link href="" className="inline-block py-2">
+                            <Link href="/" className="inline-block py-2">
                                 Giới thiệu
                             </Link>
                         </li>
                         <li>
-                            <Link href="" className="inline-block py-2">
+                            <Link href="/laptop" className="inline-block py-2">
                                 Laptop
                             </Link>
                         </li>
                         <li>
-                            <Link href="" className="inline-block py-2">
+                            <Link href="/" className="inline-block py-2">
                                 Phụ kiện
                             </Link>
                         </li>
                         <li>
-                            <Link href="" className="inline-block py-2">
+                            <Link href="/" className="inline-block py-2">
                                 Tin tức & Bài viết
                             </Link>
                         </li>
                         <li>
-                            <Link href="" className="inline-block py-2">
+                            <Link href="/" className="inline-block py-2">
                                 Liên hệ
                             </Link>
                         </li>

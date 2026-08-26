@@ -94,4 +94,5 @@ export type ReadEditProductType = {
     product: ReadEditProduct;
     product_categories: ProductCategories[];
     sub_media: [];
+    current_page: string | number
 }

@@ -15,7 +15,7 @@ import { ReadConfigType } from "@/types/module/product_variant";
 import { EditVariantDataType } from "@/types/module/product_variant";
 import { EditVariantType } from "@/types/module/product_variant";
 
-export default function EditVariant({ products, productConFigTypes, variant, dataConfig, configChecked }: EditVariantDataType) {
+export default function EditVariant({ products, productConFigTypes, variant, dataConfig, configChecked, current_page }: EditVariantDataType) {
 
     const { data, setData, patch, errors, processing, clearErrors, } = useForm<EditVariantType>({
         product_id: variant.product_id,
@@ -39,7 +39,7 @@ export default function EditVariant({ products, productConFigTypes, variant, dat
             preserveState: true,
             onSuccess: () => {
                 toast.success("Cập nhật thành công");
-                router.visit("/admin/products/variants");
+                router.visit(`/admin/products/variants?page=${current_page}`);
             },
         })
     }
@@ -307,7 +307,7 @@ export default function EditVariant({ products, productConFigTypes, variant, dat
                                         autoComplete="on"
                                     />
                                 </div>
-                                
+
                                 {/* button */}
                                 <div className="mt-4 flex justify-end gap-2">
                                     <ButtonBackLink route="/admin/products/variants" />
@@ -325,7 +325,7 @@ export default function EditVariant({ products, productConFigTypes, variant, dat
                         </div>
 
                         {/* configs */}
-                        <div className="flex-1 md:mt-7 order-1 md:order-2">
+                        <div className="order-1 flex-1 md:order-2">
                             <div className="mt-2">
                                 <Select
                                     label="Loại cấu hình"
@@ -369,7 +369,7 @@ export default function EditVariant({ products, productConFigTypes, variant, dat
                             </div>
 
                             {Object.values(configs)?.length > 0 && (
-                                <div className="mt-1.5 h-full w-full rounded-lg">
+                                <div className="mt-4 h-125 w-full overflow-hidden overflow-y-auto rounded-xl border border-gray-200 p-4">
                                     {Object.entries(configs).map(
                                         ([group, configItems]) => (
                                             <div key={group} className="mb-5">

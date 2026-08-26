@@ -22,11 +22,11 @@ export default function SliderProduct({
     isShowBadgeDiscount = false,
     isShowBadgeNew = false,
 }: SliderProductProp) {
-    const ItemVisible = 4;
+    const ItemVisible = 5;
     const { sliderTurn, mobilityIndex, index, handleSlide } = useSlider({
         data,
         itemVisibleAllowed: ItemVisible,
-        mobilityIndexProp: 316,
+        mobilityIndexProp: 256,
     });
 
     return (
@@ -48,7 +48,6 @@ export default function SliderProduct({
                         itemVisible={ItemVisible}
                         index={index}
                         sliderTurn={sliderTurn}
-                        
                     />
 
                     {/* data */}

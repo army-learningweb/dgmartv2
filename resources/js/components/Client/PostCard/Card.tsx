@@ -11,7 +11,7 @@ interface CardProps {
 export default function Card({ dataItem, url }: CardProps) {
     return (
         <div
-            className="w-75 h-85 shrink-0 overflow-hidden rounded-2xl bg-white shadow transition-all duration-250 ease-out select-none hover:shadow-lg p-2 border border-gray-200"
+            className="w-60 h-70 shrink-0 overflow-hidden rounded-2xl bg-white shadow transition-all duration-250 ease-out select-none hover:shadow-lg p-2 border border-gray-200"
         >
             {/* image */}
             <CardImage dataImage={dataItem.media} route={dataItem.slug}/>

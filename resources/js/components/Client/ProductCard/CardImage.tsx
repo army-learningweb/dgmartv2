@@ -11,7 +11,7 @@ export default function CardImage({dataImage} : CardImageProps) {
             <img
                 src={dataImage.file_url}
                 alt={dataImage.file_name}
-                className="w-50 h-50 object-cover"
+                className="w-35 h-35 object-cover"
             />
         </div>
     );

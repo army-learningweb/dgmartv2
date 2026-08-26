@@ -36,6 +36,7 @@ export interface PostDataProp {
 }
 
 export type ReadDataProduct = {
-    new_products : ProductDataProp[],
-    posts : PostDataProp[]
-}
+    new_products: ProductDataProp[];
+    discount_products: ProductDataProp[];
+    posts: PostDataProp[];
+};

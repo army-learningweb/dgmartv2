@@ -5,15 +5,15 @@ export default function CategoryCard({dataItem, dataIndex} : any){
     return (
         <Link
             className={clsx(
-                'relative w-101 shrink-0 overflow-hidden rounded-2xl shadow hover:scale-[1.02] hover:shadow-lg transition-all duration-250 ease-out border border-gray-200 inline-block',
+                'relative w-75 shrink-0 overflow-hidden rounded-2xl shadow hover:shadow-lg transition-all duration-250 ease-out border border-gray-200 inline-block hover:-translate-y-1',
                 {
                     'bg-white': dataIndex % 2 === 0,
                     'bg-black text-gray-200': dataIndex % 2 !== 0,
                 },
             )}
         >
-            <div className="absolute top-10 left-10 w-80 space-y-2">
-                <h2 className="text-2xl font-medium tracking-tight">
+            <div className="absolute top-0 left-0 p-4 space-y-2">
+                <h2 className="text-xl font-medium tracking-tight">
                     {dataItem.title}
                 </h2>
                 <p>{dataItem.desc}</p>
@@ -21,7 +21,7 @@ export default function CategoryCard({dataItem, dataIndex} : any){
             <img
                 src={dataItem.src}
                 alt={dataItem.alt}
-                className="mt-18 h-full w-full object-cover"
+                className="mt-18 w-full h-full object-cover"
             />
         </Link>
     );

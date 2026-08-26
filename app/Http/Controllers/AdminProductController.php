@@ -188,7 +188,7 @@ class AdminProductController extends Controller
     }
 
     // Sửa
-    public function edit(Product $product)
+    public function edit(Request $request, Product $product)
     {
         $product_categories = ProductCategory::whereNot('id', 1)->get(['id', 'name', 'parent_id']);
         $product = $product->with([
@@ -212,6 +212,7 @@ class AdminProductController extends Controller
         return Inertia::render("Admin/Product/Edit", [
             'product_categories' => $product_categories,
             'product' => $product,
+            'current_page' => $request->input('current_page')
         ]);
     }
 

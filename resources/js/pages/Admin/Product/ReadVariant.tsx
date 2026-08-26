@@ -37,7 +37,6 @@ export default function ReadVariant({
     filter_product,
     search,
 }: ReadVariantType) {
-
     // Xóa
     const handleDelete = (id: string | number) => {
         if (confirm('Bạn có chắc muốn xóa biến thể này ?')) {
@@ -128,7 +127,7 @@ export default function ReadVariant({
                 </div>
 
                 {/* filter & search */}
-                <div className="mt-4 flex flex-col md:flex-row items-center justify-between">
+                <div className="mt-4 flex flex-col items-center justify-between md:flex-row">
                     <SearchBar
                         onChange={handleQuerySearch}
                         onClearQuery={handleClearQuerySearch}
@@ -276,26 +275,42 @@ export default function ReadVariant({
                                             <div className="flex items-center gap-3">
                                                 <div className="flex w-25 flex-col gap-0.5 truncate">
                                                     {item.price_discount && (
+                                                        <>
+                                                            <div className="font-medium">
+                                                                {vndFormat(
+                                                                    Number(
+                                                                        item.price_discount,
+                                                                    ),
+                                                                )}
+                                                            </div>
+                                                            <div
+                                                                className={clsx(
+                                                                    '',
+                                                                    {
+                                                                        'text-gray-500 line-through':
+                                                                            item.discount !==
+                                                                            null,
+                                                                    },
+                                                                )}
+                                                            >
+                                                                {vndFormat(
+                                                                    Number(
+                                                                        item.price,
+                                                                    ),
+                                                                )}
+                                                            </div>
+                                                        </>
+                                                    )}
+
+                                                    {!item.price_discount && (
                                                         <div className="font-medium">
                                                             {vndFormat(
                                                                 Number(
-                                                                    item.price_discount,
+                                                                    item.price,
                                                                 ),
                                                             )}
                                                         </div>
                                                     )}
-
-                                                    <div
-                                                        className={clsx('', {
-                                                            'text-gray-500 line-through':
-                                                                item.discount !==
-                                                                null,
-                                                        })}
-                                                    >
-                                                        {vndFormat(
-                                                            Number(item.price),
-                                                        )}
-                                                    </div>
                                                 </div>
 
                                                 {item.discount && (
@@ -345,6 +360,10 @@ export default function ReadVariant({
                                         <td className="px-4 py-1.75">
                                             <div className="flex h-6.75 gap-2">
                                                 <ButtonEditLink
+                                                    data={{
+                                                        current_page:
+                                                            variants.current_page,
+                                                    }}
                                                     route={`/admin/products/variants/${item.id}/edit`}
                                                 />
                                                 <ButtonDelete
@@ -367,7 +386,7 @@ export default function ReadVariant({
                                     className="border-b border-gray-200 p-3"
                                 >
                                     <div className="flex justify-between">
-                                        <div className='flex items-center gap-5'>
+                                        <div className="flex items-center gap-5">
                                             <div className="h-15 w-15">
                                                 <img
                                                     src={

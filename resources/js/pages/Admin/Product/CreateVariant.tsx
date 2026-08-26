@@ -1,4 +1,4 @@
-import { Head, useForm, router } from '@inertiajs/react';
+import { Head, useForm, router, usePage } from '@inertiajs/react';
 import toast from 'react-hot-toast';
 import { useState, Fragment } from 'react';
 import { Cog } from 'lucide-react';
@@ -18,10 +18,11 @@ import { ReadConfigType } from '@/types/module/product_variant';
 export default function CreateVariant({
     products,
     productConFigTypes,
+    productID
 }: CreateVariantDataType) {
     const { data, setData, post, errors, processing, clearErrors } =
         useForm<CreateVariantType>({
-            product_id: '',
+            product_id: productID ?? '',
             code: '',
             price: '',
             discount: '',
@@ -85,8 +86,6 @@ export default function CreateVariant({
         });
     };
 
-    console.log(configData);
-
     return (
         <>
             <Head title="Thêm cấu hình và biến thể" />
@@ -118,7 +117,7 @@ export default function CreateVariant({
                                         label="Sản phẩm"
                                         name="product_id"
                                         error={errors.product_id}
-                                        defaultValue={data.product_id ?? ''}
+                                        value={(data.product_id || productID) ?? ''}
                                     >
                                         <option value="">
                                             -Chọn sản phẩm-

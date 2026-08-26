@@ -50,12 +50,13 @@ class AdminProductVariantController extends Controller
             'sort_price' => $request->input('sort_price'),
             'filter_role' => $request->input('filter_role'),
             'filter_product' => $request->input('filter_product'),
-            'search' => $request->input('search')
+            'search' => $request->input('search'),
+            'productID' => $request->input('product')
         ]);
     }
 
     // Thêm
-    public function create()
+    public function create(Request $request)
     {
         $products = Product::with('category:id,name')
             ->get(['id', 'name', 'category_id'])
@@ -66,7 +67,8 @@ class AdminProductVariantController extends Controller
 
         return Inertia::render("Admin/Product/CreateVariant", [
             'products' => $products,
-            'productConFigTypes' => $product_config_types
+            'productConFigTypes' => $product_config_types,
+            'productID' => $request->input('product')
         ]);
     }
 
@@ -111,7 +113,7 @@ class AdminProductVariantController extends Controller
     }
 
     // Sửa
-    public function edit(ProductVariant $variant)
+    public function edit(Request $request, ProductVariant $variant)
     {
         $products = Product::with('category:id,name')
             ->get(['id', 'name', 'category_id'])
@@ -137,7 +139,8 @@ class AdminProductVariantController extends Controller
             'productConFigTypes' => $product_config_types,
             'variant' => $variant,
             'dataConfig' => $dataConfig,
-            'configChecked' => $configChecked
+            'configChecked' => $configChecked,
+            'current_page' => $request->input('current_page')
         ]);
     }
 
@@ -169,6 +172,8 @@ class AdminProductVariantController extends Controller
 
         if ($validated['discount'] > 0) {
             $validated['price_discount'] = $validated['price'] - (($validated['price'] / 100) * $validated['discount']);
+        }else{
+            $validated['discount'] = null;
         }
         $validated['updated_at'] = now();
 

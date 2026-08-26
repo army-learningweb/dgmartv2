@@ -3,11 +3,12 @@ import { Plus } from "lucide-react"
 
 interface ButtonCreateLinkProps {
     route: string;
+    data?: any;
 }
 
-export default function ButtonCreateLink({route} : ButtonCreateLinkProps) {
+export default function ButtonCreateLink({route, data, ...props} : ButtonCreateLinkProps) {
     return (
-        <Link href={route} className="flex gap-1 items-center bg-blue-600 border border-blue-600 text-white hover:brightness-110 px-2.5 py-1.5 rounded-lg text-xs font-medium active:translate-y-0.5 transition-all duration-150 ">
+        <Link href={route} method="get" data={data} className="flex gap-1 items-center bg-blue-600 border border-blue-600 text-white hover:brightness-110 px-2.5 py-1.5 rounded-lg text-xs font-medium active:translate-y-0.5 transition-all duration-150 " {...props}>
             <Plus size={15} />
             <span>Thêm mới</span>
         </Link>

@@ -4,5 +4,5 @@ interface CardTitleProps {
 }
 
 export default function CardTitle({title, className} : CardTitleProps) {
-    return <div className={`text-lg font-medium select-none h-10 line-clamp-2 leading-5 ${className}`}>{title}</div>;
+    return <div className={`font-medium select-none leading-5 truncate ${className}`}>{title}</div>;
 }
