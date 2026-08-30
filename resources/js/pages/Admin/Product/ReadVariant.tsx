@@ -123,7 +123,14 @@ export default function ReadVariant({
                 {/* heading */}
                 <div className="flex items-center justify-between">
                     <Title heading="Cấu hình & biến thể" />
-                    <ButtonCreateLink route="/admin/products/variants/create" />
+                    
+                    <div className="flex gap-2">
+                        <ButtonCreateLink route="/admin/products/variants/create" />
+                        <ButtonCreateLink
+                            route="/admin/products/create"
+                            label="Thêm sản phẩm"
+                        />
+                    </div>
                 </div>
 
                 {/* filter & search */}

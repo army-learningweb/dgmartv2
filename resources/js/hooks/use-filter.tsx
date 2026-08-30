@@ -12,7 +12,6 @@ export const useFilter = ({
     initialsFilter,
     onlyLoad,
 }: useFilterProps) => {
-
     const [queryFilters, setQueryFilters] = useState(initialsFilter);
     const handleQueryFilter = (query: {}) => {
         const mergedQuery = { ...queryFilters, ...query };
@@ -26,10 +25,9 @@ export const useFilter = ({
 
         router.get(route, requestFilters, {
             preserveState: true,
-            preserveScroll: true,
+            // preserveScroll: true,
             only: onlyLoad,
         });
     };
-
     return { handleQueryFilter };
 };

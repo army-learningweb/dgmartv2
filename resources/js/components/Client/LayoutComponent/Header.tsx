@@ -4,22 +4,17 @@ import { Search, ShoppingBag } from 'lucide-react';
 
 export default function Header() {
     return (
-        <header className="mx-auto flex max-w-312 items-center justify-between py-4">
+        <header className="mx-auto flex max-w-312 items-center justify-between py-4 border-b border-gray-100">
             <div className="flex gap-10">
                 <Link href="/">
                     <Logo />
                 </Link>
 
                 <nav className="mt-1 mr-10">
-                    <ul className="flex gap-5">
+                    <ul className="flex gap-5 font-medium">
                         <li>
                             <Link href="/" className="inline-block py-2">
                                 Trang chủ
-                            </Link>
-                        </li>
-                        <li>
-                            <Link href="/" className="inline-block py-2">
-                                Giới thiệu
                             </Link>
                         </li>
                         <li>
@@ -50,6 +45,7 @@ export default function Header() {
                 <Search size={20} />
                 <ShoppingBag size={20} />
             </div>
+            
         </header>
     );
 }

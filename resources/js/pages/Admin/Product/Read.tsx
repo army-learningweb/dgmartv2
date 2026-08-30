@@ -62,10 +62,7 @@ export default function Read({
     const { handleQueryFilter } = useFilter({
         route: '/admin/products',
         initialsFilter: {
-            filter_status,
-            filter_category,
-            search,
-            page: products.current_page,
+            page: products.current_page === 1 ? '' : products.current_page,
         },
         onlyLoad: ['products', 'filter_status', 'filter_category'],
     });
@@ -438,7 +435,14 @@ export default function Read({
                 {/* title */}
                 <div className="flex items-center justify-between">
                     <Title heading="Danh sách sản phẩm" />
-                    <ButtonCreateLink route="/admin/products/create" />
+
+                    <div className='flex gap-2'>
+                        <ButtonCreateLink route="/admin/products/create" />
+                        <ButtonCreateLink
+                            route="/admin/products/variants/create"
+                            label="Thêm biến thể"
+                        />
+                    </div>
                 </div>
 
                 {/* filter & search */}
@@ -462,6 +466,7 @@ export default function Read({
 
                         {/* filter */}
                         <Select
+                            className="w-50!"
                             name="filter-category"
                             onChange={(e) =>
                                 handleQueryFilter({
@@ -587,7 +592,8 @@ export default function Read({
                                                 </Button>
                                                 <ButtonEditLink
                                                     data={{
-                                                        current_page: products.current_page,
+                                                        current_page:
+                                                            products.current_page,
                                                     }}
                                                     route={`/admin/products/${item.id}/edit`}
                                                 />

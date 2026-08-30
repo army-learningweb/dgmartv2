@@ -1,47 +1,49 @@
-import CardImage from "./CardImage";
-import CardPrice from "./CardPrice";
-import CardTitle from "./CardTitle";
-import { BadgeNew, BadgeDiscount } from "./CardBadge";
-import { Link } from "@inertiajs/react";
+import CardImage from './CardImage';
+import CardPrice from './CardPrice';
+import CardTitle from './CardTitle';
+import { BadgeDiscount } from './CardBadge';
+import { Link } from '@inertiajs/react';
 
 interface CardProps {
     dataItem: any;
-    showBadgeNew? : boolean;
-    showBadgeDiscount?: boolean;
 }
 
-export default function Card({ dataItem, showBadgeDiscount = false , showBadgeNew = false }: CardProps) {
+export default function Card({
+    dataItem,
+}: CardProps) {
     return (
-        <div className="flex h-90 w-60 shrink-0 flex-col justify-between rounded-2xl border border-gray-200 bg-white p-5 transition-all duration-250 ease-out select-none">
+        <div className="flex h-90 w-60 shrink-0 flex-col justify-between rounded-2xl bg-white p-5 shadow transition-all duration-250 ease-out select-none hover:-translate-y-1 hover:shadow-lg">
             {/* image */}
             <CardImage dataImage={dataItem.main_image} />
 
             <div className="space-y-2">
-                {/* badge */}
                 <div className="flex gap-1">
-                    {/* badge new */}
-                    {showBadgeNew && <BadgeNew />}
-
                     {/* badge discount */}
-                    {showBadgeDiscount && dataItem.base_price && (
-                        <BadgeDiscount
-                            discountNum={dataItem.base_price?.discount}
-                        />
+                    {dataItem.discount && (
+                        <BadgeDiscount discountNum={dataItem.discount} />
                     )}
                 </div>
 
                 {/* name */}
                 <CardTitle title={dataItem.name} />
 
-                <div className="line-clamp-2 text-gray-500">{dataItem.desc}</div>
+                <div className="line-clamp-2 text-gray-500">
+                    {dataItem.desc}
+                </div>
             </div>
 
             {/* price */}
-            <CardPrice dataPrice={dataItem.base_price} />
+            <CardPrice
+                price={dataItem.price}
+                price_discount={dataItem.price_discount}
+            />
 
             {/* link */}
-            <Link href={dataItem.slug} className="text-blue-600 hover:underline">
-                Mua ngay
+            <Link
+                href={dataItem.slug}
+                className="text-blue-600 hover:underline mt-1"
+            >
+                Xem chi tiết...
             </Link>
         </div>
     );

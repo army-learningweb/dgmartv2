@@ -42,10 +42,17 @@ class ProductVariant extends Model
 
     public function mainImage(){
         return $this->hasOne(Media::class, 'object_id' ,'product_id')
-        ->where('role','main');
+        ->where('role','main')
+        ->where('object_type','product');
     }
 
-    public function configChecked(){
+    public function configs(){
         return $this->hasMany(ProductVariantConfig::class, 'variant_id');
     }
+
+    public function info()
+    {
+        return $this->belongsTo(Product::class, 'product_id');
+    }
+    
 }

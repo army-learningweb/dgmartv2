@@ -1,16 +1,29 @@
-import { Link } from "@inertiajs/react"
-import { Plus } from "lucide-react"
+import { Link } from '@inertiajs/react';
+import { Plus } from 'lucide-react';
 
 interface ButtonCreateLinkProps {
     route: string;
     data?: any;
+    label?: string;
 }
 
-export default function ButtonCreateLink({route, data, ...props} : ButtonCreateLinkProps) {
+export default function ButtonCreateLink({
+    route,
+    data,
+    label,
+    ...props
+}: ButtonCreateLinkProps) {
     return (
-        <Link href={route} method="get" data={data} className="flex gap-1 items-center bg-blue-600 border border-blue-600 text-white hover:brightness-110 px-2.5 py-1.5 rounded-lg text-xs font-medium active:translate-y-0.5 transition-all duration-150 " {...props}>
+        <Link
+            href={route}
+            method="get"
+            data={data}
+            className="flex items-center gap-1 rounded-lg border border-blue-600 bg-blue-600 px-2.5 py-1.5 text-xs font-medium text-white transition-all duration-150 hover:brightness-110 active:translate-y-0.5"
+            {...props}
+        >
             <Plus size={15} />
-            <span>Thêm mới</span>
+            {!label && <span>Thêm mới</span>}
+            {label && label}
         </Link>
-    )
+    );
 }

@@ -1,24 +1,43 @@
-import { PaginatedData } from "./global";
-
 export interface ProductDataProp {
-    id: string | number;
-    name: string;
-    desc: string;
-    slug: string;
-    main_image: {
-        object_id: string | number;
-        file_url: string;
-        file_name: string;
+    id: number;
+    main_image: string;
+    base_price: string;
+    price: string;
+    price_discount: string;
+    discount: string;
+    configs: any;
+    info: {
+        name: string;
+        desc: string;
+        slug: string;
+        category_id: string | number;
     };
-    base_price: {
-        id: string | number;
-        product_id: string | number;
-        discount: string | number;
-        price: string | number;
-        price_discount: string | number;
-    };
+    
 }
 
+export type PaginatedProducts = {
+    data: ProductDataProp[];
+    links: any;
+    meta: any;
+};
+
 export type ReadDataProduct = {
-    products: PaginatedData<ProductDataProp>;
+    products: PaginatedProducts;
+    categories: {
+        id: string | number;
+        name: string;
+        childs: [
+            {
+                id: string | number;
+                name: string;
+                parent_id: string;
+            },
+        ];
+    };
+    category: string;
+    price: string;
+    cpu: string;
+    gpu: string;
+    ram: string;
+    design: string;
 };

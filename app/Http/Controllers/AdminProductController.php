@@ -78,7 +78,8 @@ class AdminProductController extends Controller
         ], [
             "category_id.required" => "Danh mục sản phẩm không được để trống.",
             "files.*" => "Lỗi ! không thể upload ảnh vui lòng kiểm tra lại định đạng hoặc kích cỡ File",
-            "name.required" => ":attribute không được để trống"
+            "name.required" => ":attribute không được để trống",
+            "desc.regex" => ":attribute không hợp lệ",
         ], [
             "name" => "Tên sản phẩm"
         ]);
@@ -232,7 +233,11 @@ class AdminProductController extends Controller
             "old_files" => ['array'],
         ], [
             "category_id.required" => "Danh mục sản phẩm không được để trống.",
-            "files.*" => "Lỗi ! không thể upload ảnh vui lòng kiểm tra lại định đạng hoặc kích cỡ File"
+            "files.*" => "Lỗi ! không thể upload ảnh vui lòng kiểm tra lại định đạng hoặc kích cỡ File",
+            "desc.regex" => ":attribute không hợp lệ",
+        ], [
+            "name" => "Tiêu đề bài viết",
+            "desc" => "Mô tả"
         ]);
 
         $validated["status"] = $request->input('status');

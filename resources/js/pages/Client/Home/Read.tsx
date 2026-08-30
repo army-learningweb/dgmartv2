@@ -24,9 +24,9 @@ export default function Read({ new_products, discount_products, posts }: ReadDat
 
             {/* new product */}
             <SliderProduct
-                title="Xem ngay có gì mới"
-                desc="Cập nhật những thiết bị công nghệ mới nhất, dẫn đầu xu hướng với công nghệ hiện đại."
-                data={new_products}
+                title="Có tại cửa hàng"
+                desc="Khám phá các sản phẩm công nghệ đang có mặt trực tiếp tại cửa hàng."
+                data={new_products.data}
                 isShowBadgeNew
                 isShowBadgeDiscount
             />
@@ -35,7 +35,7 @@ export default function Read({ new_products, discount_products, posts }: ReadDat
             <SliderProduct
                 title="Đang giảm giá"
                 desc="Săn ngay các sản phẩm chính hãng với mức giá hấp dẫn cùng chính sách ưu đãi giới hạn."
-                data={discount_products}
+                data={discount_products.data}
                 isShowBadgeDiscount
             />
 

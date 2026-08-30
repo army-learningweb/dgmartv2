@@ -1,11 +1,3 @@
-export function BadgeNew() {
-    return (
-        <div className="w-fit rounded-full font-medium text-blue-600 bg-blue-50 px-3 py-0.75 text-xs">
-            Mới
-        </div>
-    );
-}
-
 
 export function BadgeDiscount({ discountNum }: { discountNum : number}) {
     return (

@@ -55,9 +55,7 @@ export default function SliderProduct({
                         {data.map((item) => (
                             <Card
                                 key={item.id}
-                                dataItem={item}
-                                showBadgeDiscount={isShowBadgeDiscount}
-                                showBadgeNew={isShowBadgeNew}
+                                dataItem={item}    
                             />
                         ))}
                     </SliderData>

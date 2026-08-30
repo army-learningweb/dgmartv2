@@ -9,7 +9,7 @@ export default function ButtonResetFilter({route, className} : ButtonResetFilter
     return (
         <Link
             href={route}
-            className={`md:inline-flex ms-2 hidden items-center gap-1 text-blue-600 hover:text-blue-700 active:text-blue-900 ${className}`}
+            className={`md:rounded-lg md:text-xs font-medium md:inline-flex ms-1 hidden items-center gap-1 text-red-700 hover:text-red-600 active:text-red-500 ${className}`}
         >
             <RotateCcw size={15} />
             Đặt lại
