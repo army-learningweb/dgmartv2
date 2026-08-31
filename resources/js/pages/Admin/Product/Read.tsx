@@ -62,7 +62,7 @@ export default function Read({
     const { handleQueryFilter } = useFilter({
         route: '/admin/products',
         initialsFilter: {
-            page: products.current_page === 1 ? '' : products.current_page,
+            page: products.current_page == 1 ? '' : products.current_page,
         },
         onlyLoad: ['products', 'filter_status', 'filter_category'],
     });
@@ -436,12 +436,13 @@ export default function Read({
                 <div className="flex items-center justify-between">
                     <Title heading="Danh sách sản phẩm" />
 
-                    <div className='flex gap-2'>
-                        <ButtonCreateLink route="/admin/products/create" />
+                    <div className="flex gap-2">
                         <ButtonCreateLink
                             route="/admin/products/variants/create"
                             label="Thêm biến thể"
+                            variant='outline'
                         />
+                        <ButtonCreateLink route="/admin/products/create" />
                     </div>
                 </div>
 
@@ -466,7 +467,7 @@ export default function Read({
 
                         {/* filter */}
                         <Select
-                            className="w-50!"
+                            className="w-70!"
                             name="filter-category"
                             onChange={(e) =>
                                 handleQueryFilter({
@@ -553,7 +554,7 @@ export default function Read({
                                                     <p className="w-50 truncate font-medium">
                                                         {item.name}
                                                     </p>
-                                                    <p className="w-fit truncate rounded-md bg-blue-50 px-3 py-1 text-xs font-medium text-blue-600">
+                                                    <p className="w-fit truncate rounded-md text-xs font-medium text-blue-600">
                                                         {item.category?.name}
                                                     </p>
                                                 </div>

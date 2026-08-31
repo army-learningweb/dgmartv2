@@ -11,6 +11,8 @@ use App\Models\ProductCategory;
 class ProductController extends Controller
 {
     public function read(Request $request){
+        $slug = $request->segment(1);
+        
         $products = ProductVariant::query()->with([
             'mainImage' => function ($query) {
                 $query->select(['object_id', 'file_url', 'file_name']);
@@ -40,10 +42,16 @@ class ProductController extends Controller
                     $subQuery->where('category_id', $value);
                 });
             })
+            ->whereHas('info', function ($query) use ($slug){
+                $query->where('slug','like',"$slug%");
+            })
+            
+            
             ->latest()
             ->paginate(20)
             ->withQueryString();
 
+        // Lấy danh mục sản phẩm
         $categories = ProductCategory::with('childs:id,name,parent_id')
             ->where('slug', 'laptop')
             ->select(['id', 'name'])

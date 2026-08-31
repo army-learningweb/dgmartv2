@@ -19,8 +19,6 @@ export default function SliderProduct({
     data,
     title,
     desc,
-    isShowBadgeDiscount = false,
-    isShowBadgeNew = false,
 }: SliderProductProp) {
     const ItemVisible = 5;
     const { sliderTurn, mobilityIndex, index, handleSlide } = useSlider({

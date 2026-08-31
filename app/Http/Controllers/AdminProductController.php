@@ -72,14 +72,14 @@ class AdminProductController extends Controller
             'file' => ["required", "mimes:jpg,jpeg,png,avif,webp", "max:20480"],
             'files.*' => ["mimes:jpg,jpeg,png,avif,webp", "max:20480"],
             'name' => ["required", "min:2", "max:250", "regex:/^[\p{L}\p{P}\p{N}\s]+$/u", "unique:products"],
-            'desc' => ["required", "min:2", "max:250", "regex:/^[\p{L}\p{P}\p{N}\s]+$/u", "unique:products"],
+            'desc' => ["required", "min:2", "max:250", "regex:/^[\p{L}\p{P}\p{N}\p{M}\s]+$/u"],
             'content' => ["required"],
             'category_id' => ["required"],
         ], [
             "category_id.required" => "Danh mục sản phẩm không được để trống.",
             "files.*" => "Lỗi ! không thể upload ảnh vui lòng kiểm tra lại định đạng hoặc kích cỡ File",
             "name.required" => ":attribute không được để trống",
-            "desc.regex" => ":attribute không hợp lệ",
+            "desc.regex" => ":attribute không hợp lệ, không được chứa kí tự đặc biệt",
         ], [
             "name" => "Tên sản phẩm"
         ]);
@@ -227,14 +227,14 @@ class AdminProductController extends Controller
             "file" => $rule_file,
             'files.*' => ["sometimes", "nullable", "mimes:jpg,jpeg,png,avif,webp", "max:20480"],
             "name" => ["required", "min:2", "max:255", "regex:/^[\p{L}\p{P}\p{N}\s]+$/u"],
-            "desc" => ["required", "min:2", "max:255", "regex:/^[\p{L}\p{P}\p{N}\s]+$/u"],
+            "desc" => ["required", "min:2", "max:255", "regex:/^[\p{L}\p{P}\p{N}\p{M}\s]+$/u"],
             "content" => ["required"],
             "category_id" => ["required"],
             "old_files" => ['array'],
         ], [
             "category_id.required" => "Danh mục sản phẩm không được để trống.",
             "files.*" => "Lỗi ! không thể upload ảnh vui lòng kiểm tra lại định đạng hoặc kích cỡ File",
-            "desc.regex" => ":attribute không hợp lệ",
+            "desc.regex" => ":attribute không hợp lệ, không được chứa kí tự đặc biệt",
         ], [
             "name" => "Tiêu đề bài viết",
             "desc" => "Mô tả"

@@ -11,7 +11,7 @@ class AdminProductConfigGroupController extends Controller
      // Đọc
     public function read()
     {
-        $configGroup = ProductConfigGroup::all();
+        $configGroup = ProductConfigGroup::latest()->get();
         $total = ProductConfigGroup::count();
         return Inertia::render("Admin/Product/ReadConfigGroup", [
             'configGroup' => $configGroup,
@@ -25,8 +25,11 @@ class AdminProductConfigGroupController extends Controller
         $validated = $request->validate([
             "name" => ["required", "min:2", "max:100", "regex:/^[\p{L}\p{N}\p{P}\s]+$/u", "unique:product_config_groups"],
             "desc" => ["required", "min:2", "max:255", "regex:/^[\p{L}\p{N}\p{P}\s]+$/u"],
-        ], [], [
-            'name' => 'Tên nhóm'
+        ], [
+            "desc.regex" => ":attribute không hợp lệ, không được chứa kí tự đặc biệt"
+        ], [
+            'name' => 'Tên nhóm',
+            
         ]);
 
         $validated['name'] = ucfirst($validated['name']);
@@ -41,6 +44,11 @@ class AdminProductConfigGroupController extends Controller
         $validated = $request->validate([
             "name" => ["required", "min:2", "max:100", "regex:/^[\p{L}\p{N}\p{P}\s]+$/u", "unique:product_config_groups,id,".$configGroup->id],
             "desc" => ["required", "min:2", "max:255", "regex:/^[\p{L}\p{N}\p{P}\s]+$/u"],
+        ], [
+            "desc.regex" => ":attribute không hợp lệ, không được chứa kí tự đặc biệt"
+        ], [
+            'name' => 'Tên nhóm',
+
         ]);
 
         $validated['name'] = ucfirst($validated['name']);

@@ -369,10 +369,10 @@ export default function EditVariant({ products, productConFigTypes, variant, dat
                             </div>
 
                             {Object.values(configs)?.length > 0 && (
-                                <div className="mt-4 h-125 w-full overflow-hidden overflow-y-auto rounded-xl border border-gray-200 p-4">
+                                <div className="mt-4 h-135 w-full overflow-hidden overflow-y-auto rounded-xl border border-gray-200 p-4">
                                     {Object.entries(configs).map(
                                         ([group, configItems]) => (
-                                            <div key={group} className="mb-5">
+                                            <div key={group}>
                                                 <div className="rounded-lg border border-gray-100 bg-gray-100 p-2 font-medium first-of-type:mt-0">
                                                     {group.toUpperCase()}
                                                 </div>
@@ -437,7 +437,7 @@ export default function EditVariant({ products, productConFigTypes, variant, dat
                             )}
 
                             {Object.values(configs)?.length === 0 && (
-                                <div className="flex h-150 flex-col items-center justify-center gap-2 text-center font-medium text-gray-500">
+                                <div className="flex h-135 flex-col items-center justify-center gap-2 text-center font-medium text-gray-500">
                                     <div className="rounded-lg bg-gray-200 p-1.5">
                                         <Cog size={25} />
                                     </div>

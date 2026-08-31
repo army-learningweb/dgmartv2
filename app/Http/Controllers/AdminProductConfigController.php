@@ -32,10 +32,10 @@ class AdminProductConfigController extends Controller
         $validated = $request->validate(
             [
                 "group_id" => ["required", "exists:product_config_groups,id"],
-                "name" => ["required", "min:2", "max:255", "regex:/^[\p{L}\p{N}\p{P}\s]+$/u", "unique:product_configs"],
+                "name" => ["required", "min:2", "max:255", "regex:/^[\p{L}\p{N}\p{P}\+\<\>\s]+$/u", "unique:product_configs"],
             ],
             [
-                "name.regex" => "Chữ cái đầu viết hoa, không chứa dấu và kí tự",
+                "name.regex" => ":attribute chứa kí tự không hợp lệ",
             ],
             [
                 "name" => "Cấu hình",
@@ -52,10 +52,10 @@ class AdminProductConfigController extends Controller
         $validated = $request->validate(
             [
                 "group_id" => ["required", "exists:product_config_groups,id"],
-                "name" => ["required", "min:2", "max:255", "regex:/^[\p{L}\p{N}\p{P}\s]+$/u", "unique:product_configs,id,".$config->id],
+                "name" => ["required", "min:2", "max:255", "regex:/^[\p{L}\p{N}\p{P}\+\<\>\s]+$/u", "unique:product_configs,id,".$config->id],
             ],
             [
-                "name.regex" => "Chữ cái đầu viết hoa, không chứa dấu và kí tự",
+                "name.regex" => ":attribute chứa kí tự không hợp lệ",
             ],
             [
                 "name" => "Cấu hình",

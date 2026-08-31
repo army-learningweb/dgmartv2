@@ -38,7 +38,7 @@ export default function CreateVariant({
         const config_ids = configData.map((config) => config.id);
         setData('config_id', config_ids);
         post('/admin/products/variants/store', {
-            preserveScroll: true,
+            // preserveScroll: true,
             preserveState: true,
             onSuccess: () => {
                 toast.success('Thêm mới thành công');
@@ -304,10 +304,10 @@ export default function CreateVariant({
                             </div>
 
                             {Object.values(configs)?.length > 0 && (
-                                <div className="mt-4 h-125 w-full overflow-hidden overflow-y-auto rounded-xl border border-gray-200 p-4">
+                                <div className="mt-4 h-135 w-full overflow-hidden overflow-y-auto rounded-xl border border-gray-200 p-4">
                                     {Object.entries(configs).map(
                                         ([group, configItems]) => (
-                                            <div key={group} className="mb-5">
+                                            <div key={group}>
                                                 <div className="rounded-lg border border-gray-100 bg-gray-100 p-2 font-medium first-of-type:mt-0">
                                                     {group.toUpperCase()}
                                                 </div>
@@ -370,7 +370,7 @@ export default function CreateVariant({
                             )}
 
                             {Object.values(configs)?.length === 0 && (
-                                <div className="mt-4 flex h-125 flex-col items-center justify-center gap-2 rounded-xl bg-gray-100 text-center font-medium text-gray-500">
+                                <div className="mt-4 flex h-135 flex-col items-center justify-center gap-2 rounded-xl bg-gray-100 text-center font-medium text-gray-500">
                                     <div className="rounded-lg bg-gray-200 p-1.5">
                                         <Cog size={25} />
                                     </div>

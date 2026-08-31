@@ -12,7 +12,7 @@ export default function Card({
     dataItem,
 }: CardProps) {
     return (
-        <div className="flex h-90 w-60 shrink-0 flex-col justify-between rounded-2xl bg-white p-5 shadow transition-all duration-250 ease-out select-none hover:-translate-y-1 hover:shadow-lg">
+        <div className="flex h-90 w-60 shrink-0 flex-col justify-between rounded-2xl bg-white p-5 shadow transition-all duration-250 ease-out select-none hover:-translate-y-1 hover:shadow-lg relative">
             {/* image */}
             <CardImage dataImage={dataItem.main_image} />
 

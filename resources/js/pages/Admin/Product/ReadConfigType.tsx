@@ -9,6 +9,7 @@ import ButtonCreate from '@/components/Admin/TableManager/ButtonCreate';
 import ButtonDelete from '@/components/Admin/TableManager/ButtonDelete';
 import ButtonEdit from '@/components/Admin/TableManager/ButtonEdit';
 import Title from '@/components/Admin/TableManager/Title';
+import ShortCutHint from '@/components/Admin/TableManager/Hint';
 
 import { useModal } from '@/hooks/use-modal';
 
@@ -16,6 +17,7 @@ import { ReadProductConfigTypeS } from '@/types/module/product_config_type';
 import { CreateProductConfigTypeS } from '@/types/module/product_config_type';
 import { EditProductConfigTypeS } from '@/types/module/product_config_type';
 import { ConfigType } from '@/types/module/product_config_type';
+import { useShortCut } from '@/hooks/use-shortcut';
 
 export default function ReadConfigType({ types, configs, total }: ReadProductConfigTypeS) {
     const { data, setData, post, patch, errors, processing, reset, clearErrors, } = useForm<CreateProductConfigTypeS>({
@@ -27,6 +29,9 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
 
     // Modal hooks
     const { openModal, isEditModal, setOpenModal, setIsEditModal, handleOpenModal, handleCloseModal, } = useModal({ reset, clearErrors });
+
+    // Shortcut hooks
+    useShortCut({openModal, setOpenModal})
 
     // Modal Edit Mode
     const handleEdit = async (configType: EditProductConfigTypeS) => {
@@ -117,78 +122,124 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
                 onClose={handleCloseModal}
                 isOpen={openModal}
                 customSize="w-[90%] md:w-[60%] min-h-[40%]"
-                title={!isEditModal ? 'Thêm loại cấu hình' : 'Chỉnh sửa thông tin'}
+                title={
+                    !isEditModal ? 'Thêm loại cấu hình' : 'Chỉnh sửa thông tin'
+                }
                 labelSubmit={!isEditModal ? 'Thêm mới' : 'Cập nhật'}
                 formSubmitId="createConfigType"
                 processing={processing}
             >
-                <form onSubmit={!isEditModal ? handleCreate : handleUpdate} id="createConfigType">
+                <form
+                    onSubmit={!isEditModal ? handleCreate : handleUpdate}
+                    id="createConfigType"
+                >
                     <div>
-                        <Input type="text" 
-                            name="name" 
-                            label="Tên loại" 
-                            error={errors.name} 
+                        <Input
+                            type="text"
+                            name="name"
+                            label="Tên loại"
+                            error={errors.name}
                             value={data.name}
-                            onChange={(e) => setData('name', e.target.value)} 
-                            onBlur={() => clearErrors("name")} 
-                            autoComplete="on" 
-                            placeholder='Laptop'
+                            onChange={(e) => setData('name', e.target.value)}
+                            onBlur={() => clearErrors('name')}
+                            autoComplete="on"
+                            placeholder="Laptop"
                         />
                     </div>
 
                     <div className="mt-2">
-                        <Input type="text" 
-                            name="desc" 
-                            label="Mô tả" 
-                            error={errors.desc} 
-                            value={data.desc} 
-                            onChange={(e) => setData('desc', e.target.value)} 
-                            onBlur={() => clearErrors("desc")} 
-                            autoComplete="on" 
-                            placeholder='Cấu hình cho sản phẩm Laptop'
+                        <Input
+                            type="text"
+                            name="desc"
+                            label="Mô tả"
+                            error={errors.desc}
+                            value={data.desc}
+                            onChange={(e) => setData('desc', e.target.value)}
+                            onBlur={() => clearErrors('desc')}
+                            autoComplete="on"
+                            placeholder="Cấu hình cho sản phẩm Laptop"
                         />
                     </div>
 
                     <div className="mt-2">
-                        <div className="flex flex-col md:flex-row gap-2">
+                        <div className="flex flex-col gap-2 md:flex-row">
                             <span className="font-medium">Chọn cấu hình</span>
-                            <span className="text-gray-500"> (Loại này có cấu hình gì?) </span>
+                            <span className="text-gray-500">
+                                {' '}
+                                (Loại này có cấu hình gì?){' '}
+                            </span>
                             {errors.configs && (
                                 <span className="text-red-600">
                                     ({errors.configs})
                                 </span>
                             )}
                         </div>
-                        
+
                         {/* config */}
                         {Object.keys(configs)?.length > 0 && (
                             <div className="mt-2 max-h-85 overflow-y-auto">
                                 {Object.entries(configs).map(
                                     ([group, configItems]) => (
-                                        <div key={group} className="rounded-lg border border-gray-200 p-3 mb-3" >
+                                        <div
+                                            key={group}
+                                            className="mb-3 rounded-lg border border-gray-200 p-3"
+                                        >
                                             <div className="itemsc-enter flex w-fit gap-2 rounded-lg py-1">
-                                                <input onChange={(e) => handleCheckAll(e, configItems)}
-                                                    checked={configItems.every((item) => data.configs?.includes(item.id,))}
+                                                <input
+                                                    onChange={(e) =>
+                                                        handleCheckAll(
+                                                            e,
+                                                            configItems,
+                                                        )
+                                                    }
+                                                    checked={configItems.every(
+                                                        (item) =>
+                                                            data.configs?.includes(
+                                                                item.id,
+                                                            ),
+                                                    )}
                                                     type="checkbox"
                                                     name="checkAll"
                                                     id={group}
                                                     value={group}
                                                 />
-                                                <label htmlFor={group} className="font-medium text-blue-600 select-none">{group} </label>
+                                                <label
+                                                    htmlFor={group}
+                                                    className="font-medium text-blue-600 select-none"
+                                                >
+                                                    {group}{' '}
+                                                </label>
                                             </div>
 
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 mt-3">
+                                            <div className="mt-3 grid grid-cols-1 gap-y-4 md:grid-cols-2">
                                                 {configItems.map((item) => (
-                                                    <div key={item.id} className="flex items-center gap-2" >
+                                                    <div
+                                                        key={item.id}
+                                                        className="flex items-center gap-2"
+                                                    >
                                                         <div>
-                                                            <input onChange={(e) => handleCheckSingle(e, item.id)}
-                                                                checked={data.configs.includes(item.id)}
+                                                            <input
+                                                                onChange={(e) =>
+                                                                    handleCheckSingle(
+                                                                        e,
+                                                                        item.id,
+                                                                    )
+                                                                }
+                                                                checked={data.configs.includes(
+                                                                    item.id,
+                                                                )}
                                                                 type="checkbox"
                                                                 name="configs"
                                                                 id={item.id}
                                                             />
                                                         </div>
-                                                        <label className="mb-0.75 select-none w-95 truncate" htmlFor={item.id}> {item.name} </label>
+                                                        <label
+                                                            className="mb-0.75 w-95 truncate select-none"
+                                                            htmlFor={item.id}
+                                                        >
+                                                            {' '}
+                                                            {item.name}{' '}
+                                                        </label>
                                                     </div>
                                                 ))}
                                             </div>
@@ -205,7 +256,11 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
                 {/* title */}
                 <div className="flex items-center justify-between">
                     <Title heading={`Loại cấu hình (${total})`} />
-                    <ButtonCreate onOpenModal={handleOpenModal} />
+
+                    <div className="flex items-center gap-2">
+                        <ShortCutHint/>
+                        <ButtonCreate onOpenModal={handleOpenModal} />
+                    </div>
                 </div>
 
                 {/* data */}
@@ -224,7 +279,10 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
                             </thead>
                             <tbody>
                                 {types.map((item) => (
-                                    <tr key={item.id} className="border-b border-gray-200 last-of-type:border-0" >
+                                    <tr
+                                        key={item.id}
+                                        className="border-b border-gray-200 last-of-type:border-0"
+                                    >
                                         <td className="w-50 truncate px-5 py-3">
                                             {item.name}
                                         </td>
@@ -239,8 +297,16 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
                                         </td>
                                         <td className="px-5 py-3">
                                             <div className="flex h-6.75 gap-2">
-                                                <ButtonEdit onEdit={() => handleEdit(item)} />
-                                                <ButtonDelete onDelete={() => handleDelete(item.id)} />
+                                                <ButtonEdit
+                                                    onEdit={() =>
+                                                        handleEdit(item)
+                                                    }
+                                                />
+                                                <ButtonDelete
+                                                    onDelete={() =>
+                                                        handleDelete(item.id)
+                                                    }
+                                                />
                                             </div>
                                         </td>
                                     </tr>
@@ -249,20 +315,32 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
                         </table>
 
                         {/* mobile */}
-                        <div className="md:hidden inline-flex flex-col gap-2 w-full">
-                            {types.map(item => (
-                                <div key={item.id} className="border-b border-gray-200 p-3 w-full flex justify-between h-22">
+                        <div className="inline-flex w-full flex-col gap-2 md:hidden">
+                            {types.map((item) => (
+                                <div
+                                    key={item.id}
+                                    className="flex h-22 w-full justify-between border-b border-gray-200 p-3"
+                                >
                                     <div className="mt-3">
-                                        <p className="w-30 truncate">{item.name}</p>
-                                        <p className="text-gray-500 w-40 truncate">{item.desc}</p>
+                                        <p className="w-30 truncate">
+                                            {item.name}
+                                        </p>
+                                        <p className="w-40 truncate text-gray-500">
+                                            {item.desc}
+                                        </p>
                                     </div>
 
-                                    <div className="flex flex-col h-6.75 gap-2">
-                                        <ButtonEdit onEdit={() => handleEdit(item)} />
-                                        <ButtonDelete onDelete={() => handleDelete(item.id)} />
+                                    <div className="flex h-6.75 flex-col gap-2">
+                                        <ButtonEdit
+                                            onEdit={() => handleEdit(item)}
+                                        />
+                                        <ButtonDelete
+                                            onDelete={() =>
+                                                handleDelete(item.id)
+                                            }
+                                        />
                                     </div>
                                 </div>
-
                             ))}
                         </div>
                     </div>

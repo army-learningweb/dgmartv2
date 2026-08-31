@@ -8,7 +8,7 @@ import { ReadDataProduct } from '@/types/module/home';
 import { CategoriesData } from '@/data/categories';
 import Policy from '@/components/Client/Home/Policy';
 
-export default function Read({ new_products, discount_products, posts }: ReadDataProduct) {
+export default function Read({ onshop_products, discount_products, posts }: ReadDataProduct) {
     return (
         <>
             <Head title="Trang chủ" />
@@ -26,7 +26,7 @@ export default function Read({ new_products, discount_products, posts }: ReadDat
             <SliderProduct
                 title="Có tại cửa hàng"
                 desc="Khám phá các sản phẩm công nghệ đang có mặt trực tiếp tại cửa hàng."
-                data={new_products.data}
+                data={onshop_products.data}
                 isShowBadgeNew
                 isShowBadgeDiscount
             />

@@ -1,5 +1,5 @@
 import { Head } from '@inertiajs/react';
-import { ArrowDownWideNarrow, ArrowUpNarrowWide } from 'lucide-react';
+import { ArrowDownWideNarrow, ArrowUpNarrowWide, Funnel } from 'lucide-react';
 import { useState } from 'react';
 import Card from '@/components/Client/ProductCard/Card';
 import Pagination from '@/components/Admin/Pagination/Pagination';
@@ -19,7 +19,8 @@ export default function Read({
     ram,
     design,
 }: ReadDataProduct) {
-    
+    console.log(products);
+
     // Bộ lọc hiện tại đang hoạt động
     const currentFilter = [cpu, gpu, ram, design];
 
@@ -27,7 +28,10 @@ export default function Read({
     const { handleQueryFilter } = useFilter({
         route: '/laptop',
         initialsFilter: {
-            page: products.meta.current_page === 1 ? '' : products.meta.current_page,
+            page:
+                products.meta.current_page === 1
+                    ? ''
+                    : products.meta.current_page,
         },
         onlyLoad: [
             'products',
@@ -128,6 +132,22 @@ export default function Read({
 
     return (
         <>
+            <div className='fixed top-[33%] left-10 w-13 h-13 bg-white shadow-md border border-gray-200 flex items-center justify-center rounded-full'>
+                <Funnel/>
+            </div>
+
+            <div className='fixed w-full h-full top-0 left-0 bg-gray-500/40 z-40 hidden'>
+                <div className="fixed top-13 left-5 z-50 w-[17%] hidden">
+                    <Filter
+                        data={Filters}
+                        currentFilter={currentFilter}
+                        onFilter={handleFilterData}
+                        onRemove={handleRemoveFilter}
+                        onClear={handleClearAllFilter}
+                    />
+                </div>
+            </div>
+
             <div className="mx-auto max-w-312 space-y-4">
                 <Head title="Sản phẩm" />
 
@@ -205,36 +225,19 @@ export default function Read({
                             >
                                 <ArrowDownWideNarrow size={17} />
                                 <span>Cao đến thấp</span>
-                            </FilterTab>          
+                            </FilterTab>
                         </div>
                     </div>
                 </div>
 
                 <div className="flex-1">
-                    <div className="mt-4 flex gap-4">
-                        <div className="w-[19%]">
-                            <div className="sticky top-5">
-                                {/* filter */}
-                                <Filter
-                                    data={Filters}
-                                    currentFilter={currentFilter}
-                                    onFilter={handleFilterData}
-                                    onRemove={handleRemoveFilter}
-                                    onClear={handleClearAllFilter}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="flex-1">
-                            {/* product */}
-                            <div
-                                className={`grid grid-cols-4 gap-3 ${FilterDataReview?.length > 0 ? '' : ''}`}
-                            >
-                                {products.data.map((item) => (
-                                    <Card key={item.id} dataItem={item} />
-                                ))}
-                            </div>
-                        </div>
+                    {/* product */}
+                    <div
+                        className={`mt-4 grid grid-cols-5 gap-3 ${FilterDataReview?.length > 0 ? '' : ''}`}
+                    >
+                        {products.data.map((item) => (
+                            <Card key={item.id} dataItem={item} />
+                        ))}
                     </div>
 
                     {/* pagination */}

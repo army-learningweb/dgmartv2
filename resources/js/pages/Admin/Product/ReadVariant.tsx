@@ -63,11 +63,7 @@ export default function ReadVariant({
     const { handleQueryFilter } = useFilter({
         route: '/admin/products/variants',
         initialsFilter: {
-            filter_role,
-            filter_product,
-            sort_price,
-            search,
-            page: variants.current_page,
+            page: variants.current_page == 1 ? '' : variants.current_page,
         },
         onlyLoad: ['variants', 'filter_role', 'filter_product', 'sort_price'],
     });
@@ -123,13 +119,14 @@ export default function ReadVariant({
                 {/* heading */}
                 <div className="flex items-center justify-between">
                     <Title heading="Cấu hình & biến thể" />
-                    
+
                     <div className="flex gap-2">
-                        <ButtonCreateLink route="/admin/products/variants/create" />
                         <ButtonCreateLink
                             route="/admin/products/create"
                             label="Thêm sản phẩm"
+                            variant='outline'
                         />
+                        <ButtonCreateLink route="/admin/products/variants/create" />
                     </div>
                 </div>
 
