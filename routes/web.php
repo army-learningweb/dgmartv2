@@ -17,10 +17,11 @@ use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 
-Route::get('/',[HomeController::class, 'read']);
 
 //HOME
+Route::get('/',[HomeController::class, 'read']);
 Route::get('/laptop', [ProductController::class, 'read']);
+Route::get('/phu-kien', [ProductController::class, 'readAccessory']);
 
 //AUTH
 Route::get('/admin/login', [AdminAuthController::class, 'login'])->name('login');

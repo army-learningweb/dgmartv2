@@ -18,6 +18,7 @@ import { CreateProductConfigTypeS } from '@/types/module/product_config_type';
 import { EditProductConfigTypeS } from '@/types/module/product_config_type';
 import { ConfigType } from '@/types/module/product_config_type';
 import { useShortCut } from '@/hooks/use-shortcut';
+import { useInputFocus } from '@/hooks/use-inputFocus';
 
 export default function ReadConfigType({ types, configs, total }: ReadProductConfigTypeS) {
     const { data, setData, post, patch, errors, processing, reset, clearErrors, } = useForm<CreateProductConfigTypeS>({
@@ -31,7 +32,9 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
     const { openModal, isEditModal, setOpenModal, setIsEditModal, handleOpenModal, handleCloseModal, } = useModal({ reset, clearErrors });
 
     // Shortcut hooks
-    useShortCut({openModal, setOpenModal})
+    useShortCut({openModal, handleOpenModal, handleCloseModal})
+
+    const {ipRef} = useInputFocus({openModal});
 
     // Modal Edit Mode
     const handleEdit = async (configType: EditProductConfigTypeS) => {
@@ -135,6 +138,7 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
                 >
                     <div>
                         <Input
+                            ref={ipRef}
                             type="text"
                             name="name"
                             label="Tên loại"
@@ -258,7 +262,7 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
                     <Title heading={`Loại cấu hình (${total})`} />
 
                     <div className="flex items-center gap-2">
-                        <ShortCutHint/>
+                        <ShortCutHint />
                         <ButtonCreate onOpenModal={handleOpenModal} />
                     </div>
                 </div>
@@ -283,11 +287,15 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
                                         key={item.id}
                                         className="border-b border-gray-200 last-of-type:border-0"
                                     >
-                                        <td className="w-50 truncate px-5 py-3">
-                                            {item.name}
+                                        <td className="px-5 py-3">
+                                            <div className="w-50 truncate">
+                                                {item.name}
+                                            </div>
                                         </td>
-                                        <td className="w-80 truncate px-5 py-3">
-                                            {item.desc}
+                                        <td className="px-5 py-3">
+                                            <div className="w-80 truncate text-gray-500">
+                                                {item.desc}
+                                            </div>
                                         </td>
                                         <td className="w-55 truncate px-5 py-3">
                                             {item.created_at}

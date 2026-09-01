@@ -38,7 +38,7 @@ export default function Create({ product_categories }: ReadProductType) {
             filesReview.map((file) => file.file),
         );
         post('/admin/products/store', {
-            preserveScroll: true,
+            // preserveScroll: true,
             preserveState: true,
             onSuccess: () => {
                 toast.success('Thêm mới thành công');

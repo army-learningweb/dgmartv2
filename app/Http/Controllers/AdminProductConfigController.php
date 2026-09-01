@@ -12,9 +12,7 @@ class AdminProductConfigController extends Controller
     // Đọc
     public function read()
     {
-        $configs = ProductConfig::with('group:id,name')->get()->groupBy(function($value){
-            return $value->group->name;
-        });
+        $configs = ProductConfig::latest()->paginate(10);
 
         $total = ProductConfig::count();
         $groupConfigs = ProductConfigGroup::get(['id','name']);
@@ -32,7 +30,7 @@ class AdminProductConfigController extends Controller
         $validated = $request->validate(
             [
                 "group_id" => ["required", "exists:product_config_groups,id"],
-                "name" => ["required", "min:2", "max:255", "regex:/^[\p{L}\p{N}\p{P}\+\<\>\s]+$/u", "unique:product_configs"],
+                "name" => ["required", "min:2", "max:255", "regex:/^[\p{L}\p{N}\p{P}\p{M}\+\<\>\s]+$/u", "unique:product_configs"],
             ],
             [
                 "name.regex" => ":attribute chứa kí tự không hợp lệ",

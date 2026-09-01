@@ -440,7 +440,7 @@ export default function Read({
                         <ButtonCreateLink
                             route="/admin/products/variants/create"
                             label="Thêm biến thể"
-                            variant='outline'
+                            variant="outline"
                         />
                         <ButtonCreateLink route="/admin/products/create" />
                     </div>
@@ -477,7 +477,7 @@ export default function Read({
 
                             value={filter_category ?? ''}
                         >
-                            <option value="">Theo danh mục</option>
+                            <option value="">Theo danh mục sản phẩm</option>
                             {product_categories?.length > 0 &&
                                 product_categories.map((item) => (
                                     <option key={item.id} value={item.id}>
@@ -514,9 +514,9 @@ export default function Read({
                             <thead className="border-b border-gray-200 bg-gray-100 font-medium text-gray-800">
                                 <tr>
                                     <td className="px-4 py-2">Sản phẩm</td>
-                                    <td className="px-4 py-2">Ngày tạo</td>
-                                    <td className="px-4 py-2">Người tạo</td>
+                                    <td className="px-4 py-2">Danh mục</td>
                                     <td className="px-4 py-2">Trạng thái</td>
+                                    <td className="px-4 py-2">Người tạo</td>
                                     <td className="px-4 py-2 text-center">
                                         Tùy chỉnh sản phẩm
                                     </td>
@@ -554,20 +554,15 @@ export default function Read({
                                                     <p className="w-50 truncate font-medium">
                                                         {item.name}
                                                     </p>
-                                                    <p className="w-fit truncate rounded-md text-xs font-medium text-blue-600">
-                                                        {item.category?.name}
+                                                    <p className="w-50 truncate rounded-md text-xs font-medium text-gray-500">
+                                                        {item.slug}
                                                     </p>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-4 py-1.75">
-                                            <div className="w-30 truncate">
-                                                {item.created_at}
-                                            </div>
-                                        </td>
-                                        <td className="px-4 py-1.75">
-                                            <div className="w-30 truncate">
-                                                {item.user?.name}
+                                            <div className="w-30 truncate text-xs font-medium text-blue-600">
+                                                {item.category?.name}
                                             </div>
                                         </td>
                                         <td className="px-4 py-1.75">
@@ -575,6 +570,12 @@ export default function Read({
                                                 <Badge status={item.status} />
                                             </div>
                                         </td>
+                                        <td className="px-4 py-1.75">
+                                            <div className="w-30 truncate">
+                                                {item.user?.name}
+                                            </div>
+                                        </td>
+
                                         <td className="px-4 py-1.75">
                                             <div className="flex h-6.75 gap-2">
                                                 <Button

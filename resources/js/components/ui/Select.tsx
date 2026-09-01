@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { ChevronDown } from "lucide-react"
+import { forwardRef } from "react";
 
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     error?: string;
@@ -10,7 +11,7 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     children?: React.ReactNode;
 }
 
-export default function Select({ children, label, name, error, showError = true , className, ...props }: SelectProps) {
+const Select = forwardRef<any, SelectProps>(({children, label, name, error, showError = true , className, ...props},ref) => {
     return (
         <>
             <div className="relative">
@@ -24,6 +25,7 @@ export default function Select({ children, label, name, error, showError = true 
                 )}
                
                 <select
+                    ref={ref}
                     name={name}
                     id={name}
                     className={clsx(`${label && 'mt-2'} w-full appearance-none rounded-lg border border-gray-200 pl-2 pr-6 py-1.75 transition-colors duration-150 focus:border-gray-400/70 focus:ring-3 focus:ring-gray-300/70 focus:ring-offset-blue-50 focus:outline-0 ${className}`, {
@@ -50,4 +52,6 @@ export default function Select({ children, label, name, error, showError = true 
             )}
         </>
     )
-}
+})
+
+export default Select

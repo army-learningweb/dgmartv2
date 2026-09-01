@@ -15,7 +15,7 @@ export default function Button({ variant = 'primary', size = 'medium', animatePr
     const variants = {
         primary: 'bg-blue-600 border border-blue-600 text-white hover:brightness-110',
         secondary: 'bg-gray-600 border border-gray-600 text-white hover:brightness-110',
-        outline: 'border border-gray-200 bg-gray-100 hover:bg-gray-200 bg-white',
+        outline: 'border border-gray-200 bg-gray-100 hover:bg-gray-200',
         danger: 'bg-red-700 border-red-700 text-white hover:brightness-110',
         warning: 'bg-amber-600 border-amber-600 text-black hover:brightness-110'
     }

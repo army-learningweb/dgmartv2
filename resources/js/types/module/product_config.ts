@@ -1,15 +1,16 @@
 import { ProductConfigGroup } from './product_config_group';
+import { PaginatedData } from './global';
 
 interface ProductConfigType {
-    id: string | number | null;
+    id: string | number;
     name: string;
-    group_id: string | number | null;
     created_at: string;
     updated_at: string;
+    group_id: string | number | null;
 }
 
 export type ReadProductConfigType = {
-    configs: Record<string, ProductConfigType[]>;
+    configs: PaginatedData<ProductConfigType>;
     total: string;
     groupConfigs: Pick<ProductConfigGroup, 'id' | 'name'>[];
 };

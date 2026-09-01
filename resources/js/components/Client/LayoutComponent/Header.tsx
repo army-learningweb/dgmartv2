@@ -23,7 +23,7 @@ export default function Header() {
                             </Link>
                         </li>
                         <li>
-                            <Link href="/" className="inline-block py-2">
+                            <Link href="/phu-kien" className="inline-block py-2">
                                 Phụ kiện
                             </Link>
                         </li>

@@ -1,7 +1,7 @@
 interface FilterTab {
-    onFilter : () => void;
+    onFilter? : () => void;
     children: React.ReactNode;
-    active: boolean;
+    active?: boolean;
 }
 
 export default function FilterTab ({onFilter, active, children} : FilterTab) {

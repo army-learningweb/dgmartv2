@@ -19,6 +19,9 @@ import { useModal } from '@/hooks/use-modal';
 import { ReadCategoriesProductType } from '@/types/module/product_category';
 import { CreateCategoriesProductType } from '@/types/module/product_category';
 import { EditCategoriesPostType } from '@/types/module/product_category';
+import { useShortCut } from '@/hooks/use-shortcut';
+import ShortCutHint from '@/components/Admin/TableManager/Hint';
+import { useInputFocus } from '@/hooks/use-inputFocus';
 
 export default function ReadCategoriesProduct({ categories, parent_categories, total }: ReadCategoriesProductType) {
     const { data, setData, post, patch, errors, processing, reset, clearErrors } = useForm<CreateCategoriesProductType>({
@@ -30,6 +33,11 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
 
     // Modal hooks
     const { openModal, isEditModal, setOpenModal, setIsEditModal, handleOpenModal, handleCloseModal } = useModal({ reset, clearErrors });
+
+    // shortcuts hooks
+    useShortCut({openModal, handleCloseModal, handleOpenModal})
+
+    const {ipRef } = useInputFocus({openModal})
 
     // Modal edit mode
     const handleEdit = async (category: EditCategoriesPostType) => {
@@ -98,30 +106,60 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
                 onClose={handleCloseModal}
                 isOpen={openModal}
                 customSize="w-[90%] md:w-[30%] min-h-[20%]"
-                title={!isEditModal ? 'Thêm mới danh mục' : 'Chỉnh sửa thông tin'}
+                title={
+                    !isEditModal ? 'Thêm mới danh mục' : 'Chỉnh sửa thông tin'
+                }
                 labelSubmit={!isEditModal ? 'Thêm mới' : 'Cập nhật'}
                 formSubmitId="categoryProduct"
                 processing={processing}
             >
-                <form onSubmit={!isEditModal ? handleCreate : handleUpdate} id="categoryProduct" >
+                <form
+                    onSubmit={!isEditModal ? handleCreate : handleUpdate}
+                    id="categoryProduct"
+                >
                     <div className="mt-1">
-                        <Input type="text" name="name" label="Tên danh mục" error={errors.name} value={data.name} onChange={(e) => setData('name', e.target.value)} onBlur={() => clearErrors("name")} autoComplete="on" />
+                        <Input
+                            ref={ipRef}
+                            type="text"
+                            name="name"
+                            label="Tên danh mục"
+                            error={errors.name}
+                            value={data.name}
+                            onChange={(e) => setData('name', e.target.value)}
+                            onBlur={() => clearErrors('name')}
+                            autoComplete="on"
+                        />
                     </div>
                     <div className="mt-2">
-                        <Select className={clsx('', { 'pointer-events-none opacity-50': data.parent_id == '0' && isEditModal, })}
+                        <Select
+                            className={clsx('', {
+                                'pointer-events-none opacity-50':
+                                    data.parent_id == '0' && isEditModal,
+                            })}
                             label="Danh mục cha"
                             name="parent_id"
                             value={data.parent_id}
-                            onChange={(e) => setData('parent_id', e.target.value)}
+                            onChange={(e) =>
+                                setData('parent_id', e.target.value)
+                            }
                         >
                             <option value="">-Chọn danh mục cha-</option>
                             {parent_categories?.length > 0 &&
                                 parent_categories.map((category) => (
-                                    <option key={category.id} value={category.id}> {category.name} </option>
+                                    <option
+                                        key={category.id}
+                                        value={category.id}
+                                    >
+                                        {' '}
+                                        {category.name}{' '}
+                                    </option>
                                 ))}
 
                             {parent_categories?.length === 0 && (
-                                <option value=""> Hiện chưa có danh mục cha nào !</option>
+                                <option value="">
+                                    {' '}
+                                    Hiện chưa có danh mục cha nào !
+                                </option>
                             )}
                         </Select>
                     </div>
@@ -143,7 +181,12 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
                             label="Trạng thái"
                             name="status"
                             value={data.status}
-                            onChange={(e) => setData('status', e.target.value as 'active' | 'inactive',)}
+                            onChange={(e) =>
+                                setData(
+                                    'status',
+                                    e.target.value as 'active' | 'inactive',
+                                )
+                            }
                         >
                             <option value="active">Hoạt động</option>
                             <option value="inactive">Vô hiệu hóa</option>
@@ -162,7 +205,11 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
                 {/* title */}
                 <div className="flex items-center justify-between">
                     <Title heading={`Danh mục sản phẩm (${total})`} />
-                    <ButtonCreate onOpenModal={handleOpenModal} />
+
+                    <div className="flex items-center gap-2">
+                        <ShortCutHint/>
+                        <ButtonCreate onOpenModal={handleOpenModal} />
+                    </div>
                 </div>
 
                 {/* data */}
@@ -187,7 +234,11 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
                                         <tr className="border-b border-gray-100">
                                             <td className="px-5 py-4">
                                                 <div className="flex w-40 items-center gap-2 truncate">
-                                                    <Folder className="fill-amber-500" strokeWidth={1} size={19.5} />
+                                                    <Folder
+                                                        className="fill-amber-500"
+                                                        strokeWidth={1}
+                                                        size={19.5}
+                                                    />
                                                     <div>{category.name}</div>
                                                 </div>
                                             </td>
@@ -208,13 +259,25 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
                                             </td>
                                             <td className="px-5 py-4">
                                                 <div className="w-30">
-                                                    <Badge status={category.status} />
+                                                    <Badge
+                                                        status={category.status}
+                                                    />
                                                 </div>
                                             </td>
                                             <td className="px-5 py-4">
                                                 <div className="flex h-6.75 w-40 gap-2">
-                                                    <ButtonEdit onEdit={() => handleEdit(category)} />
-                                                    <ButtonDelete onDelete={() => handleDelete(category.id)} />
+                                                    <ButtonEdit
+                                                        onEdit={() =>
+                                                            handleEdit(category)
+                                                        }
+                                                    />
+                                                    <ButtonDelete
+                                                        onDelete={() =>
+                                                            handleDelete(
+                                                                category.id,
+                                                            )
+                                                        }
+                                                    />
                                                 </div>
                                             </td>
                                         </tr>
@@ -222,11 +285,21 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
                                         {/* danh mục con */}
                                         {category.childs?.length > 0 &&
                                             category.childs.map((item) => (
-                                                <tr key={item.id} className="border-b border-gray-100">
+                                                <tr
+                                                    key={item.id}
+                                                    className="border-b border-gray-100"
+                                                >
                                                     <td className="px-5 py-4">
-                                                        <div className="ms-2.5 flex w-40 gap-2 truncate">
-                                                            <CornerDownRight size={18} strokeWidth={1.5} />
-                                                            <div>{item.name}</div>
+                                                        <div className="ms-2.5 flex gap-2">
+                                                            <CornerDownRight className='shrink-0'
+                                                                size={18}
+                                                                strokeWidth={
+                                                                    1.5
+                                                                }
+                                                            />
+                                                            <div className='w-40 truncate'>
+                                                                {item.name}
+                                                            </div>
                                                         </div>
                                                     </td>
                                                     <td className="px-5 py-4">
@@ -246,13 +319,29 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
                                                     </td>
                                                     <td className="px-5 py-4">
                                                         <div className="w-30">
-                                                            <Badge status={item.status} />
+                                                            <Badge
+                                                                status={
+                                                                    item.status
+                                                                }
+                                                            />
                                                         </div>
                                                     </td>
                                                     <td className="px-5 py-4">
                                                         <div className="flex h-6.75 w-40 gap-2">
-                                                            <ButtonEdit onEdit={() => handleEdit(item)} />
-                                                            <ButtonDelete onDelete={() => handleDelete(item.id)} />
+                                                            <ButtonEdit
+                                                                onEdit={() =>
+                                                                    handleEdit(
+                                                                        item,
+                                                                    )
+                                                                }
+                                                            />
+                                                            <ButtonDelete
+                                                                onDelete={() =>
+                                                                    handleDelete(
+                                                                        item.id,
+                                                                    )
+                                                                }
+                                                            />
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -268,8 +357,14 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
                                 <Fragment key={category.id}>
                                     <div className="flex h-22.5 gap-2 border-b border-gray-200 py-2">
                                         <div className="relative flex flex-1 items-center gap-2 truncate">
-                                            <Folder className="fill-amber-500" strokeWidth={1} size={19.5} />
-                                            <div className='w-30 truncate'>{category.name}</div>
+                                            <Folder
+                                                className="fill-amber-500"
+                                                strokeWidth={1}
+                                                size={19.5}
+                                            />
+                                            <div className="w-30 truncate">
+                                                {category.name}
+                                            </div>
 
                                             {category.status === 'active' && (
                                                 <div className="absolute bottom-6 left-3 h-3 w-3 rounded-full bg-green-600"></div>
@@ -277,11 +372,18 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
                                             {category.status === 'inactive' && (
                                                 <div className="absolute bottom-6 left-3 h-3 w-3 rounded-full bg-red-600"></div>
                                             )}
-
                                         </div>
                                         <div className="flex h-6.75 w-24 flex-col gap-2">
-                                            <ButtonEdit onEdit={() => handleEdit(category)} />
-                                            <ButtonDelete onDelete={() => handleDelete(category.id)} />
+                                            <ButtonEdit
+                                                onEdit={() =>
+                                                    handleEdit(category)
+                                                }
+                                            />
+                                            <ButtonDelete
+                                                onDelete={() =>
+                                                    handleDelete(category.id)
+                                                }
+                                            />
                                         </div>
                                     </div>
 
@@ -294,8 +396,16 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
                                                 {item.name}
                                             </div>
                                             <div className="flex h-6.75 w-24 flex-col gap-2">
-                                                <ButtonEdit onEdit={() => handleEdit(item)} />
-                                                <ButtonDelete onDelete={() => handleDelete(item.id)} />
+                                                <ButtonEdit
+                                                    onEdit={() =>
+                                                        handleEdit(item)
+                                                    }
+                                                />
+                                                <ButtonDelete
+                                                    onDelete={() =>
+                                                        handleDelete(item.id)
+                                                    }
+                                                />
                                             </div>
                                         </div>
                                     ))}
