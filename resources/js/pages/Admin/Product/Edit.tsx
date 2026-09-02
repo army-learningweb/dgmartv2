@@ -1,4 +1,4 @@
-import { Head, useForm, router } from "@inertiajs/react"
+import { Head, useForm, router, usePage } from "@inertiajs/react"
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -15,21 +15,24 @@ import { EditProductType } from "@/types/module/products";
 import { ReadEditProductType } from "@/types/module/products";
 import ButtonBackLink from "@/components/Admin/TableManager/ButtonBackLink";
 
-export default function Edit({ product_categories, product, current_page }: ReadEditProductType) {
+export default function Edit({ product_categories, product }: ReadEditProductType) {
     
-    const { data, setData, post, errors, processing, clearErrors } = useForm<EditProductType>({
-        file: null,
-        files: null,
-        old_file: product.main_image?.object_id,
-        old_files: product.medias ?? [],
-        name: product.name,
-        desc: product.desc,
-        content: product.content,
-        status: product.status,
-        category_id: product.category_id,
-    });
-
+    const { data, setData, post, errors, processing, clearErrors } =
+        useForm<EditProductType>({
+            file: null,
+            files: null,
+            old_file: product.main_image?.object_id,
+            old_files: product.medias ?? [],
+            name: product.name,
+            desc: product.desc,
+            content: product.content,
+            status: product.status,
+            category_id: product.category_id,
+        });
     const [filesReview, setFilesReview] = useState<any[]>(product.medias ?? []);
+
+    const {url} = usePage();
+    const queryString = url.split('?')[1];
 
     const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>, id: string) => {
         e.preventDefault();
@@ -39,8 +42,7 @@ export default function Edit({ product_categories, product, current_page }: Read
             preserveScroll: true,
             onSuccess: () => {
                 toast.success("Cập nhật thành công");
-                router.visit(`/admin/products?page=${current_page}`);
-                
+                router.visit(`/admin/products?${queryString}`)
             },
         })
     }

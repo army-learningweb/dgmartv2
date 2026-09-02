@@ -37,7 +37,7 @@ export default function SearchBar({
 }: SearchBarProps) {
     return (
         <div className="relative w-full md:w-auto">
-            <div className="focus-within:border-ring flex w-full md:w-100 items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-2 transition-all duration-150 ease-out focus-within:border-gray-400 focus-within:ring-3 focus-within:ring-gray-300/70">
+            <div className="focus-within:border-ring flex w-full items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-2 transition-all duration-150 ease-out focus-within:border-gray-400 focus-within:ring-3 focus-within:ring-gray-300/70 md:w-100">
                 <div className="flex w-full items-center gap-1">
                     <Search
                         size={18}
@@ -52,7 +52,7 @@ export default function SearchBar({
                         onFocus={onFocus}
                         onBlur={onBlur}
                         value={querySearch}
-                        className="flex-1 px-2 py-1.5 focus:outline-0 truncate"
+                        className="flex-1 truncate px-2 py-1.5 focus:outline-0"
                         placeholder={placeHolderSearch}
                         autoComplete="off"
                     />
@@ -112,17 +112,20 @@ export default function SearchBar({
                     {!querySearch && <p>Mới thêm gần đây</p>}
                 </div>
                 <hr className="my-2 border-gray-100" />
-                {dataSuggest.map((item) => (
-                    <div
-                        key={item.id}
-                        onMouseDown={() => onMouseDown(item.name)}
-                        onMouseEnter={() => onMouseEnter(item.name)}
-                        onMouseLeave={onMouseLeave}
-                        className="cursor-pointer rounded-md p-1 hover:bg-gray-100 truncate"
-                    >
-                        {item.name}
-                    </div>
-                ))}
+
+                <div className="max-h-50 overflow-y-auto">
+                    {dataSuggest.map((item) => (
+                        <div
+                            key={item.id}
+                            onMouseDown={() => onMouseDown(item.name)}
+                            onMouseEnter={() => onMouseEnter(item.name)}
+                            onMouseLeave={onMouseLeave}
+                            className="cursor-pointer truncate rounded-md p-1 hover:bg-gray-100"
+                        >
+                            {item.name}
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     );

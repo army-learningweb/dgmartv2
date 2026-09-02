@@ -20,6 +20,7 @@ import { useSearch } from '@/hooks/use-search';
 import { useFilter } from '@/hooks/use-filter';
 
 import { ReadPostType } from '@/types/module/post';
+import { usePrevPage } from '@/hooks/use-prevPage';
 
 export default function Read({
     posts,
@@ -53,6 +54,8 @@ export default function Read({
             'sort_date',
         ],
     });
+
+    const { queryString } = usePrevPage();
 
     // Tìm kiếm
     const {
@@ -148,6 +151,7 @@ export default function Read({
 
                         {/* filter */}
                         <Select
+                            className='md:w-70!'
                             name="filter-category"
                             onChange={(e) =>
                                 handleQueryFilter({
@@ -202,6 +206,7 @@ export default function Read({
                         <ButtonResetFilterMobile route="/admin/posts" />
                     )}
                 </div>
+
                 {posts.data?.length > 0 && (
                     <div className="mt-4 h-full overflow-hidden rounded-xl border border-gray-200">
                         {/* desktop */}
@@ -337,7 +342,7 @@ export default function Read({
                                         <td className="px-4 py-2.75">
                                             <div className="flex h-6.75 gap-2">
                                                 <ButtonEditLink
-                                                    route={`/admin/posts/${item.id}/edit`}
+                                                    route={`/admin/posts/${item.id}/edit${queryString ? `?${queryString}` : ''}`}
                                                 />
                                                 <ButtonDelete
                                                     onDelete={() =>

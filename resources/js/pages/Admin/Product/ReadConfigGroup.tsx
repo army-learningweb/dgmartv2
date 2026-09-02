@@ -9,12 +9,15 @@ import ButtonDelete from '@/components/Admin/TableManager/ButtonDelete';
 import ButtonEdit from '@/components/Admin/TableManager/ButtonEdit';
 import Title from '@/components/Admin/TableManager/Title';
 import Textarea from '@/components/ui/Textarea';
-import ButtonQuickCreate from '@/components/Admin/TableManager/ButtonQuickCreate';
 import ShortCutHint from '@/components/Admin/TableManager/Hint';
+import SearchBar from '@/components/Admin/TableManager/SearchBar';
+import Pagination from '@/components/Admin/Pagination/Pagination';
 
 import { useModal } from '@/hooks/use-modal';
 import { useShortCut } from '@/hooks/use-shortcut';
 import { useInputFocus } from '@/hooks/use-inputFocus';
+import { useFilter } from '@/hooks/use-filter';
+import { useSearch } from '@/hooks/use-search';
 
 import { ReadProductConfigGroupType } from '@/types/module/product_config_group';
 import { CreateProductConfigGroupType } from '@/types/module/product_config_group';
@@ -23,6 +26,8 @@ import { EditProductConfigGroupType } from '@/types/module/product_config_group'
 export default function ReadConfigGroup({
     configGroup,
     total,
+    configGroupSuggest,
+    search,
 }: ReadProductConfigGroupType) {
     const {
         data,
@@ -54,6 +59,37 @@ export default function ReadConfigGroup({
 
     // Input Focus hooks
     const { ipRef } = useInputFocus({ openModal });
+
+    // Bộ lọc tổng hợp
+    const { handleQueryFilter } = useFilter({
+        route: '/admin/products/configs/group',
+        initialsFilter: {
+            page: configGroup.current_page == 1 ? '' : configGroup.current_page,
+        },
+        onlyLoad: ['configGroup', 'search'],
+    });
+
+    // Tìm kiếm
+    const {
+        querySearch,
+        loadingSearch,
+        dataSuggest,
+        openSuggest,
+        placeholderSearch,
+        handleQuerySearch,
+        handleClearQuerySearch,
+        handleSetPlaceHolder,
+        handleFocusSearch,
+        handleBlurSearch,
+        handleChoose,
+        handleLeave,
+    } = useSearch({
+        handleQueryFilter,
+        search,
+        initialData: configGroupSuggest,
+        placeholder: 'Tìm kiếm theo tên nhóm...',
+        routeGetData: '/admin/products/configs/group/getGroup',
+    });
 
     // Modal Edit Mode
     const handleEdit = async (group: EditProductConfigGroupType) => {
@@ -159,8 +195,6 @@ export default function ReadConfigGroup({
                 </form>
             </Modal>
 
-            <ButtonQuickCreate onOpenModal={handleOpenModal} />
-
             <section>
                 {/* title */}
                 <div className="flex items-center justify-between">
@@ -172,8 +206,28 @@ export default function ReadConfigGroup({
                     </div>
                 </div>
 
+                <div className="mt-4 flex flex-col items-center justify-between md:flex-row">
+                    {/* filter & search */}
+                    <div className="flex w-full flex-1 flex-col gap-2 md:flex-row md:justify-between">
+                        <SearchBar
+                            onChange={handleQuerySearch}
+                            onClearQuery={handleClearQuerySearch}
+                            onFocus={handleFocusSearch}
+                            onBlur={handleBlurSearch}
+                            onMouseDown={handleChoose}
+                            onMouseEnter={handleSetPlaceHolder}
+                            onMouseLeave={handleLeave}
+                            dataSuggest={dataSuggest}
+                            querySearch={querySearch}
+                            placeHolderSearch={placeholderSearch}
+                            loadingSearch={loadingSearch}
+                            openSuggest={openSuggest}
+                        />
+                    </div>
+                </div>
+
                 {/* data */}
-                {configGroup?.length > 0 && (
+                {configGroup?.data.length > 0 && (
                     <div className="mt-4 h-full overflow-hidden rounded-xl border border-gray-200">
                         {/* desktop */}
                         <table className="hidden w-full md:table">
@@ -187,32 +241,32 @@ export default function ReadConfigGroup({
                                 </tr>
                             </thead>
                             <tbody>
-                                {configGroup.map((item) => (
+                                {configGroup.data.map((item) => (
                                     <tr
                                         key={item.id}
                                         className="border-b border-gray-200 last-of-type:border-0"
                                     >
-                                        <td className="px-5 py-3">
+                                        <td className="px-5 py-2.5">
                                             <div className="w-60 truncate">
                                                 {item.name}
                                             </div>
                                         </td>
-                                        <td className="px-5 py-3">
+                                        <td className="px-5 py-2.5">
                                             <div className="w-65 truncate text-gray-500">
                                                 {item.desc}
                                             </div>
                                         </td>
-                                        <td className="px-5 py-3">
+                                        <td className="px-5 py-2.5">
                                             <div className="w-30">
                                                 {item.created_at}
                                             </div>
                                         </td>
-                                        <td className="px-5 py-3">
+                                        <td className="px-5 py-2.5">
                                             <div className="w-30">
                                                 {item.updated_at}
                                             </div>
                                         </td>
-                                        <td className="px-5 py-3">
+                                        <td className="px-5 py-2.5">
                                             <div className="flex h-6.75 gap-2">
                                                 <ButtonEdit
                                                     onEdit={() =>
@@ -233,7 +287,7 @@ export default function ReadConfigGroup({
 
                         {/* mobile */}
                         <div className="inline-flex w-full flex-col gap-2 md:hidden">
-                            {configGroup.map((item) => (
+                            {configGroup.data.map((item) => (
                                 <div
                                     key={item.id}
                                     className="flex h-22 w-full justify-between border-b border-gray-200 p-3"
@@ -263,8 +317,20 @@ export default function ReadConfigGroup({
                     </div>
                 )}
 
+                {/* pagination */}
+                {configGroup.data?.length > 0 && (
+                    <Pagination
+                        firstUrl={configGroup.first_page_url}
+                        lastUrl={configGroup.last_page_url}
+                        prevUrl={configGroup.prev_page_url}
+                        nextUrl={configGroup.next_page_url}
+                        currentPage={configGroup.current_page}
+                        lastPage={configGroup.last_page}
+                    />
+                )}
+
                 {/* empty */}
-                {configGroup?.length === 0 && (
+                {configGroup?.data.length === 0 && (
                     <EmptyData>
                         <ButtonCreate onOpenModal={handleOpenModal} />
                     </EmptyData>

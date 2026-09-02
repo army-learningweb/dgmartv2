@@ -16,7 +16,6 @@ export const useFilter = ({
     const handleQueryFilter = (query: {}) => {
         const mergedQuery = { ...queryFilters, ...query };
         setQueryFilters(mergedQuery);
-
         const requestFilters = Object.fromEntries(
             Object.entries(mergedQuery).filter(
                 ([, q]) => q !== null && q !== undefined && q !== '',
@@ -29,5 +28,6 @@ export const useFilter = ({
             only: onlyLoad,
         });
     };
+
     return { handleQueryFilter };
 };

@@ -9,6 +9,7 @@ import { CategoriesData } from '@/data/categories';
 import Policy from '@/components/Client/Home/Policy';
 
 export default function Read({ onshop_products, discount_products, posts }: ReadDataProduct) {
+
     return (
         <>
             <Head title="Trang chủ" />
@@ -43,7 +44,7 @@ export default function Read({ onshop_products, discount_products, posts }: Read
             <SliderPost
                 title="Bài viết & Tin tức"
                 desc="Khám phá các bài viết đánh giá chi tiết, thủ thuật máy tính hữu ích và xu hướng công nghệ nổi bật mỗi ngày."
-                data={posts}
+                data={posts.data}
             />
         </>
     );

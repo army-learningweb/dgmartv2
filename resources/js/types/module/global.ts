@@ -7,4 +7,5 @@ export type PaginatedData<T> = {
     next_page_url: string;
     prev_page_url: string;
     data: T[];
+    from: number;
 };

@@ -196,8 +196,7 @@ class AdminPostController extends Controller
         ]);
 
         $validated["status"] = $request->input('status');
-        $parent_category_slug = PostCategory::where('id', $request->input('category_id'))->value('slug');
-        $validated["slug"] = $parent_category_slug . "/" . Str::slug($request->input('title'));
+        $validated["slug"] = Str::slug($request->input('title'));
         $validated["updated_at"] = now();
         $post->update($validated);
 

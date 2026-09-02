@@ -9,10 +9,18 @@ interface ProductConfigType {
     group_id: string | number | null;
 }
 
+interface ConfigsSuggestProps {
+    id: string;
+    name: string;
+}
+
 export type ReadProductConfigType = {
     configs: PaginatedData<ProductConfigType>;
     total: string;
     groupConfigs: Pick<ProductConfigGroup, 'id' | 'name'>[];
+    search: string;
+    configs_suggest: ConfigsSuggestProps[];
+    group: string;
 };
 
 export type CreateProductConfigType = {

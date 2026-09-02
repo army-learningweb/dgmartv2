@@ -9,13 +9,23 @@ use App\Models\ProductConfigGroup;
 class AdminProductConfigGroupController extends Controller
 {
      // Đọc
-    public function read()
+    public function read(Request $request)
     {
-        $configGroup = ProductConfigGroup::latest()->get();
+        $configGroup = ProductConfigGroup::query()
+        ->when($request->input('search'), function ($query, $value) {
+            $query->where('name','like',"%{$value}%");
+        })
+        ->latest()
+        ->paginate(10);
+        
+        $configGroupSuggest = ProductConfigGroup::latest()->take(5)->get(['id','name']);
         $total = ProductConfigGroup::count();
+
         return Inertia::render("Admin/Product/ReadConfigGroup", [
             'configGroup' => $configGroup,
-            'total' => $total
+            'total' => $total,
+            'configGroupSuggest' => $configGroupSuggest,
+            'search' => $request->input('search')
         ]);
     }
 
@@ -65,5 +75,19 @@ class AdminProductConfigGroupController extends Controller
         if ($configGroup) {
             $configGroup->delete();
         }
+    }
+
+    // Lấy nhóm cấu hình theo gợi ý tìm kiếm
+    public function getGroup(Request $request)
+    {
+        $query = $request->input('search');
+        $configs = null;
+
+        if ($query == '') {
+            $configs = ProductConfigGroup::latest()->take(5)->get(['id', 'name']);
+        } else {
+            $configs = ProductConfigGroup::where('name', 'like', "%{$query}%")->get(['id', 'name']);
+        }
+        return response()->json($configs);
     }
 }

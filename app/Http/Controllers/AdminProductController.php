@@ -191,6 +191,7 @@ class AdminProductController extends Controller
     // Sửa
     public function edit(Request $request, Product $product)
     {
+        $request->session()->put('returnURL', $request->input('returnURL'));
         $product_categories = ProductCategory::whereNot('id', 1)->get(['id', 'name', 'parent_id']);
         $product = $product->with([
             'mainImage' => function ($query) use ($product) {
@@ -213,7 +214,6 @@ class AdminProductController extends Controller
         return Inertia::render("Admin/Product/Edit", [
             'product_categories' => $product_categories,
             'product' => $product,
-            'current_page' => $request->input('current_page')
         ]);
     }
 
@@ -377,7 +377,14 @@ class AdminProductController extends Controller
     // Lấy sản phẩm theo gợi ý tìm kiếm
     public function getProducts(Request $request){
         $query = $request->input('search');
-        $products = Product::where('name','like',"%{$query}%")->get(['id','name']);
+        $products = null;
+
+        if ($query == '') {
+            $products = Product::latest()->take(5)->get(['id', 'name']);
+        } else {
+            $products = Product::where('name', 'like', "%{$query}%")->get(['id', 'name']);
+        }
+
         return response()->json($products);
     }
 

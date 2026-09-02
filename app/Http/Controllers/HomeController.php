@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PostResource;
 use App\Http\Resources\ProductVariantResource;
-use App\Models\Product;
 use Inertia\Inertia;
 use App\Models\Post;
 use App\Models\ProductVariant;
@@ -21,6 +21,9 @@ class HomeController extends Controller
             ->select(['id', 'product_id', 'price', 'discount', 'price_discount'])
             ->where('is_default', 'default')
             ->where('discount', null)
+            ->whereHas('info', function ($query) {
+                $query->where('slug','like','laptop%');
+            })
             ->latest()
             ->take(10)
             ->get();
@@ -50,7 +53,7 @@ class HomeController extends Controller
         return Inertia::render('Client/Home/Read', [
             'onshop_products' => ProductVariantResource::collection($onshop_products),
             'discount_products' => ProductVariantResource::collection($discount_products),
-            'posts' => $posts
+            'posts' => PostResource::collection($posts)
         ]);
     }
 }

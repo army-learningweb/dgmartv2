@@ -14,6 +14,7 @@ import Button from "@/components/ui/Button";
 import { ReadConfigType } from "@/types/module/product_variant";
 import { EditVariantDataType } from "@/types/module/product_variant";
 import { EditVariantType } from "@/types/module/product_variant";
+import { usePrevPage } from "@/hooks/use-prevPage";
 
 export default function EditVariant({ products, productConFigTypes, variant, dataConfig, configChecked, current_page }: EditVariantDataType) {
 
@@ -29,6 +30,8 @@ export default function EditVariant({ products, productConFigTypes, variant, dat
         
     });
 
+    const {queryString} = usePrevPage();
+
     // Cập nhật
     const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>, id:string|number) => {
         e.preventDefault();
@@ -39,7 +42,7 @@ export default function EditVariant({ products, productConFigTypes, variant, dat
             preserveState: true,
             onSuccess: () => {
                 toast.success("Cập nhật thành công");
-                router.visit(`/admin/products/variants?page=${current_page}`);
+                router.visit(`/admin/products/variants?${queryString}`);
             },
         })
     }

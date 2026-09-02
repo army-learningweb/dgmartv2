@@ -23,6 +23,7 @@ import EmptyData from '@/components/Admin/Empty/EmptyData';
 
 import { useFilter } from '@/hooks/use-filter';
 import { useSearch } from '@/hooks/use-search';
+import { usePrevPage } from '@/hooks/use-prevPage';
 
 import { ReadVariantType } from '@/types/module/product_variant';
 
@@ -37,15 +38,14 @@ export default function ReadVariant({
     filter_product,
     search,
 }: ReadVariantType) {
+    const { queryString } = usePrevPage();
+
     // Xóa
     const handleDelete = (id: string | number) => {
         if (confirm('Bạn có chắc muốn xóa biến thể này ?')) {
             let toastID: string;
             router.delete(`/admin/products/variants/${id}/delete`, {
-                // data: {
-                //     user_on_page: users?.data?.length,
-                //     current_page: users.current_page,
-                // },
+
                 onStart: () => {
                     toastID = toast.loading('Đang xóa...');
                 },
@@ -62,9 +62,7 @@ export default function ReadVariant({
     // Bộ lọc tổng hợp
     const { handleQueryFilter } = useFilter({
         route: '/admin/products/variants',
-        initialsFilter: {
-            page: variants.current_page == 1 ? '' : variants.current_page,
-        },
+        initialsFilter: {},
         onlyLoad: ['variants', 'filter_role', 'filter_product', 'sort_price'],
     });
 
@@ -124,7 +122,7 @@ export default function ReadVariant({
                         <ButtonCreateLink
                             route="/admin/products/create"
                             label="Thêm sản phẩm"
-                            variant='outline'
+                            variant="outline"
                         />
                         <ButtonCreateLink route="/admin/products/variants/create" />
                     </div>
@@ -364,11 +362,7 @@ export default function ReadVariant({
                                         <td className="px-4 py-1.75">
                                             <div className="flex h-6.75 gap-2">
                                                 <ButtonEditLink
-                                                    data={{
-                                                        current_page:
-                                                            variants.current_page,
-                                                    }}
-                                                    route={`/admin/products/variants/${item.id}/edit`}
+                                                    route={`/admin/products/variants/${item.id}/edit${queryString ? `?${queryString}` : ''}`}
                                                 />
                                                 <ButtonDelete
                                                     onDelete={() =>
@@ -415,7 +409,7 @@ export default function ReadVariant({
 
                                         <div className="flex flex-col gap-2">
                                             <ButtonEditLink
-                                                route={`/admin/products/variants/${item.id}/edit`}
+                                                route={`/admin/products/variants/${item.id}/edit${queryString ? `?${queryString}` : ''}`}
                                             />
                                             <ButtonDelete
                                                 onDelete={() =>

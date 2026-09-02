@@ -11,6 +11,7 @@ import SimpleBreadcrum from "@/components/Admin/TableManager/SimpleBreadcrum";
 import { ReadEditPostType } from "@/types/module/post";
 import { EditPostType } from "@/types/module/post";
 import ButtonBackLink from "@/components/Admin/TableManager/ButtonBackLink";
+import { usePrevPage } from "@/hooks/use-prevPage";
 
 export default function Edit({ post_info, post_categories }: ReadEditPostType) {
     const { data, setData, post, errors, processing, clearErrors, } = useForm<EditPostType>({
@@ -23,6 +24,8 @@ export default function Edit({ post_info, post_categories }: ReadEditPostType) {
         category_id: post_info.category_id,
     });
 
+     const { queryString } = usePrevPage();
+
     const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>, id: string) => {
         e.preventDefault();
         post(`/admin/posts/${id}/update`, {
@@ -30,7 +33,7 @@ export default function Edit({ post_info, post_categories }: ReadEditPostType) {
             onSuccess: () => {
                 clearErrors();
                 toast.success('Cập nhật thành công');
-                router.visit("/admin/posts");
+                router.visit(`/admin/posts${queryString ? `?${queryString}` : ''}`);
             },
             onError: () => {
                 toast.error("Lỗi không thể cập nhật, vui lòng kiểm tra lại !")
@@ -38,7 +41,7 @@ export default function Edit({ post_info, post_categories }: ReadEditPostType) {
         })
     }
 
-    console.log(post_info);
+   
 
     return (
         <>

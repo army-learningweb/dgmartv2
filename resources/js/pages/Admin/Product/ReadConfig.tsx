@@ -1,5 +1,4 @@
 import { Head, useForm, router } from '@inertiajs/react';
-import { Fragment, useEffect } from 'react';
 import toast from 'react-hot-toast';
 
 import EmptyData from '@/components/Admin/Empty/EmptyData';
@@ -14,6 +13,8 @@ import Textarea from '@/components/ui/Textarea';
 import ShortCutHint from '@/components/Admin/TableManager/Hint';
 import Pagination from '@/components/Admin/Pagination/Pagination';
 import SearchBar from '@/components/Admin/TableManager/SearchBar';
+import ButtonResetFilter from '@/components/Admin/TableManager/ButtonResetFilter';
+import ButtonResetFilterMobile from '@/components/Admin/TableManager/ButtonResetFilterMobile';
 
 import { useModal } from '@/hooks/use-modal';
 import { useShortCut } from '@/hooks/use-shortcut';
@@ -31,6 +32,9 @@ export default function ReadConfig({
     configs,
     total,
     groupConfigs,
+    configs_suggest,
+    group,
+    search,
 }: ReadProductConfigType) {
     const {
         data,
@@ -64,35 +68,35 @@ export default function ReadConfig({
     const { ipRef } = useInputFocus({ openModal });
 
     // Bộ lọc tổng hợp
-        const { handleQueryFilter } = useFilter({
-            route: '/admin/products',
+    const { handleQueryFilter } = useFilter({
+            route: '/admin/products/configs',
             initialsFilter: {
                 page: configs.current_page == 1 ? '' : configs.current_page,
             },
-            onlyLoad: ['configs', 'filter_category'],
-        });
+            onlyLoad: ['configs', 'group'],
+    });
 
      // Tìm kiếm
     const {
-            querySearch,
-            loadingSearch,
-            dataSuggest,
-            openSuggest,
-            placeholderSearch,
-            handleQuerySearch,
-            handleClearQuerySearch,
-            handleSetPlaceHolder,
-            handleFocusSearch,
-            handleBlurSearch,
-            handleChoose,
-            handleLeave,
-        } = useSearch({
-            handleQueryFilter,
-            search,
-            initialData: products_suggest,
-            placeholder: 'Tìm kiếm theo tên cấu hình...',
-            routeGetData: '/admin/products/getProducts',
-        });
+        querySearch,
+        loadingSearch,
+        dataSuggest,
+        openSuggest,
+        placeholderSearch,
+        handleQuerySearch,
+        handleClearQuerySearch,
+        handleSetPlaceHolder,
+        handleFocusSearch,
+        handleBlurSearch,
+        handleChoose,
+        handleLeave,
+    } = useSearch({
+        handleQueryFilter,
+        search,
+        initialData: configs_suggest,
+        placeholder: 'Tìm kiếm theo tên cấu hình...',
+        routeGetData: '/admin/products/getConfigs',
+    });
 
     // Modal Edit Mode
     const handleEdit = (config: EditProductConfigType) => {
@@ -226,7 +230,7 @@ export default function ReadConfig({
                 {/* filter & search */}
                 <div className="mt-4 flex flex-col items-center justify-between md:flex-row">
                     {/* filter & search */}
-                    <div className="flex w-full flex-1 flex-col gap-2 md:flex-row">
+                    <div className="flex w-full flex-1 flex-col gap-2 md:flex-row md:justify-between">
                         <SearchBar
                             onChange={handleQuerySearch}
                             onClearQuery={handleClearQuerySearch}
@@ -243,45 +247,48 @@ export default function ReadConfig({
                         />
 
                         {/* filter */}
-                        {/* <Select
-                            className="w-70!"
-                            name="filter-category"
-                            onChange={(e) =>
-                                handleQueryFilter({
-                                    filter_category: e.target.value,
-                                })
-                            }
-
-                            value={filter_category ?? ''}
-                        >
-                            <option value="">Theo danh mục sản phẩm</option>
-                            {product_categories?.length > 0 &&
-                                product_categories.map((item) => (
-                                    <option key={item.id} value={item.id}>
-                                        {item.name}
-                                    </option>
-                                ))}
-
-                            {product_categories?.length === 0 && (
-                                <option value="">
-                                    Chưa danh có danh mục nào !
-                                </option>
+                        <div className="flex items-center gap-4">
+                            {/* button reset on desktop */}
+                            {(group || search) && (
+                                <ButtonResetFilter route="/admin/products/configs" />
                             )}
-                        </Select> */}
 
-                        {/* button reset on desktop */}
-                        {/* {(filter_category || filter_status || search) && (
-                            <ButtonResetFilter route="/admin/products" />
-                        )} */}
+                            <Select
+                                className="md:w-70!"
+                                name="filter-category"
+                                onChange={(e) =>
+                                    handleQueryFilter({
+                                        group: e.target.value,
+                                    })
+                                }
+
+                                value={group ?? ''}
+                            >
+                                <option value="">Theo nhóm cấu hình</option>
+                                {groupConfigs?.length > 0 &&
+                                    groupConfigs.map((item) => (
+                                        <option
+                                            key={item.id}
+                                            value={item.id}
+                                            className="w-70 truncate"
+                                        >
+                                            {item.name}
+                                        </option>
+                                    ))}
+
+                                {groupConfigs?.length === 0 && (
+                                    <option value="">
+                                        Chưa có cấu hình nào !
+                                    </option>
+                                )}
+                            </Select>
+                        </div>
                     </div>
 
-                    {/* stats */}
-                    {/* <FilterTabGroup data={filterTabData} /> */}
-
                     {/* button reset on mobile */}
-                    {/* {(filter_category || filter_status || search) && (
-                        <ButtonResetFilterMobile route="/admin/products" />
-                    )} */}
+                    {(group || search) && (
+                        <ButtonResetFilterMobile route="/admin/products/configs" />
+                    )}
                 </div>
 
                 {/* data */}
@@ -300,20 +307,25 @@ export default function ReadConfig({
                             </thead>
                             <tbody>
                                 {configs.data.map((item, index) => (
-                                    <tr className="border-b border-gray-200 last-of-type:border-0">
-                                        <td className="px-5 py-2">{index}</td>
-                                        <td className="px-5 py-2">
-                                            <div className="w-120 truncate font-medium">
+                                    <tr
+                                        key={item.id}
+                                        className="border-b border-gray-200 last-of-type:border-0"
+                                    >
+                                        <td className="px-5 py-2.5">
+                                            {configs.from + index}
+                                        </td>
+                                        <td className="px-5 py-2.5">
+                                            <div className="w-120 truncate">
                                                 {item.name}
                                             </div>
                                         </td>
-                                        <td className="px-5 py-2">
+                                        <td className="px-5 py-2.5">
                                             {item.created_at}
                                         </td>
-                                        <td className="px-5 py-2">
+                                        <td className="px-5 py-2.5">
                                             {item.updated_at}
                                         </td>
-                                        <td className="px-5 py-2">
+                                        <td className="px-5 py-2.5">
                                             <div className="flex h-6.75 gap-2">
                                                 <ButtonEdit
                                                     onEdit={() =>
@@ -333,40 +345,31 @@ export default function ReadConfig({
                         </table>
 
                         {/* modile */}
-                        {/* <div className="block p-3 md:hidden">
-                            {Object.entries(configs).map(([group, items]) => (
-                                <Fragment key={group}>
-                                    <div className="mt-5 w-fit rounded-lg bg-blue-50 px-3 py-2 font-medium text-blue-700">
-                                        {group.toUpperCase()}
-                                    </div>
-                                    {items.map((item) => (
-                                        <div
-                                            key={item.id}
-                                            className="mt-4 flex h-20 justify-between border-b border-gray-200 px-1"
-                                        >
-                                            <div className="mt-6">
-                                                <div className="w-50 truncate">
-                                                    {item.name}
-                                                </div>
-                                            </div>
-
-                                            <div className="flex h-6.75 flex-col gap-2">
-                                                <ButtonEdit
-                                                    onEdit={() =>
-                                                        handleEdit(item)
-                                                    }
-                                                />
-                                                <ButtonDelete
-                                                    onDelete={() =>
-                                                        handleDelete(item.id)
-                                                    }
-                                                />
-                                            </div>
+                        <div className="block p-3 md:hidden">
+                            {configs.data.map((item) => (
+                                <div
+                                    key={item.id}
+                                    className="mt-4 flex h-20 justify-between border-b border-gray-200 px-1 first-of-type:mt-0"
+                                >
+                                    <div className="mt-6">
+                                        <div className="w-50 truncate">
+                                            {item.name}
                                         </div>
-                                    ))}
-                                </Fragment>
+                                    </div>
+
+                                    <div className="flex h-6.75 flex-col gap-2">
+                                        <ButtonEdit
+                                            onEdit={() => handleEdit(item)}
+                                        />
+                                        <ButtonDelete
+                                            onDelete={() =>
+                                                handleDelete(item.id)
+                                            }
+                                        />
+                                    </div>
+                                </div>
                             ))}
-                        </div> */}
+                        </div>
                     </div>
                 )}
 

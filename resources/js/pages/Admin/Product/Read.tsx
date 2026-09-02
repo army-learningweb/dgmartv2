@@ -16,12 +16,12 @@ import BadgeVariant from '@/components/Admin/TableManager/BadgeVariant';
 import Select from '@/components/ui/Select';
 import ButtonResetFilter from '@/components/Admin/TableManager/ButtonResetFilter';
 import ButtonResetFilterMobile from '@/components/Admin/TableManager/ButtonResetFilterMobile';
+import Title from '@/components/Admin/TableManager/Title';
+import ButtonCreateLink from '@/components/Admin/TableManager/ButtonCreateLink';
 
 import { useSearch } from '@/hooks/use-search';
 import { useFilter } from '@/hooks/use-filter';
-
-import Title from '@/components/Admin/TableManager/Title';
-import ButtonCreateLink from '@/components/Admin/TableManager/ButtonCreateLink';
+import { usePrevPage } from '@/hooks/use-prevPage';
 
 import { ReadProductType } from '@/types/module/products';
 import { useState } from 'react';
@@ -38,6 +38,16 @@ export default function Read({
     filter_category,
     search,
 }: ReadProductType) {
+
+    // Bộ lọc tổng hợp
+    const { handleQueryFilter } = useFilter({
+        route: '/admin/products',
+        initialsFilter: {},
+        onlyLoad: ['products', 'filter_status', 'filter_category'],
+    });
+
+    const { queryString } = usePrevPage();
+
     // Xóa
     const handleDelete = (id: string) => {
         if (confirm('Bạn có chắc muốn xóa sản phẩm này ?')) {
@@ -57,15 +67,6 @@ export default function Read({
             });
         }
     };
-
-    // Bộ lọc tổng hợp
-    const { handleQueryFilter } = useFilter({
-        route: '/admin/products',
-        initialsFilter: {
-            page: products.current_page == 1 ? '' : products.current_page,
-        },
-        onlyLoad: ['products', 'filter_status', 'filter_category'],
-    });
 
     // Tìm kiếm
     const {
@@ -89,6 +90,7 @@ export default function Read({
         routeGetData: '/admin/products/getProducts',
     });
 
+    // Filtetr data
     const filterTabData = [
         {
             label: 'Tất cả',
@@ -493,7 +495,7 @@ export default function Read({
                         </Select>
 
                         {/* button reset on desktop */}
-                        {(filter_category || filter_status || search) && (
+                        {filter_category && (
                             <ButtonResetFilter route="/admin/products" />
                         )}
                     </div>
@@ -502,7 +504,7 @@ export default function Read({
                     <FilterTabGroup data={filterTabData} />
 
                     {/* button reset on mobile */}
-                    {(filter_category || filter_status || search) && (
+                    {filter_category && (
                         <ButtonResetFilterMobile route="/admin/products" />
                     )}
                 </div>
@@ -575,7 +577,6 @@ export default function Read({
                                                 {item.user?.name}
                                             </div>
                                         </td>
-
                                         <td className="px-4 py-1.75">
                                             <div className="flex h-6.75 gap-2">
                                                 <Button
@@ -592,13 +593,11 @@ export default function Read({
                                                     />
                                                     Cấu hình & Giá
                                                 </Button>
+
                                                 <ButtonEditLink
-                                                    data={{
-                                                        current_page:
-                                                            products.current_page,
-                                                    }}
-                                                    route={`/admin/products/${item.id}/edit`}
+                                                    route={`/admin/products/${item.id}/edit${queryString ? `?${queryString}` : ''}`}
                                                 />
+
                                                 <ButtonDelete
                                                     onDelete={() =>
                                                         handleDelete(item.id)
@@ -670,7 +669,7 @@ export default function Read({
                                                 Cấu hình & Giá
                                             </Button>
                                             <ButtonEditLink
-                                                route={`/admin/products/${item.id}/edit`}
+                                                route={`/admin/products/${item.id}/edit${queryString ? `?${queryString}` : ''}`}
                                             />
                                             <ButtonDelete
                                                 onDelete={() =>

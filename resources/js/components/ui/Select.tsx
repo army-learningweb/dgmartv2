@@ -14,7 +14,7 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
 const Select = forwardRef<any, SelectProps>(({children, label, name, error, showError = true , className, ...props},ref) => {
     return (
         <>
-            <div className="relative">
+            <div className={`relative w-full ${className}`}>
                 {label && (
                     <label htmlFor={name} className="flex gap-2 font-medium tracking-tight text-gray-800">
                         <span>{label}</span>
@@ -28,7 +28,7 @@ const Select = forwardRef<any, SelectProps>(({children, label, name, error, show
                     ref={ref}
                     name={name}
                     id={name}
-                    className={clsx(`${label && 'mt-2'} w-full appearance-none rounded-lg border border-gray-200 pl-2 pr-6 py-1.75 transition-colors duration-150 focus:border-gray-400/70 focus:ring-3 focus:ring-gray-300/70 focus:ring-offset-blue-50 focus:outline-0 ${className}`, {
+                    className={clsx(`${label && 'mt-2'} w-full appearance-none rounded-lg border border-gray-200 pl-2 pr-6 py-1.75 transition-colors duration-150 focus:border-gray-400/70 focus:ring-3 focus:ring-gray-300/70 focus:ring-offset-blue-50 focus:outline-0`, {
                         "ring-3 ring-red-600/20 border-red-600 focus:ring-red-600/20 focus:border-red-600": error,
                         "focus:ring-3 focus:ring-gray-300/70 focus:ring-offset-blue-50 focus:border-gray-400/70 ": !error
                     })}

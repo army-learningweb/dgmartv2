@@ -271,7 +271,6 @@ export default function CreateVariant({
                         </div>
 
                         {/* configs */}
-
                         <div className="order-1 flex-1 md:order-2">
                             <div className="mt-2">
                                 <Select

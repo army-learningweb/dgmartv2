@@ -1,3 +1,5 @@
+import { PaginatedData } from "./global";
+
 export interface ProductConfigGroup {
     id: string | number;
     name: string;
@@ -6,10 +8,17 @@ export interface ProductConfigGroup {
     updated_at: string;
 }
 
-export type ReadProductConfigGroupType = {
-    configGroup : ProductConfigGroup[],
-    total: string | number,
+interface ConfigGroupSuggestProps {
+    id: string;
+    name: string;
 }
+
+export type ReadProductConfigGroupType = {
+    configGroup: PaginatedData<ProductConfigGroup>;
+    total: string | number;
+    configGroupSuggest: ConfigGroupSuggestProps[];
+    search: string;
+};
 
 export type CreateProductConfigGroupType = {
     id: string | number | null,

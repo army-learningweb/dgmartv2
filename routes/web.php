@@ -16,12 +16,20 @@ use App\Http\Controllers\AdminUploadFileContentController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PostController;
 
 
 //HOME
 Route::get('/',[HomeController::class, 'read']);
+
+// PRODUCT
 Route::get('/laptop', [ProductController::class, 'read']);
 Route::get('/phu-kien', [ProductController::class, 'readAccessory']);
+Route::get('/camera-dong-ho', [ProductController::class, 'readCameraWatch']);
+
+// POST
+Route::get('/bai-viet-tin-tuc', [PostController::class, 'read']);
+Route::geT('/bai-viet-tin-tuc/{slug}', [PostController::class, 'readDetail']);
 
 //AUTH
 Route::get('/admin/login', [AdminAuthController::class, 'login'])->name('login');
@@ -76,12 +84,15 @@ Route::middleware(['auth'])->group( function(){
     Route::post('/admin/products/configs/store', [AdminProductConfigController::class, 'store']);
     Route::patch('/admin/products/configs/{config}/update', [AdminProductConfigController::class, 'update']);
     Route::delete('/admin/products/configs/{config}/delete', [AdminProductConfigController::class, 'delete']);
+    Route::get('/admin/products/getConfigs', [AdminProductConfigController::class, 'getConfigs']);
 
     //PRODUCT CONFIG GROUP
     Route::get('/admin/products/configs/group', [AdminProductConfigGroupController::class, 'read']);
     Route::post('/admin/products/configs/group/store', [AdminProductConfigGroupController::class, 'store']);
     Route::patch('/admin/products/configs/group/{configGroup}/update', [AdminProductConfigGroupController::class, 'update']);
     Route::delete('/admin/products/configs/group/{configGroup}/delete', [AdminProductConfigGroupController::class, 'delete']);
+    Route::get('/admin/products/configs/group/getGroup', [AdminProductConfigGroupController::class, 'getGroup']);
+
 
     //PRODUCT CONFIG TYPES
     Route::get('/admin/products/configs/type', [AdminProductConfigTypeController::class, 'read']);

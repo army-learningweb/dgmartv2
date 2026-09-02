@@ -20,17 +20,6 @@ export interface PostDataProp {
     name: string;
     desc: string;
     slug: string;
-    user_id: string | number;
-    created_at: string;
-    category_id: string | number;
-    category: {
-        id: string | number;
-        name: string;
-    };
-    user: {
-        id: string | number;
-        name: string;
-    };
 }
 
 export type ReadDataProduct = {
@@ -40,5 +29,7 @@ export type ReadDataProduct = {
     discount_products: {
         data: ProductDataProp[];
     };
-    posts: PostDataProp[];
+    posts: {
+        data: PostDataProp[];
+    };
 };
