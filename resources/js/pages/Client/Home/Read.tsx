@@ -4,11 +4,11 @@ import SliderCategory from '@/components/Client/Slider/SliderCategory';
 import SliderPost from '@/components/Client/Slider/SliderPost';
 import Banner from '@/components/Client/Home/Banner';
 
-import { ReadDataProduct } from '@/types/module/home';
+import { ReadData } from '@/types/module/home';
 import { CategoriesData } from '@/data/categories';
 import Policy from '@/components/Client/Home/Policy';
 
-export default function Read({ onshop_products, discount_products, posts }: ReadDataProduct) {
+export default function Read({ onshop_products, discount_products, posts }: ReadData) {
 
     return (
         <>

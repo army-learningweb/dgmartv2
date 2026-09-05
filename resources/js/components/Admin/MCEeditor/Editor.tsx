@@ -92,6 +92,7 @@ export default function MCEditor({ onChange, onBlur, value, typeImageContent, er
                     relative_urls: false,
                     remove_script_host: false,
                     image_caption: true,
+                    entity_encoding: 'raw',
                     images_upload_handler: async (blobInfo: any) => {
                         try {
                             const formData = new FormData();

@@ -1,6 +1,7 @@
 import { createInertiaApp } from '@inertiajs/react';
 import DashboardLayout from './layouts/Admin/DashboardLayout';
 import HomeLayout from './layouts/Client/HomeLayout';
+import "../css/tinycontent.css";
 
 const appName = import.meta.env.VITE_APP_NAME;
 

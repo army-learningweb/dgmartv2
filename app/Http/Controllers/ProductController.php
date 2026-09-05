@@ -2,34 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProductResource;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\ProductVariant;
 use App\Http\Resources\ProductVariantResource;
+use App\Models\Product;
 use App\Models\ProductCategory;
 
 class ProductController extends Controller
 {
     // Laptop
-    public function read(Request $request){
+    public function read(Request $request)
+    {
         $slug = $request->segment(1);
-        
         $products = ProductVariant::query()->with([
             'mainImage' => function ($query) {
                 $query->select(['object_id', 'file_url', 'file_name']);
             },
-            'configs' => function($query){
+            'configs' => function ($query) {
                 $query->with('configDetail');
             },
-            'info'])
+            'info'
+        ])
             ->select(['id', 'product_id', 'price', 'discount', 'price_discount'])
-            ->where('is_default','default');
+            ->where('is_default', 'default');
 
         $configFilters = ['ram', 'cpu', 'gpu', 'design'];
         foreach ($configFilters as $filter) {
             $products->when($request->input($filter), function ($q, $value) {
                 $q->whereHas('configs.configDetail', function ($subQuery) use ($value) {
-                    $subQuery->where('name','like',"%$value%");
+                    $subQuery->where('name', 'like', "%$value%");
                 });
             });
         }
@@ -43,11 +46,9 @@ class ProductController extends Controller
                     $subQuery->where('category_id', $value);
                 });
             })
-            ->whereHas('info', function ($query) use ($slug){
-                $query->where('slug','like',"$slug%");
+            ->whereHas('info', function ($query) use ($slug) {
+                $query->where('slug', 'like', "$slug%");
             })
-            
-            
             ->latest()
             ->paginate(20)
             ->withQueryString();
@@ -57,7 +58,7 @@ class ProductController extends Controller
             ->where('slug', 'laptop')
             ->select(['id', 'name'])
             ->first();
-        
+
         return Inertia::render('Client/Product/Read', [
             'products' => ProductVariantResource::collection($products),
             'categories' => $categories,
@@ -71,9 +72,9 @@ class ProductController extends Controller
     }
 
     // Phụ kiện
-    public function readAccessory(Request $request){
+    public function readAccessory(Request $request)
+    {
         $slug = $request->segment(1);
-
         $products = ProductVariant::query()->with([
             'mainImage' => function ($query) {
                 $query->select(['object_id', 'file_url', 'file_name']);
@@ -98,8 +99,6 @@ class ProductController extends Controller
             ->whereHas('info', function ($query) use ($slug) {
                 $query->where('slug', 'like', "$slug%");
             })
-
-
             ->latest()
             ->paginate(20)
             ->withQueryString();
@@ -119,7 +118,8 @@ class ProductController extends Controller
     }
 
     // Camera - đồng hồ
-    public function readCameraWatch(Request $request){
+    public function readCameraWatch(Request $request)
+    {
         $slug = $request->segment(1);
 
         $products = ProductVariant::query()->with([
@@ -161,6 +161,65 @@ class ProductController extends Controller
             'categories' => $categories,
             'category' => $request->input('category'),
             'price' => $request->input('price'),
+        ]);
+    }
+
+    // Chi tiết sản phẩm
+    public function detail(Request $request)
+    {
+        $category = $request->segment(2);
+        $slug = $request->segment(3);
+
+        // Thông tin sản phẩm
+        $product = Product::with(['variants' => function($query) {
+            $query
+            ->select(['id','product_id','code','price','discount','price_discount','qty','qty_sold', 'is_default'])
+            ->with('configs', function ($q) {
+                $q->with('configDetail', function ($n) {
+                    $n->with('group');
+                });
+            });
+        }, 
+        'mainImage' => function($query) {
+            $query
+            ->where('role','main')
+            ->select(['id','object_id','file_url','file_name']);
+        },
+        'childsImage' => function($query) {
+            $query
+            ->where('role', 'sub')
+            ->select(['id','object_id','file_url','file_name']);
+        }])
+        ->where('slug','like',"%$category/$slug")
+        ->first();
+
+        // Sản phẩm tương tự
+        $category_id = ProductCategory::where('slug','like',"%$category%")->value('id');
+        $products_suggest = Product::with([
+            'variants' => function ($query) {
+                $query
+                    ->where('is_default', 'default')
+                    ->select(['id', 'product_id', 'price', 'discount', 'price_discount','is_default'])
+                    ->with('configs', function ($q) {
+                        $q->with('configDetail', function ($n) {
+                            $n->with('group');
+                        });
+                    });
+            },
+            'mainImage' => function ($query) {
+                $query
+                    ->where('role', 'main')
+                    ->select(['id', 'object_id', 'file_url', 'file_name']);
+            }
+        ])
+            ->where('category_id', $category_id)
+            ->take(5)
+            ->get();
+
+
+        return Inertia::render('Client/Product/Detail', [
+            'product' => new ProductResource($product),
+            'products_suggest' => ProductResource::collection($products_suggest)
         ]);
     }
 }

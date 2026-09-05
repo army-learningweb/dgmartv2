@@ -21,6 +21,8 @@ class PostResource extends JsonResource
             'slug' => $this->slug,
             'image' => $this->media->file_url,
             'image_alt' => $this->media->file_name,
+            'content' => $this->content,
+            'created_at' => $this->created_at->format("d/m")
         ];
     }
 }

@@ -41,7 +41,15 @@ class Product extends Model
         return $this->hasOne(Media::class, 'object_id');
     }
 
+    public function childsImage(){
+        return $this->hasMany(Media::class, 'object_id')->where('role','sub');
+    }
+
     public function basePrice(){
         return $this->hasOne(ProductVariant::class, 'product_id')->where('is_default','default');
+    }
+
+    public function variants(){
+        return $this->hasMany(ProductVariant::class, 'product_id');
     }
 }

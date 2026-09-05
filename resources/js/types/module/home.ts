@@ -22,7 +22,7 @@ export interface PostDataProp {
     slug: string;
 }
 
-export type ReadDataProduct = {
+export type ReadData = {
     onshop_products: {
         data: ProductDataProp[];
     };

@@ -7,6 +7,7 @@ interface PostsProps {
     slug: string;
     image: string;
     image_alt: string;
+    created_at: string;
 }
 
 interface PaginatePosts {
@@ -24,4 +25,14 @@ export interface PostDataProps {
     posts: PaginatePosts;
     categories : CategoriesPost[];
     category: string;
+}
+
+export interface PostDetailProps {
+    post: {
+        data: PostsProps & { content: string };
+    };
+
+    other_posts: {
+        data: PostsProps[];
+    };
 }

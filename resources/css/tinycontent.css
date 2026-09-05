@@ -1,0 +1,47 @@
+/* Áp dụng cho div chứa nội dung hiển thị ngoài React */
+.tinymce-content {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  /* margin: 25px auto; */
+}
+
+.tinymce-content img {
+  border-radius: 15px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 10px 0;
+}
+
+/* Khôi phục khoảng cách cho Tiêu đề (h1-h6) bị CSS reset đè */
+.tinymce-content h1, 
+.tinymce-content h2, 
+.tinymce-content h3, 
+.tinymce-content h4 {
+  font-weight: bold;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+}
+
+.tinymce-content h1 { font-size: 2em; }
+.tinymce-content h2 { font-size: 1.5em; }
+.tinymce-content h3 { font-size: 1.25em; }
+.tinymce-content h4 { font-size: 1em; }
+
+.tinymce-content p {
+  margin-bottom: 1em;
+}
+
+/* Khôi phục đường viền cho Bảng */
+.tinymce-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.tinymce-content th, 
+.tinymce-content td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}

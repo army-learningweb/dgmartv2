@@ -3,6 +3,7 @@ import CardPrice from './CardPrice';
 import CardTitle from './CardTitle';
 import { BadgeDiscount } from './CardBadge';
 import { Link } from '@inertiajs/react';
+import {usePage} from '@inertiajs/react';
 
 interface CardProps {
     dataItem: any;
@@ -11,8 +12,9 @@ interface CardProps {
 export default function Card({
     dataItem,
 }: CardProps) {
+
     return (
-        <div className="flex h-90 w-60 shrink-0 flex-col justify-between rounded-2xl bg-white p-5 shadow transition-all duration-250 ease-out select-none hover:-translate-y-1 hover:shadow-lg relative">
+        <div className="relative flex h-90 w-60 shrink-0 flex-col justify-between rounded-2xl bg-white p-5 shadow transition-all duration-250 ease-out select-none hover:-translate-y-1 hover:shadow-lg">
             {/* image */}
             <CardImage dataImage={dataItem.main_image} />
 
@@ -40,8 +42,8 @@ export default function Card({
 
             {/* link */}
             <Link
-                href={dataItem.slug}
-                className="text-blue-600 hover:underline mt-1"
+                href={`/${dataItem.slug}`}
+                className="mt-1 text-blue-600 hover:underline"
             >
                 Xem chi tiết...
             </Link>

@@ -20,7 +20,7 @@ class PostController extends Controller
                 $query->where('category_id', $value);
             })
             ->where('status', 'active')
-            ->select(['id', 'title', 'desc', 'category_id', 'slug'])
+            ->select(['id', 'title', 'desc', 'category_id', 'slug', 'created_at'])
             ->latest()
             ->paginate(15)
             ->withQueryString();
@@ -36,6 +36,31 @@ class PostController extends Controller
     }
 
     public function readDetail(Request $request){
-        return Inertia::render('Client/Post/Detail');
+        $slug = $request->segment(2);
+
+        $post = Post::with(['user:id,name', 'category:id,name', 'media' => function ($query) {
+            $query->select(['object_id', 'file_url', 'file_name'])
+                ->where('object_type', 'post')
+                ->where('role', 'main');
+        }])
+            ->where('status', 'active')
+            ->where('slug', $slug)
+            ->first();
+
+        $other_posts = Post::with(['user:id,name', 'category:id,name', 'media' => function ($query) {
+            $query->select(['object_id', 'file_url', 'file_name'])
+                ->where('object_type', 'post')
+                ->where('role', 'main');
+        }])
+            ->where('status', 'active')
+            ->select(['id', 'title', 'desc', 'category_id', 'slug', 'created_at'])
+            ->inRandomOrder()
+            ->take(6)
+            ->get();
+
+        return Inertia::render('Client/Post/Detail', [
+            'post' => new PostResource($post),
+            'other_posts' => PostResource::collection($other_posts)
+        ]);
     }
 }

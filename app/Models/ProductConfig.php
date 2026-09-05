@@ -24,4 +24,10 @@ class ProductConfig extends Model
     public function group(){
         return $this->belongsTo(ProductConfigGroup::class, 'group_id');
     }
+
+    // public function details(){
+    //     return $this->
+    // }
+
+
 }

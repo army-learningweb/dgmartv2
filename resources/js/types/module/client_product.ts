@@ -41,3 +41,53 @@ export type ReadDataProduct = {
     ram: string;
     design: string;
 };
+
+// Product detail
+
+interface ConfigsProp {
+    label: string;
+    name: string;
+}
+
+interface VariantsProps {
+    id: string | number;
+    category_id: string | number;
+    code: string;
+    price: number;
+    price_discount: number;
+    discount: number;
+    qty: number;
+    sold: number;
+    configs: ConfigsProp[]
+}
+
+interface ImageProps {
+    id: string;
+    object_id: string;
+    file_url: string;
+    file_name: string;
+}
+
+export interface ProductDetailProps {
+    product: {
+        data: {
+            id: string | number;
+            name: string;
+            desc: string;
+            image: ImageProps;
+            content: string;
+            childs_image: ImageProps[];
+            variants: VariantsProps[];
+        };
+    };
+
+    products_suggest: {
+        data: {
+            id: string | number;
+            name: string;
+            desc: string;
+            image: ImageProps;
+            variants: VariantsProps[];
+        }[];
+    };
+}

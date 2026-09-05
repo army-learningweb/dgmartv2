@@ -83,7 +83,6 @@ class AdminProductController extends Controller
         ], [
             "name" => "Tên sản phẩm"
         ]);
-
         $parent_category_slug = ProductCategory::where('id', $validated['category_id'])->value("slug");
         $validated['slug'] = $parent_category_slug . "/" . Str::slug($validated['name']);
         $validated['user_id'] = Auth::user()->id;

@@ -50,7 +50,7 @@ export default function SliderPost({ data, title, desc }: SliderPostProps) {
                             <Card
                                 key={item.id}
                                 dataItem={item}
-                                url={item.slug}
+                                // url={item.slug}
                             />
                         ))}
                     </SliderData>
