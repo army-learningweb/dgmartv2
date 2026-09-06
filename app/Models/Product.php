@@ -34,15 +34,15 @@ class Product extends Model
     }
 
     public function medias(){
-        return $this->hasMany(Media::class, 'object_id');
+        return $this->hasMany(Media::class, 'object_id')->where('object_type','product');
     }
 
     public function mainImage(){
-        return $this->hasOne(Media::class, 'object_id');
+        return $this->hasOne(Media::class, 'object_id')->where('role','main')->where('object_type','product');
     }
 
     public function childsImage(){
-        return $this->hasMany(Media::class, 'object_id')->where('role','sub');
+        return $this->hasMany(Media::class, 'object_id')->where('role','sub')->where('object_type', 'product')->orderBy('order','asc');
     }
 
     public function basePrice(){

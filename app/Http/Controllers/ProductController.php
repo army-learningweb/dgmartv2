@@ -181,20 +181,16 @@ class ProductController extends Controller
             });
         }, 
         'mainImage' => function($query) {
-            $query
-            ->where('role','main')
-            ->select(['id','object_id','file_url','file_name']);
+            $query->select(['id','object_id','file_url','file_name']);
         },
         'childsImage' => function($query) {
-            $query
-            ->where('role', 'sub')
-            ->select(['id','object_id','file_url','file_name']);
+            $query->select(['id','object_id','file_url','file_name']);
         }])
         ->where('slug','like',"%$category/$slug")
         ->first();
 
         // Sản phẩm tương tự
-        $category_id = ProductCategory::where('slug','like',"%$category%")->value('id');
+        $category_id = ProductCategory::where('slug','like',"%$category")->value('id');
         $products_suggest = Product::with([
             'variants' => function ($query) {
                 $query
@@ -207,13 +203,13 @@ class ProductController extends Controller
                     });
             },
             'mainImage' => function ($query) {
-                $query
-                    ->where('role', 'main')
-                    ->select(['id', 'object_id', 'file_url', 'file_name']);
+                $query->select(['id', 'object_id', 'file_url', 'file_name']);
             }
         ])
             ->where('category_id', $category_id)
-            ->take(5)
+            ->whereNot('slug','like',"%$slug%")
+            ->inRandomOrder()
+            ->take(6)
             ->get();
 
 

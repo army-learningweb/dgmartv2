@@ -74,6 +74,7 @@ export interface ProductDetailProps {
             id: string | number;
             name: string;
             desc: string;
+            slug: string;
             image: ImageProps;
             content: string;
             childs_image: ImageProps[];
@@ -86,6 +87,7 @@ export interface ProductDetailProps {
             id: string | number;
             name: string;
             desc: string;
+            slug: string;
             image: ImageProps;
             variants: VariantsProps[];
         }[];

@@ -21,11 +21,6 @@ export default function Read({
     design,
 }: ReadDataProduct) {
 
-    console.log(products);
-
-    // Bộ lọc hiện tại đang hoạt động
-    const currentFilter = [cpu, gpu, ram, design];
-
     // Hooks bộ lọc tổng hợp
     const { handleQueryFilter } = useFilter({
         route: '/phu-kien',

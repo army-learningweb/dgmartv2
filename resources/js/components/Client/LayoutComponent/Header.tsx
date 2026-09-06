@@ -57,7 +57,10 @@ export default function Header() {
 
             <div className="flex items-center justify-end gap-4">
                 <Search size={20} />
-                <ShoppingBag size={20} />
+
+                <Link href="/gio-hang">
+                    <ShoppingBag size={20} />
+                </Link>
             </div>
         </header>
     );

@@ -14,6 +14,7 @@ use App\Http\Controllers\AdminProductConfigGroupController;
 use App\Http\Controllers\AdminRoleController;
 use App\Http\Controllers\AdminUploadFileContentController;
 use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PostController;
@@ -29,6 +30,10 @@ Route::get('/camera-dong-ho', [ProductController::class, 'readCameraWatch']);
 Route::get('/laptop/{category}/{slug}', [ProductController::class, 'detail']);
 Route::get('/phu-kien/{category}/{slug}', [ProductController::class, 'detail']);
 Route::get('/camera-dong-ho/{category}/{slug}', [ProductController::class, 'detail']);
+
+// CART
+Route::get('/gio-hang', [CartController::class, 'read']);
+Route::post('/gio-hang/create', [CartController::class, 'create']);
 
 // POST
 Route::get('/bai-viet-tin-tuc', [PostController::class, 'read']);
