@@ -28,6 +28,26 @@ class HomeController extends Controller
             ->take(10)
             ->get();
 
+        // $products_suggest = Product::with([
+        //     'variants' => function ($query) {
+        //         $query
+        //             ->where('is_default', 'default')
+        //             ->where('discount', null)
+        //             ->select(['id', 'product_id', 'code', 'price', 'discount', 'price_discount', 'qty', 'qty_sold', 'is_default'])
+        //             ->with('configs', function ($q) {
+        //                 $q->with('configDetail', function ($n) {
+        //                     $n->with('group');
+        //                 });
+        //             });
+        //     },
+        //     'mainImage' => function ($query) {
+        //         $query->select(['id', 'object_id', 'file_url', 'file_name']);
+        //     }
+        // ])
+        //     ->inRandomOrder()
+        //     ->take(8)
+        //     ->get();
+
         $discount_products = ProductVariant::query()->with([
             'mainImage' => function ($query) {
                 $query->select(['object_id', 'file_url', 'file_name']);

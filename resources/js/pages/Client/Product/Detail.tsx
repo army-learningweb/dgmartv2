@@ -30,6 +30,7 @@ export default function Detail({
         version_id: product.data.variants?.[0].id,
     });
 
+    // Thay đổi phiên bản
     const handleChangeVersion = (id: number) => {
         const price =
             product.data.variants?.filter((item) => item.id === id)[0]
@@ -73,9 +74,9 @@ export default function Detail({
     return (
         <>
             {/* add to cart */}
-            <div className="fixed -bottom-3 z-50 w-full">
+            <div className="fixed -bottom-5 z-50 w-full">
                 <div className="mx-auto max-w-250 rounded-2xl border border-gray-200 bg-gray-100 p-1 shadow-lg">
-                    <div className="flex items-center justify-between rounded-xl bg-white px-4 py-2 shadow">
+                    <div className="flex items-center justify-between rounded-xl bg-white px-4 shadow">
                         {/* Ảnh sản phẩm */}
                         <img
                             src={product.data.image.file_url}
@@ -140,6 +141,17 @@ export default function Detail({
 
             <Head title="Chi tiết sản phẩm" />
             <div className="mx-auto mt-4 min-h-400 max-w-312">
+
+                {/* name & desc */}
+                <div className='w-150 my-10 space-y-4'>
+                    <h1 className="text-4xl font-bold">
+                        {product.data.name}
+                    </h1>
+                    <h2 className="text-[15px] text-gray-500">
+                        {product.data.desc}
+                    </h2>
+                </div>
+
                 <div className="flex items-start gap-5">
                     {/* image */}
                     <div className="sticky top-20 flex w-[60%] flex-col items-center rounded-3xl bg-white shadow">
@@ -213,15 +225,8 @@ export default function Detail({
 
                     {/* info */}
                     <div className="flex-1 space-y-4 select-none md:w-150">
-                        <h1 className="text-4xl font-medium">
-                            {product.data.name}
-                        </h1>
-                        <h2 className="text-[15px] text-gray-500">
-                            {product.data.desc}
-                        </h2>
-
                         {/* versions */}
-                        <div className="mt-4 grid flex-1 grid-cols-1 gap-5">
+                        <div className="grid flex-1 grid-cols-1 gap-5">
                             {product.data.variants.map((item, index) => (
                                 <div
                                     key={item.id}

@@ -8,7 +8,7 @@ import SliderData from './SliderData';
 import { useSlider } from '@/hooks/use-slider';
 
 interface SliderProductProp {
-    data: ProductDataProp[];
+    data: any[];
     title: string;
     desc: string;
     isShowBadgeNew?: boolean;

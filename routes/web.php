@@ -34,6 +34,10 @@ Route::get('/camera-dong-ho/{category}/{slug}', [ProductController::class, 'deta
 // CART
 Route::get('/gio-hang', [CartController::class, 'read']);
 Route::post('/gio-hang/create', [CartController::class, 'create']);
+Route::post('/gio-hang/{key}/delete', [CartController::class, 'delete']);
+Route::post('/gio-hang/destroy', [CartController::class, 'destroy']);
+Route::post('/gio-hang/{key}/increase', [CartController::class, 'increase']);
+Route::post('/gio-hang/{key}/decrease', [CartController::class, 'decrease']);
 
 // POST
 Route::get('/bai-viet-tin-tuc', [PostController::class, 'read']);

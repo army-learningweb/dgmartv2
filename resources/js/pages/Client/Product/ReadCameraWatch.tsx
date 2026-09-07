@@ -38,7 +38,7 @@ export default function Read({
             <div className="mx-auto max-w-312 space-y-4">
                 <Head title="Camera & Đồng hồ" />
 
-                <h1 className="mt-4 inline-block text-5xl font-bold tracking-tight select-none">
+                <h1 className="my-10 inline-block text-5xl font-bold tracking-tight select-none">
                     Camera & Đồng hồ
                 </h1>
 
