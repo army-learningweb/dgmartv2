@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProductResource extends JsonResource
+class ProductSliderResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,20 +16,18 @@ class ProductResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'category_id' => $this->category_id,
             'slug' => $this->slug,
             'name' => $this->name,
             'desc' => $this->desc,
             'image' => $this->mainImage,
             'variants' => $this->variants
-                ->where('is_default', 'default')
-                ->map(fn($item) => [
-                'id' => $item->id,
-                'price' => $item->price,
-                'price_discount' => $item->price_discount ?? null,
-                'discount' => $item->discount ?? null,
+                ->where('is_default','default')
+                ->map(fn($variant) => [
+                    'price' => $variant->price,
+                    'price_discount' => $variant->price_discount,
+                    'discount' => $variant->discount,
+                    'qty' => $variant->qty
             ])
-
         ];
     }
 }

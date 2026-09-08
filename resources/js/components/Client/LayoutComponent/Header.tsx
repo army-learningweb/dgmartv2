@@ -6,7 +6,7 @@ export default function Header() {
     const total : any = usePage().props.total;
 
     return (
-        <header className="mx-auto flex max-w-312 items-center justify-between border-b border-gray-100 py-4">
+        <header className="mx-auto flex max-w-312 items-center justify-between py-4">
             <div className="flex gap-10">
                 <Link href="/">
                     <Logo />
@@ -63,7 +63,7 @@ export default function Header() {
                 <Link href="/gio-hang" className="relative">
                     <ShoppingBag size={20} />
 
-                    {total?.count && (
+                    {total?.count > 0 && (
                         <div className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[11px] font-medium text-white select-none">
                             {total.count}
                         </div>

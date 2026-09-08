@@ -1,11 +1,11 @@
 export default function Banner() {
     return (
         <div className="mx-auto mt-15 flex h-80 max-w-312 items-center justify-between space-y-5 rounded-2xl">
-            <div className="w-[40%] space-y-8">
-                <h1 className="text-5xl font-bold tracking-tight">
+            <div className="w-[45%] space-y-8">
+                <h1 className="text-6xl font-bold tracking-tight">
                     Làm Việc & Giải Trí Không Giới Hạn
                 </h1>
-                <h2 className="text-3xl font-bold tracking-tight">
+                <h2 className="text-2xl font-bold tracking-tight">
                     Cam kết hàng chính hãng 100%.
                 </h2>
                 <p className="text-[16px] tracking-tight">

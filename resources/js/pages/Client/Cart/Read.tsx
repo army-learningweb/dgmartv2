@@ -1,13 +1,11 @@
-import { Head, router, usePage } from '@inertiajs/react';
-import { Plus, Minus, Trash, X, MonitorCog } from 'lucide-react';
+import { Head, router, usePage, Link } from '@inertiajs/react';
+import { Plus, Minus, Trash, X, MonitorCog, ShoppingBag } from 'lucide-react';
 import { CartPropTypes } from '@/types/module/client_cart';
 import { vndFormat } from '@/lib/currency_format';
 import Button from '@/components/ui/Button';
 import SliderProduct from '@/components/Client/Slider/SliderProduct';
 
 export default function Read({ cart, products_suggest }: CartPropTypes) {
-
-    console.log(products_suggest);
 
     // Tổng số sản phẩm
     const total : any = usePage().props.total;
@@ -63,13 +61,15 @@ export default function Read({ cart, products_suggest }: CartPropTypes) {
             <Head title="Giỏ hàng" />
 
             <div className="mx-auto max-w-312 space-y-8">
-                <h1 className="my-10 inline-block text-5xl font-bold tracking-tight select-none">
-                    Giỏ hàng
-                </h1>
+                {Object.values(cart)?.length > 0 && (
+                    <h1 className="my-10 inline-block text-5xl font-bold tracking-tight select-none">
+                        Giỏ hàng
+                    </h1>
+                )}
 
                 {Object.values(cart)?.length > 0 && (
                     <>
-                        <div className="flex gap-4">
+                        <div className="flex items-start gap-4">
                             <div className="w-[70%] space-y-2 rounded-3xl bg-white p-4 shadow">
                                 <div className="flex items-center justify-between">
                                     <h2 className="my-2 text-lg font-medium tracking-tight">
@@ -218,20 +218,29 @@ export default function Read({ cart, products_suggest }: CartPropTypes) {
                 )}
 
                 {Object.values(cart)?.length === 0 && (
-                    <div className="flex h-120 items-center justify-center rounded-2xl bg-white shadow">
-                        ABC
+                    <div className="mt-6 flex h-120 flex-col items-center justify-center gap-4 rounded-2xl bg-white shadow">
+                        <ShoppingBag size={35} />
+                        <h1 className="text-lg tracking-tighter">
+                            Giỏ hàng hiện đang trống !
+                        </h1>
+                        <Link
+                            href="/laptop"
+                            className="text-blue-600 hover:underline"
+                        >
+                            Ghé cửa hàng
+                        </Link>
                     </div>
                 )}
             </div>
 
             {/* new product */}
-            <SliderProduct
-                title="Có thể bạn sẽ thích"
-                desc="Xem thêm một số phẩm tương tự."
-                data={products_suggest.data}
-                isShowBadgeNew
-                isShowBadgeDiscount
-            />
+            {Object.values(cart)?.length > 0 && (
+                <SliderProduct
+                    title="Có thể bạn sẽ thích"
+                    desc="Xem thêm một số phẩm tương tự."
+                    data={products_suggest.data}
+                />
+            )}
         </>
     );
 }

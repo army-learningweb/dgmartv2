@@ -33,11 +33,11 @@ export default function Read({
                     Bài viết & Tin tức
                 </h1>
 
-                <div className="mt-3 flex items-center justify-between gap-4">
+                <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
                         {/* filter category */}
                         {categories?.length > 0 && (
-                            <div className="mt-2 flex w-fit gap-1 rounded-xl bg-gray-100 p-1 text-[13px]">
+                            <div className="mt-2 flex w-fit gap-1 text-[13px]">
                                 <FilterTab
                                     active={!category}
                                     onFilter={() =>
@@ -64,9 +64,9 @@ export default function Read({
                     </div>
                 </div>
 
-                <div className="flex-1">
+                <div className="flex-1 mt-6">
                     {/* posts */}
-                    <div className={`mt-4 grid grid-cols-5 gap-3`}>
+                    <div className={`grid grid-cols-5 gap-3`}>
                         {posts.data.map((item) => (
                             <Card
                                 key={item.id}

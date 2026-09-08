@@ -75,7 +75,7 @@ export default function Detail({
         <>
             {/* add to cart */}
             <div className="fixed -bottom-5 z-50 w-full">
-                <div className="mx-auto max-w-250 rounded-2xl border border-gray-200 bg-gray-100 p-1 shadow-lg">
+                <div className="max-w-312 mx-auto rounded-2xl border border-gray-200 bg-gray-100 p-1 shadow-lg">
                     <div className="flex items-center justify-between rounded-xl bg-white px-4 shadow">
                         {/* Ảnh sản phẩm */}
                         <img

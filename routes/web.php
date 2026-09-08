@@ -25,8 +25,8 @@ Route::get('/',[HomeController::class, 'read']);
 
 // PRODUCT
 Route::get('/laptop', [ProductController::class, 'read']);
-Route::get('/phu-kien', [ProductController::class, 'readAccessory']);
-Route::get('/camera-dong-ho', [ProductController::class, 'readCameraWatch']);
+Route::get('/phu-kien', [ProductController::class, 'read']);
+Route::get('/camera-dong-ho', [ProductController::class, 'read']);
 Route::get('/laptop/{category}/{slug}', [ProductController::class, 'detail']);
 Route::get('/phu-kien/{category}/{slug}', [ProductController::class, 'detail']);
 Route::get('/camera-dong-ho/{category}/{slug}', [ProductController::class, 'detail']);

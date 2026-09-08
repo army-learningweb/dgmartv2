@@ -11,7 +11,6 @@ interface CardProps {
 export default function Card({
     dataItem,
 }: CardProps) {
-    
     return (
         <div className="relative flex h-90 w-60 shrink-0 flex-col justify-between rounded-2xl bg-white p-5 shadow transition-all duration-250 ease-out select-none hover:-translate-y-1 hover:shadow-lg">
             {/* image */}
@@ -20,8 +19,10 @@ export default function Card({
             <div className="space-y-2">
                 <div className="flex gap-1">
                     {/* badge discount */}
-                    {dataItem.discount && (
-                        <BadgeDiscount discountNum={dataItem.discount} />
+                    {dataItem.variants?.[0]?.discount && (
+                        <BadgeDiscount
+                            discountNum={dataItem.variants?.[0]?.discount}
+                        />
                     )}
                 </div>
 
@@ -34,10 +35,15 @@ export default function Card({
             </div>
 
             {/* price */}
-            <CardPrice
-                price={dataItem.variants?.[0].price}
-                price_discount={dataItem.variants?.[0].price_discount}
-            />
+
+            {dataItem.variants?.[0]?.price ? (
+                <CardPrice
+                    price={dataItem.variants?.[0].price}
+                    price_discount={dataItem.variants?.[0].price_discount}
+                />
+            ) : (
+                <div>Chưa cập nhật</div>
+            )}
 
             {/* link */}
             <Link

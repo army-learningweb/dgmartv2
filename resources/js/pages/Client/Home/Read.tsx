@@ -3,13 +3,12 @@ import SliderProduct from '@/components/Client/Slider/SliderProduct';
 import SliderCategory from '@/components/Client/Slider/SliderCategory';
 import SliderPost from '@/components/Client/Slider/SliderPost';
 import Banner from '@/components/Client/Home/Banner';
+import Policy from '@/components/Client/Home/Policy';
 
 import { ReadData } from '@/types/module/home';
 import { CategoriesData } from '@/data/categories';
-import Policy from '@/components/Client/Home/Policy';
 
-export default function Read({ onshop_products, discount_products, posts }: ReadData) {
-
+export default function Read({ onshop_products, accessories_products, posts }: ReadData) {
     return (
         <>
             <Head title="Trang chủ" />
@@ -23,21 +22,18 @@ export default function Read({ onshop_products, discount_products, posts }: Read
             {/* category slider */}
             <SliderCategory data={CategoriesData} />
 
-            {/* new product */}
+            {/* on shop  */}
             <SliderProduct
                 title="Có tại cửa hàng"
                 desc="Khám phá các sản phẩm công nghệ đang có mặt trực tiếp tại cửa hàng."
                 data={onshop_products.data}
-                isShowBadgeNew
-                isShowBadgeDiscount
             />
 
-            {/* discount product */}
+            {/* on shop  */}
             <SliderProduct
-                title="Đang giảm giá"
-                desc="Săn ngay các sản phẩm chính hãng với mức giá hấp dẫn cùng chính sách ưu đãi giới hạn."
-                data={discount_products.data}
-                isShowBadgeDiscount
+                title="Phụ kiện Laptop"
+                desc="Tiện ích hơn mỗi ngày với phụ kiện."
+                data={accessories_products.data}
             />
 
             {/* posts */}

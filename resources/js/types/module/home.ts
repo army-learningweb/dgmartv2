@@ -26,7 +26,7 @@ export type ReadData = {
     onshop_products: {
         data: ProductDataProp[];
     };
-    discount_products: {
+    accessories_products: {
         data: ProductDataProp[];
     };
     posts: {

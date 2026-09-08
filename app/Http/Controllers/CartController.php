@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ProductResource;
-use App\Models\Media;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Product;
@@ -19,7 +18,7 @@ class CartController extends Controller
         $products_suggest = Product::with([
             'variants' => function ($query) {
                 $query
-                    ->where('is_default','default')
+                    ->where('is_default', 'default')
                     ->select(['id', 'product_id', 'code', 'price', 'discount', 'price_discount', 'qty', 'qty_sold', 'is_default'])
                     ->with('configs', function ($q) {
                         $q->with('configDetail', function ($n) {
@@ -34,7 +33,7 @@ class CartController extends Controller
             ->inRandomOrder()
             ->take(8)
             ->get();
-            
+
         $cart = $request->session()->get('cart', []);
         return Inertia::render("Client/Cart/Read", [
             'cart' => $cart,
@@ -49,9 +48,8 @@ class CartController extends Controller
         $product_id = $request->input('product_id');
 
         // Lấy thông tin sản phẩm
-        $product_info = Product::where('id', $product_id)->first(['id', 'name', 'slug']);
+        $product_info = Product::with('mainImage')->where('id', $product_id)->first(['id', 'name', 'slug']);
         $product_price = ProductVariant::where('id', $variant_id)->first(['price', 'discount', 'price_discount', 'qty']);
-        $product_image = Media::where('object_id', $product_id)->where('role', 'main')->first(['file_url', 'file_name']);
 
         $product_configs_id = ProductVariantConfig::where('variant_id', $variant_id)->get()->pluck('config_id');
         $product_configs = ProductConfig::with(['group' => function ($q) {
@@ -80,8 +78,8 @@ class CartController extends Controller
                 'key' => $KEY,
                 'slug' => $product_info->slug,
                 'product_id' => $product_info->id,
-                'image' => $product_image->file_url,
-                'image_alt' => $product_image->file_name,
+                'image' => $product_info->mainImage->file_url,
+                'image_alt' => $product_info->mainImage->file_name,
                 'name' => $product_info->name,
                 'qty' => 1,
                 'discount' => $product_price->discount ?? 0,
@@ -101,9 +99,7 @@ class CartController extends Controller
     public function delete(Request $request, int $key)
     {
         $cart = $request->session()->get('cart', []);
-        if (isset($cart[$key])) {
-            unset($cart[$key]);
-        }
+        unset($cart[$key]);
         $request->session()->put('cart', $cart);
         $this->total($request);
         return redirect('/gio-hang');
@@ -140,7 +136,7 @@ class CartController extends Controller
     {
         $cart = $request->session()->get('cart', []);
         if (isset($cart[$key])) {
-            if ($cart[$key]['qty'] === 1) {
+            if ($cart[$key]['qty'] <= 1) {
                 unset($cart[$key]);
             } else {
                 $offical_price = $cart[$key]['price_discount'] > 0
@@ -161,17 +157,12 @@ class CartController extends Controller
     public function total(Request $request)
     {
         $cart = $request->session()->get('cart');
-
-        if (!empty($cart)) {
-            $total['count'] = 0;
-            $total['total_price'] = 0;
-
-            foreach ($cart as $item) {
-                $total['count'] += $item['qty'] ?? 0;
-                $total['total_price'] += $item['total'] ?? 0;
-            }
-
-            $request->session()->put('total', $total);
+        $total['count'] = 0;
+        $total['total_price'] = 0;
+        foreach ($cart as $item) {
+            $total['count'] += $item['qty'] ?? 0;
+            $total['total_price'] += $item['total'] ?? 0;
         }
+        $request->session()->put('total', $total);
     }
 }

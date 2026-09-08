@@ -1,6 +1,5 @@
 import Card from '../ProductCard/Card';
 
-import { ProductDataProp } from '@/types/module/home';
 import SliderButton from './SliderButton';
 import SliderTitle from './SliderTitle';
 import SliderDesc from './SiderDesc';
@@ -11,8 +10,6 @@ interface SliderProductProp {
     data: any[];
     title: string;
     desc: string;
-    isShowBadgeNew?: boolean;
-    isShowBadgeDiscount?: boolean;
 }
 
 export default function SliderProduct({
@@ -26,7 +23,6 @@ export default function SliderProduct({
         itemVisibleAllowed: ItemVisible,
         mobilityIndexProp: 256,
     });
-
     return (
         <>
             {data?.length > 0 && (
