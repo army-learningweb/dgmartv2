@@ -2,18 +2,32 @@ import { Head, router, usePage, Link } from '@inertiajs/react';
 import { Plus, Minus, Trash, X, MonitorCog, ShoppingBag } from 'lucide-react';
 import { CartPropTypes } from '@/types/module/client_cart';
 import { vndFormat } from '@/lib/currency_format';
-import Button from '@/components/ui/Button';
 import SliderProduct from '@/components/Client/Slider/SliderProduct';
+import toast from 'react-hot-toast';
+import { useState } from 'react';
 
 export default function Read({ cart, products_suggest }: CartPropTypes) {
-
-    // Tổng số sản phẩm
-    const total : any = usePage().props.total;
+    // Tổng giỏ hàng
+    const total: any = usePage().props.total;
 
     // Hàm route dùng chung
     const action = (route: string) => {
-        router.post(route,{},{ only: ['cart', 'total'], preserveScroll: true });
-    }
+        setIsClickIncrease(true);
+        router.post(
+            route,
+            {},
+            {
+                only: ['cart', 'total'],
+                preserveScroll: true,
+                onError: (error) => {
+                    toast.error(error[0]);
+                },
+                onFinish: () => {
+                    setIsClickIncrease(false);
+                },
+            },
+        );
+    };
 
     // Xóa 1
     const handleRemove = (key: number) => {
@@ -30,6 +44,8 @@ export default function Read({ cart, products_suggest }: CartPropTypes) {
             );
         }
     };
+
+    const [isClickIncrease, setIsClickIncrease] = useState(false);
 
     // Tăng số lượng
     const handleIncrease = (key: number) => {
@@ -107,12 +123,17 @@ export default function Read({ cart, products_suggest }: CartPropTypes) {
                                                 </div>
 
                                                 {/* tên */}
-                                                <div className="cursor-pointer space-y-2">
+                                                <div className="cursor-pointer space-y-1">
                                                     <p className="w-50 truncate">
                                                         {item.name}
                                                     </p>
+
+                                                    <p className="text-xs">
+                                                        ({item.variant_code})
+                                                    </p>
+
                                                     <div className="flex w-fit items-center gap-2 rounded-md border border-gray-200 bg-gray-100 px-3 py-1.25 text-xs font-medium">
-                                                        <MonitorCog size={17} />
+                                                        <MonitorCog size={15} />
                                                         <span>
                                                             Xem cấu hình...
                                                         </span>
@@ -154,7 +175,7 @@ export default function Read({ cart, products_suggest }: CartPropTypes) {
                                                     <input
                                                         type="number"
                                                         name="number"
-                                                        id="number"
+                                                        id={`number-${item.variant_id}`}
                                                         value={item.qty}
                                                         readOnly
                                                         className="w-5 text-center select-none focus:ring-0 focus:outline-none"
@@ -164,7 +185,7 @@ export default function Read({ cart, products_suggest }: CartPropTypes) {
                                                     onClick={() =>
                                                         handleIncrease(item.key)
                                                     }
-                                                    className="cursor-pointer rounded-md bg-gray-200 p-1 transition-transform duration-200 ease-out active:scale-75"
+                                                    className={`cursor-pointer rounded-md bg-gray-200 p-1 transition-transform duration-200 ease-out active:scale-75 ${isClickIncrease ? 'opacity-50 pointer-events-none' : 'opacity-100 pointer-events-auto'}`}
                                                 >
                                                     <Plus size={18} />
                                                 </div>
@@ -188,7 +209,7 @@ export default function Read({ cart, products_suggest }: CartPropTypes) {
                                 ))}
                             </div>
 
-                            <div className="flex-1 space-y-3 rounded-3xl bg-white p-4 shadow select-none">
+                            <div className="flex-1 space-y-2 rounded-3xl bg-white p-4 shadow select-none">
                                 <h2 className="my-2 text-lg font-medium tracking-tight">
                                     Tạm tính
                                 </h2>
@@ -209,9 +230,19 @@ export default function Read({ cart, products_suggest }: CartPropTypes) {
                                     </span>
                                 </div>
 
-                                <Button className="w-full">
+                                <Link
+                                    href="/laptop"
+                                    className="inline-block w-full rounded-lg border border-gray-200 bg-gray-100 py-1.75 text-center transition-colors duration-150 hover:bg-gray-200 active:bg-gray-300"
+                                >
+                                    Tiếp tục mua sắm
+                                </Link>
+
+                                <Link
+                                    href="/thanh-toan?step=1"
+                                    className="inline-block w-full rounded-lg bg-blue-600 py-2 text-center text-white transition-transform duration-150 active:bg-blue-700"
+                                >
                                     Tiến hành thanh toán
-                                </Button>
+                                </Link>
                             </div>
                         </div>
                     </>

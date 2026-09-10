@@ -1,5 +1,6 @@
 import Footer from '@/components/Client/LayoutComponent/Footer';
 import Header from '@/components/Client/Header/Header';
+import { Toaster } from 'react-hot-toast';
 
 interface HomeLayoutProps {
     children: React.ReactNode;
@@ -7,17 +8,31 @@ interface HomeLayoutProps {
 
 export default function HomeLayout({ children }: HomeLayoutProps) {
     return (
-        <div className="bg-slate-50">
-            <div className="min-h-screen">
-                {/* header */}
-                <Header />
+        <>
+            <Toaster
+                toastOptions={{
+                    className: '',
+                    style: {
+                        padding: '14px 16px',
+                        fontWeight: 500,
+                        fontSize: 13,
+                    },
+                    position: 'top-center',
+                }}
+            />
 
-                {/* main */}
-                <main className="flex-1 space-y-10">{children}</main>
+            <div className="bg-slate-50">
+                <div className="min-h-screen">
+                    {/* header */}
+                    <Header />
 
-                {/* footer */}
-                <Footer />
+                    {/* main */}
+                    <main className="flex-1 space-y-10">{children}</main>
+
+                    {/* footer */}
+                    {/* <Footer /> */}
+                </div>
             </div>
-        </div>
+        </>
     );
 }

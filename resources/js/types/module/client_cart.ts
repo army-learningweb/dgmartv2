@@ -3,9 +3,12 @@ interface ConfigTypes {
     value: string;
 }
 
-interface CartTypes {
+export interface CartTypes {
     key: number;
     product_id: number;
+    variant_id: number;
+    variant_code: string;
+    variant_stock: number;
     name: string;
     image: string;
     image_alt: string;

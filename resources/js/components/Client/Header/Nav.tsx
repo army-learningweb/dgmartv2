@@ -1,12 +1,16 @@
 import { usePage } from '@inertiajs/react';
 import NavLink from './NavLink';
 
-export default function Nav() {
+interface NavProps {
+    className?:string
+}
+
+export default function Nav({className} : NavProps) {
     const { url } = usePage();
 
     return (
-        <nav className="mt-1 mr-10">
-            <div className="flex gap-5 font-medium">
+        <nav className={`mt-1 ${className}`}>
+            <div className="flex gap-5 font-medium justify-center">
                 <NavLink name="Trang chủ" route="/" active={url === '/'} />
                 <NavLink
                     name="Laptop"

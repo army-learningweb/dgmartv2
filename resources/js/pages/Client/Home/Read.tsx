@@ -2,8 +2,8 @@ import { Head } from '@inertiajs/react';
 import SliderProduct from '@/components/Client/Slider/SliderProduct';
 import SliderCategory from '@/components/Client/Slider/SliderCategory';
 import SliderPost from '@/components/Client/Slider/SliderPost';
-import Banner from '@/components/Client/Home/Banner';
-import Policy from '@/components/Client/Home/Policy';
+import Banner from '@/components/Client/HomePage/Banner';
+import Policy from '@/components/Client/HomePage/Policy';
 
 import { ReadData } from '@/types/module/home';
 import { CategoriesData } from '@/data/categories';

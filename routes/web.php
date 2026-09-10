@@ -15,6 +15,7 @@ use App\Http\Controllers\AdminRoleController;
 use App\Http\Controllers\AdminUploadFileContentController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PostController;
@@ -22,6 +23,11 @@ use App\Http\Controllers\PostController;
 
 //HOME
 Route::get('/',[HomeController::class, 'read']);
+
+//CHECKOUT
+Route::get('/thanh-toan',[CheckoutController::class, 'read']);
+Route::post('/thanh-toan/xac-nhan-thong-tin', [CheckoutController::class, 'storeInfo']);
+Route::post('/thanh-toan/phuong-thuc-thanh-toan', [CheckoutController::class, 'storePayment']);
 
 // PRODUCT
 Route::get('/laptop', [ProductController::class, 'read']);

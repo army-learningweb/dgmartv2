@@ -50,6 +50,8 @@ class CartController extends Controller
         // Lấy thông tin sản phẩm
         $product_info = Product::with('mainImage')->where('id', $product_id)->first(['id', 'name', 'slug']);
         $product_price = ProductVariant::where('id', $variant_id)->first(['price', 'discount', 'price_discount', 'qty']);
+        $product_variant_code = ProductVariant::where('id', $variant_id) ->value('code');
+        $product_variant_stock = ProductVariant::where('id', $variant_id)->value('qty');
 
         $product_configs_id = ProductVariantConfig::where('variant_id', $variant_id)->get()->pluck('config_id');
         $product_configs = ProductConfig::with(['group' => function ($q) {
@@ -78,6 +80,9 @@ class CartController extends Controller
                 'key' => $KEY,
                 'slug' => $product_info->slug,
                 'product_id' => $product_info->id,
+                'variant_id' => $variant_id,
+                'variant_code' => $product_variant_code,
+                'variant_stock' => $product_variant_stock,
                 'image' => $product_info->mainImage->file_url,
                 'image_alt' => $product_info->mainImage->file_name,
                 'name' => $product_info->name,
@@ -118,6 +123,13 @@ class CartController extends Controller
     {
         $cart = $request->session()->get('cart', []);
         if (isset($cart[$key])) {
+            $limit_stock_variant = ProductVariant::where('id',$cart[$key]['variant_id'])->value('qty');    
+            $qty_variant = $cart[$key]['qty'];
+
+            if($limit_stock_variant - $qty_variant == 0){
+                return back()->withErrors('Số lượng sản phẩm đã vượt quá kho cửa hàng, không thể tăng thêm số lượng !');
+            }
+
             $offical_price = $cart[$key]['price_discount'] > 0
                 ? $cart[$key]['price_discount']
                 : $cart[$key]['price'];
