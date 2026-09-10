@@ -6,7 +6,7 @@ import Banner from '@/components/Client/HomePage/Banner';
 import Policy from '@/components/Client/HomePage/Policy';
 
 import { ReadData } from '@/types/module/home';
-import { CategoriesData } from '@/data/categories';
+import { CategoriesData } from '@/data/Categories';
 
 export default function Read({ onshop_products, accessories_products, posts }: ReadData) {
     return (

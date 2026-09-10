@@ -1,11 +1,8 @@
 import { Head, usePage } from '@inertiajs/react';
 import { ArrowDownWideNarrow, ArrowUpNarrowWide, Funnel } from 'lucide-react';
-import { useState } from 'react';
 import Card from '@/components/Client/ProductCard/Card';
 import Pagination from '@/components/Admin/Pagination/Pagination';
-import Filter from '@/components/Client/Filter/Filter';
 import FilterTab from '@/components/Client/Filter/FilterTab';
-import Button from '@/components/ui/Button';
 
 import { useFilter } from '@/hooks/use-filter';
 import { ReadDataProduct } from '@/types/module/client_product';
@@ -16,8 +13,6 @@ export default function Read({
     category,
     price
 }: ReadDataProduct) {
-
-    console.log(products);
 
     const {url} = usePage();
     const path = url.split("?")[0];
