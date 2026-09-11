@@ -1,9 +1,10 @@
-import Progress from '@/components/Client/CheckoutPage/Progress';
-import { useForm, usePage, router } from '@inertiajs/react';
-import Input from '@/components/ui/Input';
-import Textarea from '@/components/ui/Textarea';
 import { useEffect, useRef } from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { useForm, usePage, router } from '@inertiajs/react';
+
+import Progress from '@/components/Client/CheckoutPage/Progress';
+import Input from '@/components/ui/Input';
+import Textarea from '@/components/ui/Textarea';
 import Button from '@/components/ui/Button';
 
 import { vndFormat } from '@/lib/currency_format';
@@ -79,8 +80,8 @@ export default function Read({
 
     // Rời đi
     const handleLeave = () => {
-        if(Object.values(info_save)?.length > 0){
-            if(step == 1){
+        if (Object.values(info_save)?.length > 0) {
+            if (step == 1) {
                 if (
                     confirm(
                         'Bạn có chắc muốn rời đi và hủy quá trình thanh toán ? ',
@@ -88,11 +89,16 @@ export default function Read({
                 ) {
                     router.visit(`/gio-hang`);
                 }
-            }else{
-                router.visit(`/thanh-toan?step=${step - 1}`)
+            } else {
+                router.visit(`/thanh-toan?step=${step - 1}`);
             }
         }
-    }
+    };
+
+    // Đặt hàng
+    const handleOrder = () => {
+        router.post('/dat-hang-thanh-cong', {is_confirm_order : true});
+    };
 
     return (
         <div className="mx-auto mt-10 flex max-w-312 flex-col items-center justify-center gap-4 pb-10">
@@ -276,7 +282,7 @@ export default function Read({
                             Thông tin giao hàng
                         </h1>
 
-                        <div className='space-y-1 border border-gray-200 p-4 rounded-xl'>
+                        <div className="space-y-1 rounded-xl border border-gray-200 p-4">
                             <p>Họ và tên: {info_save.name}</p>
                             <p>Số điện thoại: {info_save.tel}</p>
                             <p>Email: {info_save.email}</p>
@@ -353,13 +359,19 @@ export default function Read({
                         </div>
                     </div>
 
-                    <Button className="w-full cursor-pointer">Đặt hàng</Button>
+                    <Button
+                        onClick={handleOrder}
+                        className="w-full cursor-pointer active:bg-blue-700"
+                    >
+                        Đặt hàng
+                    </Button>
                 </div>
             )}
 
             {/* redirect */}
             <div className="flex w-135 justify-between">
-                <div onClick={handleLeave}
+                <div
+                    onClick={handleLeave}
                     className="group flex cursor-pointer items-center gap-1 text-gray-600"
                 >
                     <ChevronLeft

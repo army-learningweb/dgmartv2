@@ -72,7 +72,7 @@ export default function Read({ cart, products_suggest }: CartPropTypes) {
 
     return (
         <div className="mb-10">
-            <SectionPage head="Giỏ hàng" title="Giỏ hàng">
+            <SectionPage head="Giỏ hàng" title={Object.values(cart)?.length > 0 && 'Giỏ hàng'}>
                 {/* cart */}
                 {Object.values(cart)?.length > 0 && (
                     <div className="flex items-start gap-4">
@@ -96,24 +96,36 @@ export default function Read({ cart, products_suggest }: CartPropTypes) {
                                 />
                             ))}
                         </div>
-                        
+
                         {/* order sumary */}
-                        <OrderSumary total_price={total.total_price}/>
+                        <OrderSumary total_price={total.total_price} />
                     </div>
                 )}
 
                 {/* empty cart */}
                 {Object.values(cart)?.length === 0 && (
-                    <div className="mt-6 flex h-120 flex-col items-center justify-center gap-4 rounded-2xl bg-white shadow">
-                        <ShoppingBag size={30} />
-                        <h1 className="font-semibold">
-                            Giỏ hàng hiện đang trống !
-                        </h1>
+                    <div className="flex flex-col items-center justify-center px-4 py-20">
+                        <div className="mb-6 rounded-full bg-blue-50 p-5">
+                            <ShoppingBag
+                                size={30}
+                                className="text-blue-500"
+                                strokeWidth={1.5}
+                            />
+                        </div>
+
+                        <h3 className="mb-2 text-xl font-semibold text-gray-900 tracking-tight">
+                            Giỏ hàng của bạn đang trống
+                        </h3>
+                        <p className="mb-6 max-w-sm text-center text-gray-500">
+                            Hãy khám phá các sản phẩm nổi bật và thêm vào giỏ
+                            hàng của bạn nhé!
+                        </p>
+
                         <Link
                             href="/laptop"
-                            className="text-blue-600 hover:underline"
+                            className="rounded-lg bg-blue-600 px-3 py-1.75 font-medium text-white transition-colors hover:bg-blue-700"
                         >
-                            Ghé cửa hàng
+                            Khám phá sản phẩm
                         </Link>
                     </div>
                 )}

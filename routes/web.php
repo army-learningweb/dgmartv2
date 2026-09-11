@@ -23,6 +23,7 @@ use App\Http\Controllers\PostController;
 //===================================================
 //ClIENT
 //===================================================
+
 //HOME
 Route::get('/',[HomeController::class, 'read']);
 
@@ -30,6 +31,7 @@ Route::get('/',[HomeController::class, 'read']);
 Route::get('/thanh-toan',[CheckoutController::class, 'read']);
 Route::post('/thanh-toan/xac-nhan-thong-tin', [CheckoutController::class, 'storeInfo']);
 Route::post('/thanh-toan/phuong-thuc-thanh-toan', [CheckoutController::class, 'storePayment']);
+Route::post('/dat-hang-thanh-cong', [CheckoutController::class, 'checkoutComplete']);
 
 // PRODUCT
 Route::get('/laptop', [ProductController::class, 'read']);

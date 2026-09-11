@@ -41,8 +41,8 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
-            'cart' => $request->session()->get('cart', []),
-            'total' => $request->session()->get('total', [])
+            'cart' => fn () => $request->session()->get('cart', []),
+            'total' => fn () => $request->session()->get('total', [])
         ];
     }
 }

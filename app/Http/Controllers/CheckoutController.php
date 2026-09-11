@@ -92,4 +92,20 @@ class CheckoutController extends Controller
 
         return redirect('/thanh-toan?step=3');
     }
+
+    // Thanh toán thành công
+    public function checkoutComplete(Request $request){
+        $is_confirm_order = $request->input('is_confirm_order');
+        $checkoutInfo = $request->session()->has('checkout_info');
+
+        if($is_confirm_order == true && $checkoutInfo){
+            $request->session()->forget('checkout_info');
+            $request->session()->forget('checkout_payment');
+            $request->session()->forget('cart');
+            $request->session()->forget('total');
+            return Inertia::render('Client/Checkout/Complete');
+        }
+
+        return abort(404);
+    }
 }

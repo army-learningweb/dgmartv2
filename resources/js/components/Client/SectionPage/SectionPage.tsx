@@ -4,7 +4,7 @@ import TitlePage from './TitlePage';
 interface SectionPageProps {
     children?: React.ReactNode;
     head: string;
-    title: string | undefined;
+    title?: any;
 }
 
 export default function SectionPage({
@@ -15,7 +15,9 @@ export default function SectionPage({
     return (
         <div className="mx-auto max-w-312 space-y-4">
             <Head title={head} />
-            <TitlePage title={title} />
+
+            {title && <TitlePage title={title} />}
+
             {children}
         </div>
     );

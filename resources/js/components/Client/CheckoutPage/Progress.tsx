@@ -16,7 +16,7 @@ export default function Progress() {
             <div className="flex w-150">
                 <ProgressItem num={1}>Nhập thông tin giao hàng</ProgressItem>
                 <ProgressItem num={2}>Chọn phương thức thanh toán</ProgressItem>
-                <ProgressItem num={3}>Đặt hàng</ProgressItem>
+                <ProgressItem num={3}>Xác nhận đặt hàng</ProgressItem>
             </div>
 
             {/* progress bar */}
