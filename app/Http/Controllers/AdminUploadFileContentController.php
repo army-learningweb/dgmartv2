@@ -9,9 +9,10 @@ use Illuminate\Support\Facades\Storage;
 
 class AdminUploadFileContentController extends Controller
 {
-    public function upload(Request $request){
+    public function upload(Request $request)
+    {
         $typeImageContent = $request->input('type');
-        
+
         if ($request->hasFile("file")) {
             $file = $request->file("file");
             $file_size = $file->getSize();
@@ -21,7 +22,7 @@ class AdminUploadFileContentController extends Controller
             $object_id = null;
             $object_type = $typeImageContent;
             $role = "content";
-            
+
             $new_file = Media::create([
                 'file_url' => $file_path,
                 'file_name' => $file_name,

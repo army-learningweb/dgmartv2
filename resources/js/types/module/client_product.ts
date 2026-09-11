@@ -93,3 +93,5 @@ export interface ProductDetailProps {
         }[];
     };
 }
+
+export type ProductSuggestProps = ProductDetailProps['products_suggest']['data'];

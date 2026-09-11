@@ -1,20 +1,13 @@
-import Progress from '@/components/Client/Checkout/Progress';
-import { useForm, Link, usePage, router } from '@inertiajs/react';
+import Progress from '@/components/Client/CheckoutPage/Progress';
+import { useForm, usePage, router } from '@inertiajs/react';
 import Input from '@/components/ui/Input';
 import Textarea from '@/components/ui/Textarea';
 import { useEffect, useRef } from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import Button from '@/components/ui/Button';
 
-import { CartTypes } from '@/types/module/client_cart';
 import { vndFormat } from '@/lib/currency_format';
-
-interface CheckoutProps {
-    step: number;
-    info_save: any;
-    payment_save: string;
-    cart: CartTypes[];
-}
+import { CheckoutProps } from '@/types/module/client_checkout';
 
 export default function Read({
     step,

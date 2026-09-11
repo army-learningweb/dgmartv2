@@ -1,4 +1,4 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { ProductDetailProps } from '@/types/module/client_product';
 import { ChevronRight, ChevronLeft, ShoppingBag } from 'lucide-react';
 import { useRef, useEffect, useState } from 'react';
@@ -6,6 +6,8 @@ import parse from 'html-react-parser';
 import { vndFormat } from '@/lib/currency_format';
 import Select from '@/components/ui/Select';
 import Button from '@/components/ui/Button';
+
+import OtherProducts from '@/components/Client/ProductDetailPage/OtherProducts';
 
 export default function Detail({
     product,
@@ -75,7 +77,7 @@ export default function Detail({
         <>
             {/* add to cart */}
             <div className="fixed -bottom-5 z-50 w-full">
-                <div className="max-w-312 mx-auto rounded-2xl border border-gray-200 bg-gray-100 p-1 shadow-lg">
+                <div className="mx-auto max-w-312 rounded-2xl border border-gray-200 bg-gray-100 p-1 shadow-lg">
                     <div className="flex items-center justify-between rounded-xl bg-white px-4 shadow">
                         {/* Ảnh sản phẩm */}
                         <img
@@ -141,12 +143,9 @@ export default function Detail({
 
             <Head title="Chi tiết sản phẩm" />
             <div className="mx-auto mt-4 min-h-400 max-w-312">
-
                 {/* name & desc */}
-                <div className='w-150 my-10 space-y-4'>
-                    <h1 className="text-4xl font-bold">
-                        {product.data.name}
-                    </h1>
+                <div className="my-10 w-150 space-y-4">
+                    <h1 className="text-4xl font-bold">{product.data.name}</h1>
                     <h2 className="text-[15px] text-gray-500">
                         {product.data.desc}
                     </h2>
@@ -281,68 +280,18 @@ export default function Detail({
                     </div>
                 </div>
 
-                {/* detail */}
+                {/* content detail & other product */}
                 <div className="mt-5 flex items-start gap-5">
+                    {/* content detail */}
                     <div className="w-[60%]">
                         <div className="tinymce-content rounded-3xl bg-white px-6 py-2 shadow">
                             {parse(product.data.content)}
                         </div>
                     </div>
 
+                    {/* product suggest */}
                     <div className="sticky top-10 flex-1 rounded-3xl bg-white p-4 shadow">
-                        {/* product suggest */}
-                        <h2 className="text-xl font-medium">
-                            Sản phẩm tương tự
-                        </h2>
-                        <div className="mt-4 flex flex-col gap-4">
-                            {products_suggest.data.map((item) => (
-                                <Link
-                                    href={`/${item.slug}`}
-                                    key={item.id}
-                                    className="group flex items-center gap-4"
-                                >
-                                    <div className="relative h-20 w-30 shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-white">
-                                        <img
-                                            src={item.image.file_url}
-                                            alt=""
-                                            className="h-full w-full object-contain"
-                                        />
-
-                                        {item.variants?.[0]?.discount && (
-                                            <div className="absolute top-0 left-0 rounded-br-xl bg-red-600 px-2 py-0.5 text-xs text-white">
-                                                Giảm{' '}
-                                                {item.variants?.[0]?.discount}%
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="space-y-1">
-                                        <p className="line-clamp-1 group-hover:underline">
-                                            {item.name}
-                                        </p>
-                                        <p className="line-clamp-1 text-gray-500">
-                                            {item.desc}
-                                        </p>
-                                        <div className="flex gap-4">
-                                            <p
-                                                className={`${item.variants?.[0]?.discount ? 'line-through' : 'font-medium'}`}
-                                            >
-                                                {vndFormat(
-                                                    item.variants?.[0]?.price,
-                                                )}
-                                            </p>
-                                            {item.variants?.[0]?.discount && (
-                                                <p className="font-medium">
-                                                    {vndFormat(
-                                                        item.variants?.[0]
-                                                            .price_discount,
-                                                    )}
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
+                        <OtherProducts data={products_suggest.data} />
                     </div>
                 </div>
             </div>

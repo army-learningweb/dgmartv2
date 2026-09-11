@@ -15,6 +15,7 @@ class AdminAuthController extends Controller
         return Inertia::render('Admin/Auth/Login');
     }
 
+    // Xác thục người dùng
     public function storeLogin(Request $request){
         $attempt = $request->validate([
             'email' => ['required', 'email'],
@@ -44,6 +45,7 @@ class AdminAuthController extends Controller
         return Inertia::render('Admin/Auth/Register');
     }
 
+    // Tạo mới thành viên
     public function store(Request $request){
         $validated = $request->validate([
             'name' => ['required','min:2','max:100','regex:/^[\p{L}\s]+$/u'],

@@ -1,4 +1,4 @@
-import Footer from '@/components/Client/LayoutComponent/Footer';
+import Footer from '@/components/Client/Footer/Footer';
 import Header from '@/components/Client/Header/Header';
 import { Toaster } from 'react-hot-toast';
 
@@ -29,7 +29,7 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                     {/* main */}
                     <main className="flex-1 space-y-10">{children}</main>
 
-                    {/* footer */}
+                    
                     {/* <Footer /> */}
                 </div>
             </div>

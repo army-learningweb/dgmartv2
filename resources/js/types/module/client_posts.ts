@@ -1,6 +1,5 @@
-import { PaginatedData } from "./global";
 
-interface PostsProps {
+export interface PostsProps {
     id: string | number;
     title: string;
     desc: string;

@@ -10,12 +10,14 @@ interface SliderProductProp {
     data: any[];
     title: string;
     desc: string;
+    className?: string;
 }
 
 export default function SliderProduct({
     data,
     title,
     desc,
+    className
 }: SliderProductProp) {
     const ItemVisible = 5;
     const { sliderTurn, mobilityIndex, index, handleSlide } = useSlider({
@@ -26,7 +28,7 @@ export default function SliderProduct({
     return (
         <>
             {data?.length > 0 && (
-                <section className="relative">
+                <section className={`relative ${className}`}>
                     <div className="mx-auto max-w-312">
                         {/* title */}
                         <SliderTitle title={title} />
@@ -47,10 +49,7 @@ export default function SliderProduct({
                     {/* data */}
                     <SliderData mobilityIndex={mobilityIndex} index={index}>
                         {data.map((item) => (
-                            <Card
-                                key={item.id}
-                                dataItem={item}    
-                            />
+                            <Card key={item.id} dataItem={item} />
                         ))}
                     </SliderData>
                 </section>

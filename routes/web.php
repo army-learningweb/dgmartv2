@@ -20,7 +20,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PostController;
 
-
+//===================================================
+//ClIENT
+//===================================================
 //HOME
 Route::get('/',[HomeController::class, 'read']);
 
@@ -56,8 +58,11 @@ Route::post('/admin/logout', [AdminAuthController::class, 'logout']);
 Route::get('/admin/register', [AdminAuthController::class, 'register']);
 Route::post('/admin/register/store', [AdminAuthController::class, 'store']);
 
-Route::middleware(['auth'])->group( function(){
+//===================================================
+// ADMIN
+//===================================================
 
+Route::middleware(['auth'])->group( function(){
     //DASHBOARD
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'read']);
 

@@ -7,6 +7,7 @@ use Inertia\Inertia;
 
 class AdminDashboardController extends Controller
 {
+    // Đọc
     public function read(){
         return Inertia::render("Admin/Dashboard/Read");
     }
