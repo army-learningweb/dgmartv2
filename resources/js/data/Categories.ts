@@ -19,14 +19,7 @@ const CategoriesData = [
         title: 'Đồng hồ & Camera',
         desc: 'Thiết kế hiện đại, công nghệ tiên tiến.',
         route: '',
-    },
-    {
-        src: 'images/category3.png',
-        alt: 'category3.png',
-        title: 'Linh kiện',
-        desc: 'Nâng cấp, tối ưu trải nghiệm làm việc, chơi game.',
-        route: '',
-    },
+    }
 ];
 
 export {CategoriesData}

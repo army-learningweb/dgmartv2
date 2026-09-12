@@ -16,7 +16,7 @@ export default function OrtherPostItem({ dataItem }: OrtherPostItemProps) {
             className="group flex items-center gap-4"
         >
             <div className="relative h-23 w-[40%] shrink-0 overflow-hidden rounded-xl bg-gray-200">
-                <div className="absolute top-0 left-0 z-50 rounded-br-xl bg-black/80 px-3 py-1 text-white">
+                <div className="absolute top-0 left-0 z-50 rounded-br-2xl bg-black px-3 py-0.5 text-white">
                     {dataItem.created_at}
                 </div>
 

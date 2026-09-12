@@ -1,7 +1,8 @@
 import { vndFormat } from '@/lib/currency_format';
-import { Trash, MonitorCog } from 'lucide-react';
+import { Trash } from 'lucide-react';
 import MinusButton from './MinusButton';
 import PlusButton from './PlusButton copy';
+import { Link } from '@inertiajs/react';
 
 interface CartItemProps {
     dataItem: any;
@@ -20,7 +21,7 @@ export default function CartItem({
         <div className="flex items-center justify-between pr-1 pb-2">
             <div className="flex items-center gap-4">
                 {/* Ảnh */}
-                <div className="relative flex h-20 w-30 items-center justify-center overflow-hidden rounded-xl border border-gray-200 bg-white p-2">
+                <div className="relative flex h-20 w-30 items-center justify-center overflow-hidden rounded-xl border border-gray-200 bg-white p-1">
                     <img
                         src={dataItem.image}
                         alt={dataItem.image_alt}
@@ -28,22 +29,20 @@ export default function CartItem({
                     />
 
                     {dataItem.discount > 0 && (
-                        <div className="absolute top-0 left-0 z-50 rounded-br-xl bg-red-600 px-2 py-0.75 text-[10px] font-medium text-white">
+                        <div className="absolute top-0 left-0 z-40 rounded-br-xl bg-red-600 px-2 py-0.75 text-[10px] font-medium text-white">
                             Giảm {dataItem.discount}%
                         </div>
                     )}
                 </div>
 
                 {/* tên */}
-                <div className="cursor-pointer space-y-1">
-                    <p className="w-50 truncate">{dataItem.name}</p>
-
-                    <p className="text-xs">({dataItem.variant_code})</p>
-
-                    <div className="flex w-fit items-center gap-2 rounded-md border border-gray-200 bg-gray-100 px-3 py-1.25 text-xs font-medium">
-                        <MonitorCog size={15} />
-                        <span>Xem cấu hình...</span>
-                    </div>
+                <div className="">
+                    <Link href={dataItem.slug} className="w-50 truncate font-medium hover:underline inline-block">
+                        {dataItem.name}
+                    </Link>
+                    <p className="text-xs text-gray-500">
+                        ({dataItem.variant_code})
+                    </p>
                 </div>
             </div>
 
@@ -91,7 +90,7 @@ export default function CartItem({
             <Trash
                 size={18}
                 onClick={() => onRemove(dataItem.key)}
-                className="text-gray-500 hover:text-red-600"
+                className="text-gray-500 hover:text-red-600 mr-0.5"
             />
         </div>
     );

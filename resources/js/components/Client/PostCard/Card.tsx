@@ -14,10 +14,10 @@ export default function Card({ dataItem }: CardProps) {
     const path = url.split("?")[0];
 
     return (
-        <div className="relative h-70 w-60 shrink-0 overflow-hidden rounded-2xl bg-white p-2 shadow transition-all duration-250 ease-out select-none hover:-translate-y-1 hover:shadow-lg">
+        <div className="relative h-fit w-60 shrink-0 overflow-hidden rounded-3xl bg-white p-2.5 shadow transition-all duration-250 ease-out select-none hover:-translate-y-1 hover:shadow-lg">
             {/* date */}
             <CardDate date={dataItem.created_at} />
-
+            
             {/* image */}
             <CardImage
                 src={dataItem.image}

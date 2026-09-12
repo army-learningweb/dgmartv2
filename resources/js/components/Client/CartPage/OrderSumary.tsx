@@ -3,17 +3,18 @@ import { vndFormat } from "@/lib/currency_format";
 
 interface OrderSumaryProps {
     total_price: number;
+    className?: string;
 }
 
-export default function OrderSumary({total_price} : OrderSumaryProps){
+export default function OrderSumary({total_price, className} : OrderSumaryProps){
 
     return (
-        <div className="flex-1 space-y-2 rounded-3xl bg-white p-4 shadow select-none">
-            <h2 className="my-2 text-lg font-medium tracking-tight">
-                Tạm tính
-            </h2>
+        <div
+            className={`flex-1 space-y-1.5 rounded-3xl bg-white p-4 shadow select-none ${className}`}
+        >
+            <h2 className="text-lg font-medium tracking-tight">Tạm tính</h2>
 
-            <hr className="mt-3 border-gray-200" />
+            <hr className="mt-2 border-gray-200" />
 
             <div className="flex items-center justify-between">
                 <span>Phí vận chuyển:</span>
@@ -27,12 +28,12 @@ export default function OrderSumary({total_price} : OrderSumaryProps){
                 </span>
             </div>
 
-            <Link
+            {/* <Link
                 href="/laptop"
                 className="inline-block w-full rounded-lg border border-gray-200 bg-gray-100 py-1.75 text-center transition-colors duration-150 hover:bg-gray-200 active:bg-gray-300"
             >
                 Tiếp tục mua sắm
-            </Link>
+            </Link> */}
 
             <Link
                 href="/thanh-toan?step=1"

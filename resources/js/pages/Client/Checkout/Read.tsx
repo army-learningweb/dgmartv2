@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { useForm, usePage, router } from '@inertiajs/react';
 
@@ -9,6 +9,7 @@ import Button from '@/components/ui/Button';
 
 import { vndFormat } from '@/lib/currency_format';
 import { CheckoutProps } from '@/types/module/client_checkout';
+import LoadingCircle from '@/components/ui/LoadingCircle';
 
 export default function Read({
     step,
@@ -96,8 +97,14 @@ export default function Read({
     };
 
     // Đặt hàng
+    const [isLoading,setIsLoading] = useState(false);
     const handleOrder = () => {
-        router.post('/dat-hang-thanh-cong', {is_confirm_order : true});
+        setIsLoading(true);
+        router.get('/xu-li-dat-hang', {is_confirm_order : true}, {
+            onFinish: () => {
+                setIsLoading(false);
+            }
+        });
     };
 
     return (
@@ -312,10 +319,10 @@ export default function Read({
 
                                         {/* thông tin */}
                                         <div className="space-y-1">
-                                            <p className="truncate">
+                                            <p className="truncate font-medium md:w-80">
                                                 {item.name}
                                             </p>
-                                            <p>
+                                            <p className="text-gray-500">
                                                 Mã sản phẩm: (
                                                 {item.variant_code})
                                             </p>
@@ -362,8 +369,10 @@ export default function Read({
                     <Button
                         onClick={handleOrder}
                         className="w-full cursor-pointer active:bg-blue-700"
+                        disabled={isLoading}
                     >
-                        Đặt hàng
+                        {isLoading && <LoadingCircle/>}
+                        <span>Đặt hàng</span>
                     </Button>
                 </div>
             )}

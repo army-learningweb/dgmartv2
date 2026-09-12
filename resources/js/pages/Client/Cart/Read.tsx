@@ -8,7 +8,6 @@ import CartItem from '@/components/Client/CartPage/CartItem';
 import { CartPropTypes } from '@/types/module/client_cart';
 import toast from 'react-hot-toast';
 import OrderSumary from '@/components/Client/CartPage/OrderSumary';
-import { vndFormat } from '@/lib/currency_format';
 
 export default function Read({ cart, products_suggest }: CartPropTypes) {
     // Tổng giỏ hàng
@@ -72,11 +71,14 @@ export default function Read({ cart, products_suggest }: CartPropTypes) {
 
     return (
         <div className="mb-10">
-            <SectionPage head="Giỏ hàng" title={Object.values(cart)?.length > 0 && 'Giỏ hàng'}>
+            <SectionPage
+                head="Giỏ hàng"
+                title={Object.values(cart)?.length > 0 && 'Giỏ hàng'}
+            >
                 {/* cart */}
                 {Object.values(cart)?.length > 0 && (
                     <div className="flex items-start gap-4">
-                        <div className="w-[70%] space-y-2 rounded-3xl bg-white p-4 shadow">
+                        <div className="w-[70%] space-y-1 rounded-3xl bg-white px-4 py-2 shadow">
                             <div className="flex items-center justify-between">
                                 <h2 className="my-2 text-lg font-medium tracking-tight">
                                     Sản phẩm trong giỏ ({total.count})
@@ -98,7 +100,9 @@ export default function Read({ cart, products_suggest }: CartPropTypes) {
                         </div>
 
                         {/* order sumary */}
-                        <OrderSumary total_price={total.total_price} />
+                        <div className="sticky top-5 flex-1">
+                            <OrderSumary total_price={total.total_price} />
+                        </div>
                     </div>
                 )}
 
@@ -113,7 +117,7 @@ export default function Read({ cart, products_suggest }: CartPropTypes) {
                             />
                         </div>
 
-                        <h3 className="mb-2 text-xl font-semibold text-gray-900 tracking-tight">
+                        <h3 className="mb-2 text-xl font-semibold tracking-tight text-gray-900">
                             Giỏ hàng của bạn đang trống
                         </h3>
                         <p className="mb-6 max-w-sm text-center text-gray-500">

@@ -6,7 +6,13 @@ export default function Complete() {
         <>
             <div className="mx-auto mt-10 flex max-w-312 flex-col items-center justify-center gap-4">
                 <div className="flex w-[40%] flex-col items-center gap-4">
-                    <PackageCheck size={50} className="text-green-600" />
+                    <div className="rounded-full bg-green-50 p-5">
+                        <PackageCheck
+                            size={50}
+                            className="text-green-600"
+                            strokeWidth={1.5}
+                        />
+                    </div>
                     <h1 className="text-3xl font-medium tracking-tighter text-green-600">
                         Đặt hàng thành công
                     </h1>
@@ -29,7 +35,7 @@ export default function Complete() {
                         className="flex items-center justify-center rounded-lg bg-white pr-4 pl-2 text-xs font-medium shadow transition-all duration-150 active:translate-y-0.5"
                     >
                         <img
-                            src="images/gmail.jpg"
+                            src="/images/gmail.jpg"
                             alt=""
                             className="h-8 w-8 object-contain"
                         />

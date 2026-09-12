@@ -17,6 +17,7 @@ use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PostController;
 
@@ -27,11 +28,16 @@ use App\Http\Controllers\PostController;
 //HOME
 Route::get('/',[HomeController::class, 'read']);
 
+//PAYMENT
+Route::get('/thanh-toan-online',[PaymentController::class, 'read']);
+Route::post('/thanh-toan-online/confirm', [PaymentController::class, 'confirm']);
+
 //CHECKOUT
 Route::get('/thanh-toan',[CheckoutController::class, 'read']);
 Route::post('/thanh-toan/xac-nhan-thong-tin', [CheckoutController::class, 'storeInfo']);
 Route::post('/thanh-toan/phuong-thuc-thanh-toan', [CheckoutController::class, 'storePayment']);
-Route::post('/dat-hang-thanh-cong', [CheckoutController::class, 'checkoutComplete']);
+Route::get('/xu-li-dat-hang', [CheckoutController::class, 'orderProcessing']);
+Route::get('/dat-hang-thanh-cong/{code}', [CheckoutController::class, 'checkoutComplete'])->name('dat-hang-thanh-cong');
 
 // PRODUCT
 Route::get('/laptop', [ProductController::class, 'read']);

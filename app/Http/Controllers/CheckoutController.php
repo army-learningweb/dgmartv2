@@ -2,9 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Cookie;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Mail\OrderMail;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class CheckoutController extends Controller
 {
@@ -87,25 +93,87 @@ class CheckoutController extends Controller
             'payment_method.in' => 'Phương thức thanh toán không hợp lệ.',
         ]);
 
-        $request->session()->put('checkout_payment', $validated['payment_method']);
-        Cookie::queue('checkout_payment', $validated['payment_method'], 60);
+        $checkout_payment = [
+            'payment_method' => $validated['payment_method'],
+        ];
+
+        $request->session()->put('checkout_payment', $checkout_payment);
+        Cookie::queue('checkout_payment', $checkout_payment['payment_method'], 60);
 
         return redirect('/thanh-toan?step=3');
     }
 
-    // Thanh toán thành công
-    public function checkoutComplete(Request $request){
+    // Xử lí đặt hàng
+    public function orderProcessing(Request $request){
         $is_confirm_order = $request->input('is_confirm_order');
         $checkoutInfo = $request->session()->has('checkout_info');
 
         if($is_confirm_order == true && $checkoutInfo){
-            $request->session()->forget('checkout_info');
-            $request->session()->forget('checkout_payment');
-            $request->session()->forget('cart');
-            $request->session()->forget('total');
-            return Inertia::render('Client/Checkout/Complete');
+            $cart = $request->session()->get('cart', []);
+            $total = $request->session()->get('total',[]);
+            $checkout_info = $request->session()->get('checkout_info',[]);
+            $checkout_payment = $request->session()->get('checkout_payment',[]);
+    
+            if($cart && $checkout_info && $checkout_payment && $total){
+                if($checkout_payment['payment_method'] == 'cod'){
+                    $new_order = $this->OrderAction($checkout_info, $checkout_payment, $cart, $total);
+                    $data = [
+                        'code' => $new_order->code,
+                        'cart' => $cart,
+                        'total' => $total,
+                        'checkout_info' => $checkout_info,
+                        'checkout_payment' => $checkout_payment
+                    ];
+                    Mail::to($checkout_info['email'])->send(new OrderMail($data));
+                    $request->session()->forget('checkout_info');
+                    $request->session()->forget('checkout_payment');
+                    $request->session()->forget('cart');
+                    $request->session()->forget('total');
+                    return redirect()->route('dat-hang-thanh-cong', $new_order->code);
+                }else{
+                    return redirect('/thanh-toan-online');
+                }
+            }
         }
+        return redirect('/');
+    }
 
-        return abort(404);
+    // Order Action
+    static function OrderAction($checkout_info, $checkout_payment, $cart, $total){
+        $new_customer = Customer::create([
+            'name' => $checkout_info['name'],
+            'tel' => $checkout_info['tel'],
+            'email' => $checkout_info['email']
+        ]);
+
+        $new_order = Order::create([
+            'code' => 'DG-' . Str::random(10),
+            'shipping_address' => $checkout_info['address'],
+            'shipping_note' => $checkout_info['note'],
+            'qty' => $total['count'],
+            'total' => $total['total_price'],
+            'payment_method' => $checkout_payment['payment_method'],
+            'customer_id' => $new_customer->id
+        ]);
+
+        foreach ($cart as $item) {
+            OrderItem::create([
+                'order_id' => $new_order->id,
+                'product_id' => $item['product_id'],
+                'variant_id' => $item['variant_id'],
+                'qty' => $item['qty'],
+                'price' => $item['price_discount'] > 0 ? $item['price_discount'] : $item['price'],
+                'total' => $item['total']
+            ]);
+        };
+
+        return $new_order;
+    }
+
+    // Đặt hàng thành công
+    public function checkoutComplete(Request $request, $code){
+        $exits_order = Order::where('code', $code)->first();
+        if(!$exits_order) return abort(404);
+        return Inertia::render('Client/Checkout/Complete');
     }
 }

@@ -27,9 +27,10 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                     <Header />
 
                     {/* main */}
-                    <main className="flex-1 space-y-10">{children}</main>
+                    <main className="flex-1 space-y-10">
+                        {children}
+                    </main>
 
-                    
                     {/* <Footer /> */}
                 </div>
             </div>

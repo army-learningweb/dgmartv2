@@ -13,10 +13,10 @@ export default function Progress() {
     return (
         <>
             {/* contruction */}
-            <div className="flex w-150">
+            <div className="flex w-150 justify-between">
                 <ProgressItem num={1}>Nhập thông tin giao hàng</ProgressItem>
                 <ProgressItem num={2}>Chọn phương thức thanh toán</ProgressItem>
-                <ProgressItem num={3}>Xác nhận đặt hàng</ProgressItem>
+                <ProgressItem num={3}>Xác nhận thông tin đặt hàng</ProgressItem>
             </div>
 
             {/* progress bar */}

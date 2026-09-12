@@ -77,7 +77,7 @@ export default function Detail({
         <>
             {/* add to cart */}
             <div className="fixed -bottom-5 z-50 w-full">
-                <div className="mx-auto max-w-312 rounded-2xl border border-gray-200 bg-gray-100 p-1 shadow-lg">
+                <div className="mx-auto w-250 rounded-2xl border border-gray-200 bg-gray-100 p-1 shadow-lg">
                     <div className="flex items-center justify-between rounded-xl bg-white px-4 shadow">
                         {/* Ảnh sản phẩm */}
                         <img
@@ -153,7 +153,7 @@ export default function Detail({
 
                 <div className="flex items-start gap-5">
                     {/* image */}
-                    <div className="sticky top-20 flex w-[60%] flex-col items-center rounded-3xl bg-white shadow">
+                    <div className="sticky top-19 flex w-[60%] flex-col items-center rounded-3xl bg-white shadow">
                         <div className="relative w-full overflow-hidden rounded-3xl py-5">
                             {product.data.childs_image?.length > 0 ? (
                                 <ul
@@ -283,14 +283,14 @@ export default function Detail({
                 {/* content detail & other product */}
                 <div className="mt-5 flex items-start gap-5">
                     {/* content detail */}
-                    <div className="w-[60%]">
+                    <div className="w-[60%] pb-5">
                         <div className="tinymce-content rounded-3xl bg-white px-6 py-2 shadow">
                             {parse(product.data.content)}
                         </div>
                     </div>
 
                     {/* product suggest */}
-                    <div className="sticky top-10 flex-1 rounded-3xl bg-white p-4 shadow">
+                    <div className="sticky top-5 flex-1 rounded-3xl bg-white p-4 shadow">
                         <OtherProducts data={products_suggest.data} />
                     </div>
                 </div>
