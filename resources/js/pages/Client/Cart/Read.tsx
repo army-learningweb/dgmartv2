@@ -10,59 +10,15 @@ import toast from 'react-hot-toast';
 import OrderSumary from '@/components/Client/CartPage/OrderSumary';
 
 export default function Read({ cart, products_suggest }: CartPropTypes) {
+   
     // Tổng giỏ hàng
     const total: any = usePage().props.total;
-
-    // Hàm route dùng chung
-    const action = (route: string) => {
-        router.post(
-            route,
-            {},
-            {
-                only: ['cart', 'total'],
-                preserveScroll: true,
-                onError: (error) => {
-                    toast.error(error[0]);
-                },
-            },
-        );
-    };
-
-    // Xóa 1
-    const handleRemove = (key: number) => {
-        action(`/gio-hang/${key}/delete`);
-    };
 
     // Xóa tất cả
     const handleRemoveAll = () => {
         if (confirm('Bạn có chắc muốn xóa tất cả sản phẩm trong giỏ hàng')) {
             router.post(
                 `/gio-hang/destroy`,
-                {},
-                { only: ['cart', 'total'], preserveScroll: true },
-            );
-        }
-    };
-
-    // Tăng số lượng
-    const handleIncrease = (key: number) => {
-        action(`/gio-hang/${key}/increase`);
-    };
-
-    // Giảm số lượng
-    const handleDecrease = (key: number, qty: number) => {
-        if (qty === 1) {
-            if (confirm('Bạn có chắc muốn xóa sản phẩm khỏi giỏ hàng')) {
-                router.post(
-                    `/gio-hang/${key}/decrease`,
-                    {},
-                    { only: ['cart', 'total'], preserveScroll: true },
-                );
-            }
-            return;
-        } else {
-            router.post(
-                `/gio-hang/${key}/decrease`,
                 {},
                 { only: ['cart', 'total'], preserveScroll: true },
             );
@@ -92,9 +48,6 @@ export default function Read({ cart, products_suggest }: CartPropTypes) {
                                 <CartItem
                                     key={item.product_id + item.variant_id}
                                     dataItem={item}
-                                    onDecrease={handleDecrease}
-                                    onIncrease={handleIncrease}
-                                    onRemove={handleRemove}
                                 />
                             ))}
                         </div>
@@ -135,11 +88,11 @@ export default function Read({ cart, products_suggest }: CartPropTypes) {
                 )}
             </SectionPage>
 
-            {/* new product */}
+            {/* orther product */}
             {Object.values(cart)?.length > 0 && (
                 <SliderProduct
                     title="Có thể bạn sẽ thích"
-                    desc="Xem thêm một số phẩm tương tự."
+                    desc="Thêm thiết bị, thêm tiện nghi."
                     data={products_suggest.data}
                     className="mt-8"
                 />

@@ -42,7 +42,10 @@ class Product extends Model
 
     // Ảnh chính
     public function mainImage(){
-        return $this->hasOne(Media::class, 'object_id')->where('role','main')->where('object_type','product');
+        return $this->hasOne(Media::class, 'object_id')
+        ->where('role','main')
+        ->where('object_type','product')
+        ->select('id','object_id','file_url','file_name');
     }
 
     // Ảnh phụ

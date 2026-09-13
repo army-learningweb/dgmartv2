@@ -1,13 +1,12 @@
 import { Head, router } from '@inertiajs/react';
 import { ProductDetailProps } from '@/types/module/client_product';
-import { ChevronRight, ChevronLeft, ShoppingBag } from 'lucide-react';
+import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { useRef, useEffect, useState } from 'react';
-import parse from 'html-react-parser';
 import { vndFormat } from '@/lib/currency_format';
-import Select from '@/components/ui/Select';
-import Button from '@/components/ui/Button';
+import parse from 'html-react-parser';
 
 import OtherProducts from '@/components/Client/ProductDetailPage/OtherProducts';
+import AddToCartBar from '@/components/Client/AddToCartBar/AddToCartBar';
 
 export default function Detail({
     product,
@@ -20,10 +19,10 @@ export default function Detail({
 
     // Thay đổi giá & Phiên bản
     const [version, setVersion] = useState({
-        variant_id: product.data.variants?.[0].id,
+        variant_id: product.data.variants?.[0]?.id,
         price:
-            product.data.variants?.[0].price_discount ??
-            product.data.variants?.[0].price,
+            product.data.variants?.[0]?.price_discount ??
+            product.data.variants?.[0]?.price,
     });
 
     // Thông tin sản phẩm và phiên bản đã chọn
@@ -76,70 +75,12 @@ export default function Detail({
     return (
         <>
             {/* add to cart */}
-            <div className="fixed -bottom-5 z-50 w-full">
-                <div className="mx-auto w-250 rounded-2xl border border-gray-200 bg-gray-100 p-1 shadow-lg">
-                    <div className="flex items-center justify-between rounded-xl bg-white px-4 shadow">
-                        {/* Ảnh sản phẩm */}
-                        <img
-                            src={product.data.image.file_url}
-                            alt={product.data.image.file_name}
-                            className="h-auto w-20"
-                        />
-
-                        {/* Tên sản phẩm */}
-                        <p className="w-50 truncate text-[15px] font-medium">
-                            {product.data.name}
-                        </p>
-
-                        {/* Chọn phiên bản */}
-                        <div>
-                            <Select
-                                name="version"
-                                className="w-50!"
-                                onChange={(e) =>
-                                    handleChangeVersion(Number(e.target.value))
-                                }
-                            >
-                                {product.data.variants?.length > 0 &&
-                                    product.data.variants.map(
-                                        (variant, index) => (
-                                            <option
-                                                key={variant.id}
-                                                value={variant.id}
-                                            >
-                                                Phiên bản {index + 1} (
-                                                {variant.code})
-                                            </option>
-                                        ),
-                                    )}
-                            </Select>
-                        </div>
-
-                        {/* Giá sản phẩm */}
-                        <div className="flex items-center gap-2">
-                            <span>Giá:</span>
-                            <span className="text-lg font-medium">
-                                {vndFormat(version.price)}
-                            </span>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            <Button
-                                onClick={handleAddCart}
-                                variant="outline"
-                                size="small"
-                                animatePress={true}
-                                className="cursor-pointer"
-                            >
-                                <ShoppingBag size={17} />
-                                Thêm vào giỏ hàng
-                            </Button>
-
-                            <Button size="small">Mua ngay</Button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <AddToCartBar 
+                data={product.data}
+                onAddToCart={handleAddCart}
+                onChangeVersion={handleChangeVersion}
+                version={version}
+            />
 
             <Head title="Chi tiết sản phẩm" />
             <div className="mx-auto mt-4 min-h-400 max-w-312">
@@ -283,7 +224,7 @@ export default function Detail({
                 {/* content detail & other product */}
                 <div className="mt-5 flex items-start gap-5">
                     {/* content detail */}
-                    <div className="w-[60%] pb-5">
+                    <div className="w-[60%]">
                         <div className="tinymce-content rounded-3xl bg-white px-6 py-2 shadow">
                             {parse(product.data.content)}
                         </div>

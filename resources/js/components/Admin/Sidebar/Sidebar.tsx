@@ -1,39 +1,56 @@
-import { Link, usePage } from "@inertiajs/react"
-import { LayoutDashboard, UsersRound, Package, FileText, PackageCheck, X } from 'lucide-react';
-import Logo from "@/components/ui/Logo"
-import NavLink from "./NavLink";
-import NavSubLink from "./NavSubLink";
-import UserSetting from "./UserSetting";
+import { usePage } from '@inertiajs/react';
+import {
+    LayoutDashboard,
+    UsersRound,
+    UserRound,
+    Package,
+    FileText,
+    PackageCheck,
+    X,
+} from 'lucide-react';
+import Logo from '@/components/ui/Logo';
+import NavLink from './NavLink';
+import NavSubLink from './NavSubLink';
+import UserSetting from './UserSetting';
 
 interface SidebarPropType {
-    onToggleMenu? : () => void;
+    onToggleMenu?: () => void;
 }
 
-export default function Sidebar({onToggleMenu} : SidebarPropType) {
-
+export default function Sidebar({ onToggleMenu }: SidebarPropType) {
     const { url } = usePage();
-    const pathName = url.split("?")[0];
+    const pathName = url.split('?')[0];
 
     return (
-        <div className="fixed z-50 w-[70%] border-r border-r-gray-200 bg-white p-4 h-full md:h-auto md:sticky md:top-5 md:w-full md:border-0 md:bg-transparent md:p-0">
-            <div className="relative py-1">
+        <div className="fixed z-50 h-full w-[70%] border-r border-r-gray-200 bg-white p-4 md:sticky md:h-auto md:w-full md:border-0 md:bg-transparent md:p-0">
+            <div className="relative">
                 {/* close sidebar on mobile */}
-                <div onClick={onToggleMenu} 
-                    className="absolute top-4 right-3 block rounded-md p-0.5 md:hidden">
+                <div
+                    onClick={onToggleMenu}
+                    className="absolute top-4 right-3 block rounded-md p-0.5 md:hidden"
+                >
                     <X
                         strokeWidth={1.5}
                         className="text-gray-500 active:text-gray-700"
                     />
                 </div>
 
-                {/* Logo */}
-                <Link href="/admin/dashboard">
-                    <Logo />
-                    <p className="text-gray-500">Trang quản lí Website</p>
-                </Link>
+                <div className="flex items-end justify-between pr-2.75">
+                    <div>
+                        {/* Logo */}
+                        <Logo
+                            route="/admin/dashboard"
+                            className="text-[32px]"
+                        />
+                        {/* <p className='text-xs'>Trang quản lí Website</p> */}
+                    </div>
+
+                    {/* user setting */}
+                    <UserSetting />
+                </div>
 
                 {/* nav */}
-                <div className="scrollbar-thumb-rounded-full mt-4 h-[calc(100vh-170px)] scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent overflow-x-hidden overflow-y-auto pr-2 pb-4">
+                <div className="scrollbar-thumb-rounded-full mt-2 h-[calc(100vh-100px)] scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent overflow-x-hidden overflow-y-auto pr-2 pb-4">
                     {/* Dashboard */}
                     <div>
                         <p className="my-2 text-xs font-medium text-gray-500">
@@ -128,7 +145,7 @@ export default function Sidebar({onToggleMenu} : SidebarPropType) {
                         <NavLink
                             urlActiveOpen={pathName.startsWith('/admin/users')}
                             name="Thành viên"
-                            icon={<UsersRound strokeWidth={1.75} size={17} />}
+                            icon={<UserRound strokeWidth={2} size={17} />}
                         >
                             <NavSubLink
                                 isActive={pathName === '/admin/users'}
@@ -149,17 +166,30 @@ export default function Sidebar({onToggleMenu} : SidebarPropType) {
                             />
                         </NavLink>
 
-                        <NavLink
-                            route="/admin/dashboard"
-                            name="Đơn hàng"
-                            isActive={url === '/admin/sales'}
-                            icon={<PackageCheck strokeWidth={1.75} size={17} />}
-                        />
+                        {/* Dashboard */}
+                        <div className='space-y-1'>
+                            <p className="my-2 text-xs font-medium text-gray-500">
+                                Bán hàng
+                            </p>
+                            <NavLink
+                                route="/admin/dashboard"
+                                name="Đơn hàng"
+                                isActive={url === '/admin/sales'}
+                                icon={
+                                    <PackageCheck strokeWidth={2} size={17} />
+                                }
+                            />
+                            <NavLink
+                                route="/admin/dashboard"
+                                name="Khách hàng"
+                                isActive={url === '/admin/sales'}
+                                icon={
+                                    <UsersRound strokeWidth={2} size={17} />
+                                }
+                            />
+                        </div>
                     </div>
                 </div>
-
-                {/* user setting */}
-                <UserSetting />
             </div>
         </div>
     );

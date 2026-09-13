@@ -9,6 +9,7 @@ interface HomeLayoutProps {
 export default function HomeLayout({ children }: HomeLayoutProps) {
     return (
         <>
+            {/* Thông báo */}
             <Toaster
                 toastOptions={{
                     className: '',
@@ -27,11 +28,12 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                     <Header />
 
                     {/* main */}
-                    <main className="flex-1 space-y-10">
+                    <main className="flex-1 space-y-10 pb-10">
                         {children}
                     </main>
 
-                    {/* <Footer /> */}
+                    {/* footer */}
+                    <Footer />
                 </div>
             </div>
         </>

@@ -13,18 +13,29 @@ import ButtonCreate from '@/components/Admin/TableManager/ButtonCreate';
 import Title from '@/components/Admin/TableManager/Title';
 import ButtonEdit from '@/components/Admin/TableManager/ButtonEdit';
 import ButtonDelete from '@/components/Admin/TableManager/ButtonDelete';
+import ShortCutHint from '@/components/Admin/TableManager/Hint';
 
 import { useModal } from '@/hooks/use-modal';
+import { useShortCut } from '@/hooks/use-shortcut';
+import { useInputFocus } from '@/hooks/use-inputFocus';
+import { useLockSscreen } from '@/hooks/use-lock-screen';
 
 import { ReadCategoriesProductType } from '@/types/module/product_category';
 import { CreateCategoriesProductType } from '@/types/module/product_category';
 import { EditCategoriesPostType } from '@/types/module/product_category';
-import { useShortCut } from '@/hooks/use-shortcut';
-import ShortCutHint from '@/components/Admin/TableManager/Hint';
-import { useInputFocus } from '@/hooks/use-inputFocus';
+
 
 export default function ReadCategoriesProduct({ categories, parent_categories, total }: ReadCategoriesProductType) {
-    const { data, setData, post, patch, errors, processing, reset, clearErrors } = useForm<CreateCategoriesProductType>({
+    const {
+        data,
+        setData,
+        post,
+        patch,
+        errors,
+        processing,
+        reset,
+        clearErrors,
+    } = useForm<CreateCategoriesProductType>({
         id: '',
         name: '',
         parent_id: '0',
@@ -32,12 +43,22 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
     });
 
     // Modal hooks
-    const { openModal, isEditModal, setOpenModal, setIsEditModal, handleOpenModal, handleCloseModal } = useModal({ reset, clearErrors });
+    const {
+        openModal,
+        isEditModal,
+        setOpenModal,
+        setIsEditModal,
+        handleOpenModal,
+        handleCloseModal,
+    } = useModal({ reset, clearErrors });
 
-    // shortcuts hooks
-    useShortCut({openModal, handleCloseModal, handleOpenModal})
+    // Lockscreen Hooks
+    useLockSscreen({openModal});
 
-    const {ipRef } = useInputFocus({openModal})
+    // Shortcuts hooks
+    useShortCut({ openModal, handleCloseModal, handleOpenModal });
+
+    const { ipRef } = useInputFocus({ openModal });
 
     // Modal edit mode
     const handleEdit = async (category: EditCategoriesPostType) => {
@@ -81,7 +102,11 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
 
     // Xóa
     const handleDelete = (id: string) => {
-        if (confirm('Bạn có chắc muốn xóa danh mục này, lưu ý cấp danh mục trước khi xóa ?',)) {
+        if (
+            confirm(
+                'Bạn có chắc muốn xóa danh mục này, lưu ý cấp danh mục trước khi xóa ?',
+            )
+        ) {
             let toastID: string;
             router.delete(`/admin/products/categories/${id}/delete`, {
                 preserveScroll: true,
@@ -97,7 +122,6 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
             });
         }
     };
-
 
     return (
         <>
@@ -207,7 +231,7 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
                     <Title heading={`Danh mục sản phẩm (${total})`} />
 
                     <div className="flex items-center gap-2">
-                        <ShortCutHint/>
+                        <ShortCutHint />
                         <ButtonCreate onOpenModal={handleOpenModal} />
                     </div>
                 </div>
@@ -291,13 +315,14 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
                                                 >
                                                     <td className="px-5 py-4">
                                                         <div className="ms-2.5 flex gap-2">
-                                                            <CornerDownRight className='shrink-0'
+                                                            <CornerDownRight
+                                                                className="shrink-0"
                                                                 size={18}
                                                                 strokeWidth={
                                                                     1.5
                                                                 }
                                                             />
-                                                            <div className='w-40 truncate'>
+                                                            <div className="w-40 truncate">
                                                                 {item.name}
                                                             </div>
                                                         </div>

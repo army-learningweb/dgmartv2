@@ -6,7 +6,7 @@ interface UserAvatarProps {
 
 export default function UserAvatar({name = "?"} : UserAvatarProps) {
     return (
-        <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 font-medium flex items-center justify-center">
+        <div className="w-8.5 h-8.5 rounded-lg bg-blue-100 text-blue-600 font-semibold flex items-center justify-center select-none">
             {userAvatar(name)}
         </div>
     )

@@ -1,22 +1,59 @@
 import { vndFormat } from '@/lib/currency_format';
 import { Trash } from 'lucide-react';
+import { Link } from '@inertiajs/react';
 import MinusButton from './MinusButton';
 import PlusButton from './PlusButton copy';
-import { Link } from '@inertiajs/react';
+import { useState } from 'react';
+import { router } from '@inertiajs/react';
+import toast from 'react-hot-toast';
 
 interface CartItemProps {
     dataItem: any;
-    onRemove: (value: any) => void;
-    onIncrease: (value: any) => void;
-    onDecrease: (key: number, qty: number) => void;
 }
 
-export default function CartItem({
-    dataItem,
-    onRemove,
-    onIncrease,
-    onDecrease,
-}: CartItemProps) {
+export default function CartItem({ dataItem }: CartItemProps) {
+    const [isDisableButton, setIsDisableButton] = useState<boolean>(false);
+
+    // Hàm route dùng chung
+    const action = (route: string) => {
+        router.post(
+            route,
+            {},
+            {
+                only: ['cart', 'total'],
+                preserveScroll: true,
+                onError: (error) => {
+                    toast.error(error[0]);
+                },
+                onFinish: () => setIsDisableButton(false),
+            },
+        );
+    };
+
+    // Tăng số lượng
+    const handleIncrease = (key: number) => {
+        setIsDisableButton(true);
+        action(`/gio-hang/${key}/increase`);
+    };
+
+    // Giảm số lượng
+    const handleDecrease = (key: number, qty: number) => {
+        if (qty === 1) {
+            if (!confirm('Bạn có chắc muốn xóa sản phẩm khỏi giỏ hàng')) {
+                return;
+            }
+        }
+        setIsDisableButton(true);
+        action(`/gio-hang/${key}/decrease`);
+    };
+
+    // Xóa 1
+    const handleRemove = (key: number) => {
+        if (confirm('Bạn đồng ý xóa sản phẩm khỏi giỏ hàng ?')) {
+            action(`/gio-hang/${key}/delete`);
+        }
+    };
+
     return (
         <div className="flex items-center justify-between pr-1 pb-2">
             <div className="flex items-center gap-4">
@@ -37,7 +74,10 @@ export default function CartItem({
 
                 {/* tên */}
                 <div className="">
-                    <Link href={dataItem.slug} className="w-50 truncate font-medium hover:underline inline-block">
+                    <Link
+                        href={dataItem.slug}
+                        className="inline-block w-50 truncate font-medium hover:underline"
+                    >
                         {dataItem.name}
                     </Link>
                     <p className="text-xs text-gray-500">
@@ -64,7 +104,8 @@ export default function CartItem({
             {/* tăng giảm số lượng */}
             <div className="flex items-center gap-1">
                 <MinusButton
-                    onClick={() => onDecrease(dataItem.key, dataItem.qty)}
+                    onClick={() => handleDecrease(dataItem.key, dataItem.qty)}
+                    className={`${isDisableButton && 'pointer-events-none opacity-50'}`}
                 />
 
                 <div className="rounded-md border border-gray-200 px-4 py-0.75">
@@ -78,7 +119,10 @@ export default function CartItem({
                     />
                 </div>
 
-                <PlusButton onClick={() => onIncrease(dataItem.key)} />
+                <PlusButton
+                    onClick={() => handleIncrease(dataItem.key)}
+                    className={`${isDisableButton && 'pointer-events-none opacity-50'}`}
+                />
             </div>
 
             {/* Tổng tiền của sản phẩm  */}
@@ -89,8 +133,8 @@ export default function CartItem({
             {/* Xóa */}
             <Trash
                 size={18}
-                onClick={() => onRemove(dataItem.key)}
-                className="text-gray-500 hover:text-red-600 mr-0.5"
+                onClick={() => handleRemove(dataItem.key)}
+                className="mr-0.5 text-gray-500 hover:text-red-600"
             />
         </div>
     );

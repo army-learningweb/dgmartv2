@@ -24,7 +24,7 @@ export default function Read({
     const total: any = usePage().props.total;
 
     // Form info data
-    const { data, setData, post, errors, clearErrors } = useForm({
+    const { data, setData, post, errors, clearErrors, isDirty } = useForm({
         name: info_save?.name ?? '',
         email: info_save?.email ?? '',
         address: info_save?.address ?? '',
@@ -81,19 +81,11 @@ export default function Read({
 
     // Rời đi
     const handleLeave = () => {
-        if (Object.values(info_save)?.length > 0) {
-            if (step == 1) {
-                if (
-                    confirm(
-                        'Bạn có chắc muốn rời đi và hủy quá trình thanh toán ? ',
-                    )
-                ) {
-                    router.visit(`/gio-hang`);
-                }
-            } else {
-                router.visit(`/thanh-toan?step=${step - 1}`);
-            }
-        }
+        if (step == 1) {
+            router.visit(`/gio-hang`);
+        }else{
+            router.visit(`/thanh-toan?step=${step - 1}`);
+        }         
     };
 
     // Đặt hàng

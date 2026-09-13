@@ -18,6 +18,7 @@ class ProductController extends Controller
         $slug = $request->segment(1);
         $products = Product::query()
             ->with(['variants', 'mainImage'])
+            ->whereHas('variants')
             ->withMin('variants','price')
             ->where('slug', 'like', "$slug%")
             ->when($request->input('category'), function ($query, $value) {

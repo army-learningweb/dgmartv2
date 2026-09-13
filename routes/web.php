@@ -20,10 +20,14 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\SearchController;
 
 //===================================================
 //ClIENT
 //===================================================
+
+//SEARCH
+Route::get('/searchProduct', [SearchController::class, 'getProductSearch']);
 
 //HOME
 Route::get('/',[HomeController::class, 'read']);

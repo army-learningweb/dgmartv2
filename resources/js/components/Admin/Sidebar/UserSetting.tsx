@@ -23,22 +23,27 @@ export default function UserSetting() {
     }, [isOpen])
 
     return (
-        <div ref={menuRef} onClick={() => setIsOpen(!isOpen)} className={clsx("select-none flex justify-between items-center gap-2 p-1.5 rounded-xl transition-colors duration-150 relative", {
-            "bg-white shadow-md md:shadow": isOpen,
-            "hover:bg-white md:hover:shadow": !isOpen
-        })}>
+        <div
+            ref={menuRef}
+            onClick={() => setIsOpen(!isOpen)}
+            className="cursor-pointer relative select-none' flex items-center justify-between gap-2 rounded-xl transition-colors duration-150"
+        >
             {/* avatar */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
                 <UserAvatar name={user.name} />
-                <div>{user.name}</div>
+                <ChevronsUpDown strokeWidth={1.75} size={17} />
             </div>
-            <ChevronsUpDown strokeWidth={1.75} size={17} />
 
             {/* user popup */}
-            <div className={clsx("w-full absolute -top-27 right-0 bg-white border border-gray-200 shadow rounded-xl transition-all duration-150 ease-out", {
-                'opacity-0 scale-95 translate-y-2 pointer-events-none': !isOpen,
-                'opacity-100 scale-100 translate-y-0 pointer-events-auto': isOpen
-            })}>
+            <div
+                className={clsx(
+                    'absolute z-50 -top-1 -right-52 w-50 rounded-xl border border-gray-200 bg-white shadow transition-all duration-150 ease-out',
+                    {
+                        'pointer-events-none scale-95 opacity-0': !isOpen,
+                        'pointer-events-auto scale-100 opacity-100': isOpen,
+                    },
+                )}
+            >
                 <div className="flex items-center gap-2 p-2 text-xs">
                     {/* avatar */}
                     <UserAvatar name={user.name} />
@@ -53,12 +58,16 @@ export default function UserSetting() {
 
                 {/* logout */}
                 <div className="p-1">
-                    <Link href="/admin/logout" method="post" className="py-1.5 px-2.5 inline-flex gap-2 items-center w-full hover:bg-gray-100 rounded-lg transition-colors duration-150">
+                    <Link
+                        href="/admin/logout"
+                        method="post"
+                        className="inline-flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 transition-colors duration-150 hover:bg-gray-100"
+                    >
                         <LogOut size={15} className="text-gray-500" />
                         <div>Đăng xuất</div>
                     </Link>
                 </div>
             </div>
         </div>
-    )
+    );
 }

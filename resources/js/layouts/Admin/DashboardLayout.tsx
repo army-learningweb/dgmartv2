@@ -11,17 +11,16 @@ interface DashboardLayoutProps {
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-    const {url} = usePage();
+    const { url } = usePage();
     const [openOnMobbile, setOpenOnMobile] = useState(false);
     const handleToggleMenu = () => {
         setOpenOnMobile(!openOnMobbile);
-        
     };
 
     useEffect(() => {
-        if(!openOnMobbile) return;
+        if (!openOnMobbile) return;
         handleToggleMenu();
-    },[url])
+    }, [url]);
 
     return (
         <>
@@ -40,7 +39,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <div className="min-h-screen bg-gray-100 md:flex md:gap-2 md:p-4">
                 <aside
                     className={clsx(
-                        'relative shrink-0 transition-all duration-250 ease-in-out md:left-0 md:w-55',
+                        'relative shrink-0 transition-all duration-250 ease-in-out md:left-0 md:w-60',
                         {
                             '-left-80': !openOnMobbile,
                             'left-0': openOnMobbile,
@@ -64,17 +63,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 <div className="border border-gray-200 bg-white p-4 text-gray-800 shadow md:flex-1 md:rounded-2xl">
                     <div className="mb-4 flex items-center justify-between md:hidden">
                         {/* Logo */}
-                        <Link href="/admin/dashboard">
-                            <Logo />
-                        </Link>
+                        <Logo route="/admin/dashboard" />
                         <Menu
                             className="text-gray-500 active:text-gray-700"
                             onClick={handleToggleMenu}
                         />
                     </div>
-
-                    <hr className='mb-4 border-gray-100 md:hidden'/>
-
+                    <hr className="mb-4 border-gray-100 md:hidden" />
                     {children}
                 </div>
             </div>

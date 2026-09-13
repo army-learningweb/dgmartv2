@@ -29,7 +29,7 @@ export default function NavLink({ route, isActive, name, icon, urlActiveOpen, ch
         <>
             {/* Single Link */}
             {!children && (
-                <Link href={route} className={clsx("flex items-center gap-2 py-1.5 px-2 rounded-lg transition-colors duration-150", {
+                <Link href={route} className={clsx("tracking-tight flex items-center gap-2 py-1.5 px-2 rounded-lg transition-colors duration-150 ", {
                     "bg-white shadow-md md:shadow": isActive,
                     "hover:bg-white hover:shadow": !isActive
                 })}>
@@ -41,7 +41,7 @@ export default function NavLink({ route, isActive, name, icon, urlActiveOpen, ch
             {/* Group Link */}
             {children && (
                 <>
-                    <div onClick={handleSetIsOpen} className={clsx("flex items-center justify-between gap-2 py-1.5 px-2 rounded-lg hover:bg-white hover:shadow transition-colors duration-150 select-none", {
+                    <div onClick={handleSetIsOpen} className={clsx("flex items-center justify-between gap-2 py-1.5 pl-2 pr-1 rounded-lg hover:bg-white hover:shadow transition-colors duration-150 select-none ", {
                         "bg-white shadow-md md:shadow": isActive,
                         "hover:bg-white hover:shadow": !isActive
                     })} {...props} >
