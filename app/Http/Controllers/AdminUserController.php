@@ -103,7 +103,9 @@ class AdminUserController extends Controller
     // Lấy thông tin gợi ý user
    public function getUsers(Request $request){
         $query = $request->input('search');
-        $users = User::where('name','like',"%{$query}%")->get(['id','name']);
+        $users = User::where('name','like',"%{$query}%")
+        ->orWhere('tel', 'like', "%{$query}%")
+        ->get(['id','name']);
         return response()->json($users);
     }
 }

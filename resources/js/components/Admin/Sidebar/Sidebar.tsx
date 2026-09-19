@@ -166,26 +166,24 @@ export default function Sidebar({ onToggleMenu }: SidebarPropType) {
                             />
                         </NavLink>
 
-                        {/* Dashboard */}
-                        <div className='space-y-1'>
+                        {/* Customers */}
+                        <div className="space-y-1">
                             <p className="my-2 text-xs font-medium text-gray-500">
                                 Bán hàng
                             </p>
                             <NavLink
-                                route="/admin/dashboard"
+                                route="/admin/orders"
                                 name="Đơn hàng"
-                                isActive={url === '/admin/sales'}
+                                isActive={url === '/admin/orders'}
                                 icon={
                                     <PackageCheck strokeWidth={2} size={17} />
                                 }
                             />
                             <NavLink
-                                route="/admin/dashboard"
-                                name="Khách hàng"
-                                isActive={url === '/admin/sales'}
-                                icon={
-                                    <UsersRound strokeWidth={2} size={17} />
-                                }
+                                route="/admin/customers"
+                                name="Khách mua hàng"
+                                isActive={url === '/admin/customers'}
+                                icon={<UsersRound strokeWidth={2} size={17} />}
                             />
                         </div>
                     </div>

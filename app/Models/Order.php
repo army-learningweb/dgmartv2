@@ -26,4 +26,8 @@ class Order extends Model
             'updated_at' => 'datetime:d/m/Y'
         ];
     }
+
+    public function customer(){
+        return $this->belongsTo(Customer::class);
+    }
 }

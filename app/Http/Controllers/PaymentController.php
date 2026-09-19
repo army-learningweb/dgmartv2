@@ -26,6 +26,9 @@ class PaymentController extends Controller
             $checkout_payment = $request->session()->get('checkout_payment', []);
 
             $new_order = CheckoutController::OrderAction($checkout_info, $checkout_payment, $cart, $total);
+            $new_order->update(['status_payment' => 'paid']);
+
+
             $data = [
                 'code' => $new_order->code,
                 'cart' => $cart,

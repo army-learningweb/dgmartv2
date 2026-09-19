@@ -1,7 +1,9 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\AdminCustomerController;
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\AdminPermissionController;
 use App\Http\Controllers\AdminPostCategoriesController;
 use App\Http\Controllers\AdminPostController;
@@ -77,6 +79,15 @@ Route::post('/admin/register/store', [AdminAuthController::class, 'store']);
 Route::middleware(['auth'])->group( function(){
     //DASHBOARD
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'read']);
+
+    //ORDER
+    Route::get('/admin/orders', [AdminOrderController::class, 'read']);
+    Route::get('/admin/orders/{id}', [AdminOrderController::class, 'detail']);
+    Route::patch('/admin/orders/update/{order}', [AdminOrderController::class, 'update']);
+
+    //CUSTOMER
+    Route::get('/admin/customers', [AdminCustomerController::class, 'read']);
+    Route::get('/admin/customers/getCustomers', [AdminCustomerController::class, 'getCustomers']);
 
     //USER
     Route::get('/admin/users', [AdminUserController::class, 'read']);

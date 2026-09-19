@@ -153,7 +153,8 @@ class CheckoutController extends Controller
             'qty' => $total['count'],
             'total' => $total['total_price'],
             'payment_method' => $checkout_payment['payment_method'],
-            'customer_id' => $new_customer->id
+            'status_payment' => 'unpaid',
+            'customer_id' => $new_customer->id,
         ]);
 
         foreach ($cart as $item) {
@@ -171,7 +172,7 @@ class CheckoutController extends Controller
     }
 
     // Đặt hàng thành công
-    public function checkoutComplete(Request $request, $code){
+    public function checkoutComplete($code){
         $exits_order = Order::where('code', $code)->first();
         if(!$exits_order) return abort(404);
         return Inertia::render('Client/Checkout/Complete');

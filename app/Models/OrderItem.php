@@ -24,4 +24,12 @@ class OrderItem extends Model
             'updated_at' => 'datetime:d/m/Y'
         ];
     }
+
+    public function product(){
+        return $this->belongsTo(Product::class, 'product_id');
+    }
+
+    public function variant(){
+        return $this->belongsTo(ProductVariant::class, 'variant_id');
+    }
 }
