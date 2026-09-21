@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Order;
 use App\Models\OrderItem;
+use Illuminate\Support\Carbon;
 
 use App\Http\Resources\AdminProductOrderResource;
 
@@ -16,9 +17,7 @@ class AdminOrderController extends Controller
     {
         $orders = Order::query()->with('customer:id,name')
             ->when($request->input("search"), function ($query, $value) {
-                $query->where(function ($q) use ($value) {
-                    $q->where("code", "like", "%{$value}%");
-                });
+                $query->where("code", "like", "%{$value}%");
             })
             ->when($request->input('status_shipping'), function ($query, $value) {
                 $query->where('status_shipping', $value);
@@ -26,11 +25,19 @@ class AdminOrderController extends Controller
             ->when($request->input('status_payment'), function ($query, $value) {
                 $query->where('status_payment', $value);
             })
+            ->when($request->input('filter_date'), function ($query, $value) {
+                $query->whereDate('created_at', $value);
+            })
             ->latest()
-            ->paginate(7)
+            ->paginate(9)
             ->withQueryString();
-
-        $suggest_orders = Order::latest()->take(5)->get(['id', 'code']);
+        $suggest_orders = Order::latest()->take(5)->get(['id', 'code as name']);
+        $revenue = Order::where('status_payment','paid')->sum('total');
+        $today = Carbon::today();
+        $orders_today = Order::query()
+        ->whereBetween('created_at', [$today->copy()->startOfDay(), $today->copy()->endOfDay()])
+        ->latest()
+        ->count();
 
         $total = Order::count();
         $awaiting = Order::where('status_shipping', 'awaiting')->count();
@@ -46,11 +53,14 @@ class AdminOrderController extends Controller
         $unpaid = Order::where('status_payment', 'unpaid')->count();
 
         return Inertia::render("Admin/Order/Read", [
+            "revenue" => $revenue,
+            "orders_today" => $orders_today,
             "orders" => $orders,
             "suggest_orders" => $suggest_orders,
             "search" => $request->input("search"),
             "status_shipping" => $request->input("status_shipping"),
             "status_payment" => $request->input("status_payment"),
+            "filter_date" => $request->input("filter_date"),
             "total" => $total,
             "awaiting" => $awaiting,
             "processing" => $processing,
@@ -97,7 +107,14 @@ class AdminOrderController extends Controller
         ]);
 
         $order->update($validated);
-
         return redirect('admin/orders')->with('success','Cập nhật thành công');
+    }
+
+    // Lấy thông tin đơn hàng ở gợi ý tìm kiếm
+    public function getOrders(Request $request)
+    {
+        $query = $request->input('search');
+        $orders = Order::where('code', 'like', "%{$query}%")->get(['id', 'code as name']);
+        return response()->json($orders);
     }
 }

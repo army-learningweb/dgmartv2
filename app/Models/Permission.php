@@ -9,6 +9,7 @@ class Permission extends Model
     protected $fillable = [
         'name',
         'desc',
+        'slug',
         'module',
         'created_at',
         'updated_at'

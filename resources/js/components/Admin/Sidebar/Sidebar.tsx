@@ -21,9 +21,12 @@ export default function Sidebar({ onToggleMenu }: SidebarPropType) {
     const { url } = usePage();
     const pathName = url.split('?')[0];
 
+    const {props} = usePage<any>();
+    const permissons = props.auth.user_permissions;
+
     return (
-        <div className="fixed z-50 h-full w-[70%] border-r border-r-gray-200 bg-white p-4 md:sticky md:h-auto md:w-full md:border-0 md:bg-transparent md:p-0">
-            <div className="relative">
+        <div className="border-r border-r-gray-200 bg-white p-4 md:sticky md:h-auto md:w-full md:border-0 md:bg-transparent md:p-0">
+            <div className="fixed z-50 w-60">
                 {/* close sidebar on mobile */}
                 <div
                     onClick={onToggleMenu}
@@ -42,7 +45,6 @@ export default function Sidebar({ onToggleMenu }: SidebarPropType) {
                             route="/admin/dashboard"
                             className="text-[32px]"
                         />
-                        {/* <p className='text-xs'>Trang quản lí Website</p> */}
                     </div>
 
                     {/* user setting */}
@@ -71,121 +73,175 @@ export default function Sidebar({ onToggleMenu }: SidebarPropType) {
                         <p className="my-2 text-xs font-medium text-gray-500">
                             Quản lí hệ thống
                         </p>
-                        {/* product */}
-                        <NavLink
-                            urlActiveOpen={pathName.startsWith(
-                                '/admin/products',
-                            )}
-                            name="Sản phẩm"
-                            icon={<Package strokeWidth={1.75} size={17} />}
-                        >
-                            <NavSubLink
-                                isActive={
-                                    pathName === '/admin/products/configs/group'
-                                }
-                                route="/admin/products/configs/group"
-                                name="Nhóm cấu hình"
-                            />
-                            <NavSubLink
-                                isActive={
-                                    pathName === '/admin/products/configs'
-                                }
-                                route="/admin/products/configs"
-                                name="Danh sách cấu hình"
-                            />
-                            <NavSubLink
-                                isActive={
-                                    pathName === '/admin/products/configs/type'
-                                }
-                                route="/admin/products/configs/type"
-                                name="Loại cấu hình"
-                            />
-                            <NavSubLink
-                                isActive={
-                                    pathName === '/admin/products/variants'
-                                }
-                                route="/admin/products/variants"
-                                name="Cấu hình và biến thể"
-                            />
-                            <NavSubLink
-                                isActive={
-                                    pathName === '/admin/products/categories'
-                                }
-                                route="/admin/products/categories"
-                                name="Danh mục sản phẩm"
-                            />
-                            <NavSubLink
-                                isActive={pathName === '/admin/products'}
-                                route="/admin/products"
-                                name="Danh sách sản phẩm"
-                            />
-                        </NavLink>
 
-                        {/* post */}
-                        <NavLink
-                            urlActiveOpen={pathName.startsWith('/admin/posts')}
-                            name="Bài viết"
-                            icon={<FileText strokeWidth={1.75} size={17} />}
-                        >
-                            <NavSubLink
-                                isActive={pathName === '/admin/posts'}
-                                route="/admin/posts"
-                                name="Danh sách bài viết"
-                            />
-                            <NavSubLink
-                                isActive={
-                                    pathName === '/admin/posts/categories'
-                                }
-                                route="/admin/posts/categories"
-                                name="Danh mục bài viết"
-                            />
-                        </NavLink>
+                        {permissons.includes('product.manager') && (
+                            <>
+                                {/* product */}
+                                <NavLink
+                                    urlActiveOpen={pathName.startsWith(
+                                        '/admin/products',
+                                    )}
+                                    name="Sản phẩm"
+                                    icon={
+                                        <Package strokeWidth={1.75} size={17} />
+                                    }
+                                >
+                                    <NavSubLink
+                                        isActive={
+                                            pathName ===
+                                            '/admin/products/configs/group'
+                                        }
+                                        route="/admin/products/configs/group"
+                                        name="Nhóm cấu hình"
+                                    />
+                                    <NavSubLink
+                                        isActive={
+                                            pathName ===
+                                            '/admin/products/configs'
+                                        }
+                                        route="/admin/products/configs"
+                                        name="Danh sách cấu hình"
+                                    />
+                                    <NavSubLink
+                                        isActive={
+                                            pathName ===
+                                            '/admin/products/configs/type'
+                                        }
+                                        route="/admin/products/configs/type"
+                                        name="Loại cấu hình"
+                                    />
+                                    <NavSubLink
+                                        isActive={
+                                            pathName ===
+                                            '/admin/products/variants'
+                                        }
+                                        route="/admin/products/variants"
+                                        name="Cấu hình và biến thể"
+                                    />
+                                    <NavSubLink
+                                        isActive={
+                                            pathName ===
+                                            '/admin/products/categories'
+                                        }
+                                        route="/admin/products/categories"
+                                        name="Danh mục sản phẩm"
+                                    />
+                                    <NavSubLink
+                                        isActive={
+                                            pathName === '/admin/products'
+                                        }
+                                        route="/admin/products"
+                                        name="Danh sách sản phẩm"
+                                    />
+                                </NavLink>
+                            </>
+                        )}
 
-                        {/* User */}
-                        <NavLink
-                            urlActiveOpen={pathName.startsWith('/admin/users')}
-                            name="Thành viên"
-                            icon={<UserRound strokeWidth={2} size={17} />}
-                        >
-                            <NavSubLink
-                                isActive={pathName === '/admin/users'}
-                                route="/admin/users"
-                                name="Danh sách thành viên"
-                            />
-                            <NavSubLink
-                                isActive={pathName === '/admin/users/roles'}
-                                route="/admin/users/roles"
-                                name="Quản lí vai trò"
-                            />
-                            <NavSubLink
-                                isActive={
-                                    pathName === '/admin/users/permissions'
-                                }
-                                route="/admin/users/permissions"
-                                name="Quản lí quyền"
-                            />
-                        </NavLink>
+                        {permissons.includes('post.manager') && (
+                            <>
+                                {/* post */}
+                                <NavLink
+                                    urlActiveOpen={pathName.startsWith(
+                                        '/admin/posts',
+                                    )}
+                                    name="Bài viết"
+                                    icon={
+                                        <FileText
+                                            strokeWidth={1.75}
+                                            size={17}
+                                        />
+                                    }
+                                >
+                                    <NavSubLink
+                                        isActive={pathName === '/admin/posts'}
+                                        route="/admin/posts"
+                                        name="Danh sách bài viết"
+                                    />
+                                    <NavSubLink
+                                        isActive={
+                                            pathName ===
+                                            '/admin/posts/categories'
+                                        }
+                                        route="/admin/posts/categories"
+                                        name="Danh mục bài viết"
+                                    />
+                                </NavLink>
+                            </>
+                        )}
 
-                        {/* Customers */}
-                        <div className="space-y-1">
-                            <p className="my-2 text-xs font-medium text-gray-500">
-                                Bán hàng
-                            </p>
-                            <NavLink
-                                route="/admin/orders"
-                                name="Đơn hàng"
-                                isActive={url === '/admin/orders'}
-                                icon={
-                                    <PackageCheck strokeWidth={2} size={17} />
-                                }
-                            />
-                            <NavLink
-                                route="/admin/customers"
-                                name="Khách mua hàng"
-                                isActive={url === '/admin/customers'}
-                                icon={<UsersRound strokeWidth={2} size={17} />}
-                            />
-                        </div>
+                        {permissons.includes('user.manager') && (
+                            <>
+                                {/* User */}
+                                <NavLink
+                                    urlActiveOpen={pathName.startsWith(
+                                        '/admin/users',
+                                    )}
+                                    name="Thành viên"
+                                    icon={
+                                        <UserRound strokeWidth={2} size={17} />
+                                    }
+                                >
+                                    <NavSubLink
+                                        isActive={pathName === '/admin/users'}
+                                        route="/admin/users"
+                                        name="Danh sách thành viên"
+                                    />
+                                    <NavSubLink
+                                        isActive={
+                                            pathName === '/admin/users/roles'
+                                        }
+                                        route="/admin/users/roles"
+                                        name="Quản lí vai trò"
+                                    />
+                                    <NavSubLink
+                                        isActive={
+                                            pathName ===
+                                            '/admin/users/permissions'
+                                        }
+                                        route="/admin/users/permissions"
+                                        name="Quản lí quyền"
+                                    />
+                                </NavLink>
+                            </>
+                        )}
+
+                        {permissons.includes('order.manager') && (
+                            <>
+                                <div className="space-y-1">
+                                    <p className="my-2 text-xs font-medium text-gray-500">
+                                        Bán hàng
+                                    </p>
+
+                                    {/* order */}
+                                    <NavLink
+                                        route="/admin/orders"
+                                        name="Đơn hàng"
+                                        isActive={url.startsWith(
+                                            '/admin/orders',
+                                        )}
+                                        icon={
+                                            <PackageCheck
+                                                strokeWidth={2}
+                                                size={17}
+                                            />
+                                        }
+                                    />
+
+                                    {/* customer */}
+                                    <NavLink
+                                        route="/admin/customers"
+                                        name="Khách mua hàng"
+                                        isActive={url === '/admin/customers'}
+                                        icon={
+                                            <UsersRound
+                                                strokeWidth={2}
+                                                size={17}
+                                            />
+                                        }
+                                    />
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

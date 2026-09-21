@@ -2,7 +2,7 @@ import { PaginatedData } from "./global";
 
 // Protype
 export type Order = {
-    id: string | number;
+    id: number;
     code: string;
     shipping_address: string;
     shipping_note: string;
@@ -22,15 +22,15 @@ export type Order = {
     total: number;
 };
 
-interface suggestUsersProps {
-    id: string | number;
+interface suggestOrderProps {
+    id: number;
     name: string;
 }
 
 // Read
 export type OrdersReadType = {
     orders: PaginatedData<Order>;
-    suggest_orders: suggestUsersProps[];
+    suggest_orders: suggestOrderProps[];
     search: string;
     status_shipping: string;
     status_payment: string;
@@ -45,4 +45,7 @@ export type OrdersReadType = {
     refund: string;
     paid: string;
     unpaid: string;
+    filter_date: string | number;
+    revenue : number;
+    orders_today: number;
 };

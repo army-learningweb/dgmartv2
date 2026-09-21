@@ -47,4 +47,13 @@ class User extends Authenticatable
     public function role(){
         return $this->belongsTo(Role::class);
     }
+
+    public function hasPermission(string $permissions){
+        if($this->role->permissions->where('slug',$permissions)->count() > 0) return true;
+        return false;
+    }
+
+    public function permissionSlugs(){
+        return $this->role?->permissions->pluck('slug');
+    }
 }

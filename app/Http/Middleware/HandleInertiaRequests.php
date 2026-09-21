@@ -40,6 +40,7 @@ class HandleInertiaRequests extends Middleware
             'name' => config('app.name'),
             'auth' => [
                 'user' => $request->user(),
+                'user_permissions' => $request->user()?->permissionSlugs() ?? []
             ],
             'cart' => fn () => $request->session()->get('cart', []),
             'total' => fn () => $request->session()->get('total', []),

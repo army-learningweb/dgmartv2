@@ -1,6 +1,7 @@
 export type Permission = {
     id: string;
     name: string;
+    slug: string;
     desc: string;
     module: string;
     created_at: string;
@@ -14,9 +15,9 @@ export type ReadPermissionType = {
 
 export type CreatePermissionType = Pick<
     Permission,
-    'id' | 'name' | 'desc' | 'module'
+    'id' | 'name' | 'slug' | 'desc' | 'module'
 >;
 export type EditPermissionType = Pick<
     Permission,
-    'id' | 'name' | 'desc' | 'module'
+    'id' | 'name' | 'slug' | 'desc' | 'module'
 >;

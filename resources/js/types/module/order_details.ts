@@ -51,3 +51,8 @@ export interface OrderDetailPageProps {
         data: OrderDetailProps[];
     };
 }
+
+export interface UpdateOrder {
+    status_payment: any;
+    status_shipping: any;
+}

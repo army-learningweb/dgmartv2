@@ -8,7 +8,7 @@ export default function ModalWrapper({children, openModal} : ModalWrapper){
         <>
             {/* Modal search */}
             <div
-                className={`fixed top-0 left-0 z-50 flex h-full w-full justify-center bg-black/20 transition-all duration-150 ${
+                className={`fixed top-0 left-0 z-60 flex h-full w-full justify-center bg-black/20 transition-all duration-150 ${
                     openModal
                         ? 'pointer-events-auto opacity-100'
                         : 'pointer-events-none opacity-0'

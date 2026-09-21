@@ -21,6 +21,7 @@ export default function Read({ permissions, total }: ReadPermissionType) {
     const { data, setData, post, patch, errors, processing, reset, clearErrors, } = useForm<CreatePermissionType>({
         id: '',
         name: '',
+        slug: '',
         desc: '',
         module: '',
     });
@@ -32,6 +33,7 @@ export default function Read({ permissions, total }: ReadPermissionType) {
         setData({
             id: permission.id,
             name: permission.name,
+            slug: permission.slug,
             desc: permission.desc,
             module: permission.module,
         });
@@ -96,19 +98,71 @@ export default function Read({ permissions, total }: ReadPermissionType) {
                 processing={processing}
                 customSize="w-[90%] md:w-[30%] min-h-[40%]"
             >
-                <form onSubmit={!isEditModal ? handleCreate : handleUpdate} id="createPermission">
+                <form
+                    onSubmit={!isEditModal ? handleCreate : handleUpdate}
+                    id="createPermission"
+                >
                     <div>
-                        <Input type="text" name="module" label="Module" error={errors.module} value={data.module} onChange={(e) => setData('module', e.target.value)} onBlur={() => clearErrors("module")} autoComplete="on" />
-                        <p className='mt-1 text-gray-500'>Nhóm các thao tác có chung module liên quan (vd:Post, Product,...)</p>
+                        <Input
+                            type="text"
+                            name="module"
+                            label="Module"
+                            error={errors.module}
+                            value={data.module}
+                            onChange={(e) => setData('module', e.target.value)}
+                            onBlur={() => clearErrors('module')}
+                            autoComplete="on"
+                        />
+                        <p className="mt-1 text-gray-500">
+                            Nhóm các thao tác có chung module liên quan
+                            (vd:Post, Product,...)
+                        </p>
                     </div>
 
-                    <div className='mt-2'>
-                        <Input type="text" name="name" label="Tên quyền" error={errors.name} value={data.name} onChange={(e) => setData('name', e.target.value)} onBlur={() => clearErrors("name")} autoComplete="on" />
-                        <p className='mt-1 text-gray-500'>VD: Create, Edit, Update,...</p>
+                    <div className="mt-2">
+                        <Input
+                            type="text"
+                            name="name"
+                            label="Tên quyền"
+                            error={errors.name}
+                            value={data.name}
+                            onChange={(e) => setData('name', e.target.value)}
+                            onBlur={() => clearErrors('name')}
+                            autoComplete="on"
+                        />
+                        <p className="mt-1 text-gray-500">
+                            VD: Create, Edit, Update,...
+                        </p>
                     </div>
 
-                    <div className='mt-2'>
-                        <Textarea name="desc" label="Mô tả" error={errors.desc} value={data.desc} onChange={(e) => setData('desc', e.target.value)} onBlur={() => clearErrors("desc")} autoComplete="on" />
+                    <div className="mt-2">
+                        <Input
+                            type="text"
+                            name="slug"
+                            label="Slug"
+                            error={errors.slug}
+                            value={data.slug}
+                            onChange={(e) => setData('slug', e.target.value)}
+                            onBlur={() => clearErrors('slug')}
+                            autoComplete="on"
+                        />
+                        <p className="mt-1 text-gray-500">VD: post.create</p>
+                        <p className="mt-1 text-gray-500">
+                            Slug là định danh của quyền, dùng để kiểm tra phân
+                            quyền User
+                        </p>
+                    </div>
+
+                    <div className="mt-2">
+                        <Textarea
+                            name="desc"
+                            label="Mô tả"
+                            error={errors.desc}
+                            value={data.desc}
+                            onChange={(e) => setData('desc', e.target.value)}
+                            onBlur={() => clearErrors('desc')}
+                            autoComplete="on"
+                        />
                     </div>
                 </form>
             </Modal>
@@ -122,65 +176,119 @@ export default function Read({ permissions, total }: ReadPermissionType) {
 
                 {/* data */}
                 {permissions && (
-                    <div className="mt-4 pb-1 h-full overflow-hidden rounded-xl border border-gray-200">
+                    <div className="mt-4 h-full overflow-hidden rounded-xl border border-gray-200 pb-1">
                         {/* desktop */}
                         <table className="hidden w-full md:table">
                             <thead className="border-b border-gray-200 bg-gray-100 font-medium text-gray-800">
                                 <tr>
-                                    <td className="px-5 py-2">Nhóm & tên quyền</td>
+                                    <td className="px-5 py-2">
+                                        Nhóm & tên quyền
+                                    </td>
                                     <td className="px-5 py-2">Mô tả</td>
+                                    <td className="px-5 py-2">Slug</td>
                                     <td className="px-5 py-2">Ngày tạo</td>
                                     <td className="px-5 py-2">Cập nhật</td>
                                     <td className="px-5 py-2">Tùy chỉnh</td>
                                 </tr>
                             </thead>
                             <tbody>
-                                {Object.entries(permissions).map(([module, items]) => (
-                                    <Fragment key={module}>
-                                        <tr className='font-semibold'>
-                                            <td className='py-4 px-3'>
-                                                <div className='bg-blue-50 text-blue-700 p-0.75 px-2 rounded-lg w-fit mt-4'>Module {module}</div>
-                                            </td>
-                                        </tr>
-                                        {items.map(item => (
-                                            <tr key={item.id} className='border-b border-gray-200 last-of-type:border-0'>
-                                                <td className='px-5 py-2 w-60 truncate'>{item.name}</td>
-                                                <td className='px-5 py-2 w-65 truncate'>{item.desc}</td>
-                                                <td className='px-5 py-2 w-60 truncate'>{item.created_at}</td>
-                                                <td className='px-5 py-2 w-55 truncate'>{item.updated_at}</td>
-                                                <td className='px-5 py-2'>
-                                                    <div className="flex h-6.75 gap-2">
-                                                        <ButtonEdit onEdit={() => handleEdit(item)} />
-                                                        <ButtonDelete onDelete={() => handleDelete(item.id)} />
+                                {Object.entries(permissions).map(
+                                    ([module, items]) => (
+                                        <Fragment key={module}>
+                                            <tr className="font-semibold">
+                                                <td className="px-3 py-4">
+                                                    <div className="mt-4 w-fit rounded-lg bg-blue-50 p-0.75 px-2 text-blue-700">
+                                                        Module {module}
                                                     </div>
                                                 </td>
                                             </tr>
-                                        ))}
-                                    </Fragment>
-                                ))}
+                                            {items.map((item) => (
+                                                <tr
+                                                    key={item.id}
+                                                    className="border-b border-gray-200 last-of-type:border-0"
+                                                >
+                                                    <td className="w-55 truncate px-5 py-2">
+                                                        {item.name}
+                                                    </td>
+                                                    <td className="w-55 truncate px-5 py-2">
+                                                        {item.desc}
+                                                    </td>
+                                                    <td className="w-50 truncate px-5 py-2">
+                                                        {item.slug}
+                                                    </td>
+                                                    <td className="w-40 truncate px-5 py-2">
+                                                        {item.created_at}
+                                                    </td>
+                                                    <td className="w-40 truncate px-5 py-2">
+                                                        {item.updated_at}
+                                                    </td>
+                                                    <td className="px-5 py-2">
+                                                        <div className="flex h-6.75 gap-2">
+                                                            <ButtonEdit
+                                                                onEdit={() =>
+                                                                    handleEdit(
+                                                                        item,
+                                                                    )
+                                                                }
+                                                            />
+                                                            <ButtonDelete
+                                                                onDelete={() =>
+                                                                    handleDelete(
+                                                                        item.id,
+                                                                    )
+                                                                }
+                                                            />
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </Fragment>
+                                    ),
+                                )}
                             </tbody>
                         </table>
 
                         {/* modile */}
-                        <div className='block md:hidden p-3'>
-                            {Object.entries(permissions).map(([module, items]) => (
-                                <Fragment key={module}>
-                                    <div className='px-2 py-1 bg-blue-50 text-blue-700 rounded-md my-3 first:mt-0 font-medium w-fit'>Module {module}</div>
-                                    {items.map(item => (
-                                        <div key={item.id} className='px-1 mt-3 flex justify-between border-b border-gray-200 h-20'>
-                                            <div className='mt-3'>
-                                                <div className='w-30 truncate'>{item.name}</div>
-                                                <div className='text-gray-500 w-30 truncate'>({item.desc})</div>
-                                            </div>
-
-                                            <div className="flex flex-col h-6.75 gap-2">
-                                                <ButtonEdit onEdit={() => handleEdit(item)} />
-                                                <ButtonDelete onDelete={() => handleDelete(item.id)} />
-                                            </div>
+                        <div className="block p-3 md:hidden">
+                            {Object.entries(permissions).map(
+                                ([module, items]) => (
+                                    <Fragment key={module}>
+                                        <div className="my-3 w-fit rounded-md bg-blue-50 px-2 py-1 font-medium text-blue-700 first:mt-0">
+                                            Module {module}
                                         </div>
-                                    ))}
-                                </Fragment>
-                            ))}
+                                        {items.map((item) => (
+                                            <div
+                                                key={item.id}
+                                                className="mt-3 flex h-20 justify-between border-b border-gray-200 px-1"
+                                            >
+                                                <div className="mt-3">
+                                                    <div className="w-30 truncate">
+                                                        {item.name}
+                                                    </div>
+                                                    <div className="w-30 truncate text-gray-500">
+                                                        ({item.desc})
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex h-6.75 flex-col gap-2">
+                                                    <ButtonEdit
+                                                        onEdit={() =>
+                                                            handleEdit(item)
+                                                        }
+                                                    />
+                                                    <ButtonDelete
+                                                        onDelete={() =>
+                                                            handleDelete(
+                                                                item.id,
+                                                            )
+                                                        }
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </Fragment>
+                                ),
+                            )}
                         </div>
                     </div>
                 )}

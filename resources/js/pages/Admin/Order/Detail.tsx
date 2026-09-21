@@ -1,5 +1,5 @@
 import { OrderDetailPageProps } from '@/types/module/order_details';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, router, useForm } from '@inertiajs/react';
 import { vndFormat } from '@/lib/currency_format';
 import { Fragment } from 'react/jsx-runtime';
 import Title from '@/components/Admin/TableManager/Title';
@@ -8,28 +8,34 @@ import BadgePayment from '@/components/ui/BadgePayment';
 import BadgeShipping from '@/components/ui/BadgeShipping';
 import Select from '@/components/ui/Select';
 import Button from '@/components/ui/Button';
+import { usePrevPage } from '@/hooks/use-prevPage';
+import { UpdateOrder } from '@/types/module/order_details';
 
 export default function Details({
     order_info,
     order_details,
 }: OrderDetailPageProps) {
 
-    interface UpdateOrder {
-        status_payment: any;
-        status_shipping: any;
-    }
+    // Lấy đường params trước đó
+    const { queryString } = usePrevPage();
 
+    // Lưu thông tin update form
     const { data, setData, patch, processing } = useForm<UpdateOrder>({
         status_payment: order_info.status_payment,
         status_shipping: order_info.status_shipping,
     });
 
+    // Cập nhật
     const handleUpdate = (e: React.SubmitEvent) => {
         e.preventDefault();
         patch(`/admin/orders/update/${order_info.id}`, {
             preserveScroll: true,
         })
     };
+
+    const handleMoveBack = () => {
+        router.visit(`/admin/orders${queryString ? `?${queryString}` : ''}`);
+    }
 
     return (
         <>
@@ -111,7 +117,7 @@ export default function Details({
                                                 />
                                             </div>
                                             <div>
-                                                <p className="font-medium">
+                                                <p className="font-medium w-72 truncate">
                                                     {item.product_name}
                                                 </p>
                                                 <p className="text-gray-500">
@@ -121,7 +127,7 @@ export default function Details({
                                         </div>
                                     </td>
                                     <td className="px-4 py-4 font-medium">
-                                        <div className="ms-5 flex w-25 justify-center">
+                                        <div className="ms-3 flex w-25 justify-center">
                                             x{item.qty}
                                         </div>
                                     </td>
@@ -197,8 +203,8 @@ export default function Details({
                 </div>
 
                 <div className="flex justify-end gap-2">
-                    <Button variant="secondary" className="text-xs!">
-                        Quay về
+                    <Button onClick={handleMoveBack} variant="secondary" className="text-xs!">
+                        Quay về danh sách
                     </Button>
                     <Button processing={processing} processingLabel='Đang xử lí...' form="update-order" className="text-xs!">
                         Cập nhật đơn hàng

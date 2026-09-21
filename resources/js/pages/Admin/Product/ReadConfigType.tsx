@@ -293,7 +293,7 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
                                             </div>
                                         </td>
                                         <td className="px-5 py-3">
-                                            <div className="w-80 truncate text-gray-500">
+                                            <div className="w-70 truncate text-gray-500">
                                                 {item.desc}
                                             </div>
                                         </td>

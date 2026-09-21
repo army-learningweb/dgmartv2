@@ -1,7 +1,6 @@
 import { Head, usePage } from '@inertiajs/react';
 import { Link } from '@inertiajs/react';
 
-import Title from '@/components/Admin/TableManager/Title';
 import SearchBar from '@/components/Admin/TableManager/SearchBar';
 import Pagination from '@/components/Admin/Pagination/Pagination';
 import EmptyData from '@/components/Admin/Empty/EmptyData';
@@ -9,6 +8,7 @@ import FilterTabGroup from '@/components/Admin/TableManager/FilterTabGroup';
 import Select from '@/components/ui/Select';
 import BadgePayment from '@/components/ui/BadgePayment';
 import BadgeShipping from '@/components/ui/BadgeShipping';
+import StatisOrderItem from '@/components/Admin/Statis/StatisOrderItem';
 
 import { usePrevPage } from '@/hooks/use-prevPage';
 import { useSearch } from '@/hooks/use-search';
@@ -27,14 +27,16 @@ export default function Read({
     total,
     paid,
     unpaid,
+    filter_date,
+    revenue,
+    orders_today,
 }: OrdersReadType) {
-    
     // Thông báo cập nhật thành công
-    const {props} = usePage<any>();
+    const { props } = usePage<any>();
     useEffect(() => {
-        if(props.success != '') toast.success(props.success);
-    },[])
-        
+        if (props.success != '') toast.success(props.success);
+    }, []);
+
     // Lưu lại đường link
     const { queryString } = usePrevPage();
 
@@ -42,11 +44,15 @@ export default function Read({
     const { handleQueryFilter } = useFilter({
         route: '/admin/orders',
         initialsFilter: {
-            status_shipping,
             search,
             page: orders.current_page,
         },
-        onlyLoad: ['orders', 'status_shipping'],
+        onlyLoad: [
+            'orders',
+            'status_shipping',
+            'status_payment',
+            'filter_date',
+        ],
     });
 
     // Tìm kiếm
@@ -67,7 +73,7 @@ export default function Read({
         handleQueryFilter,
         search,
         initialData: suggest_orders,
-        placeholder: 'Tìm kiếm mã đơn...',
+        placeholder: 'Tìm kiếm theo mã đơn...',
         routeGetData: '/admin/orders/getOrders',
     });
 
@@ -99,10 +105,29 @@ export default function Read({
 
             <section>
                 {/* title */}
-                <Title heading="Danh sách đơn hàng" />
+                {/* <Title heading="Danh sách đơn hàng" /> */}
+
+                <div className="grid grid-cols-4 gap-2 font-medium">
+                    <StatisOrderItem
+                        title="Đơn hàng hôm nay"
+                        value={orders_today}
+                    />
+                    <StatisOrderItem
+                        title="Doanh thu"
+                        value={vndFormat(revenue)}
+                    />
+                    <StatisOrderItem
+                        title="Đơn hàng đã thanh toán"
+                        value={paid}
+                    />
+                    <StatisOrderItem
+                        title="Đơn hàng chưa thanh toán"
+                        value={unpaid}
+                    />
+                </div>
 
                 <div className="mt-4 flex justify-between">
-                    <div className="flex gap-4">
+                    <div className="flex gap-2">
                         {/* filter & search */}
                         <SearchBar
                             onChange={handleQuerySearch}
@@ -143,6 +168,23 @@ export default function Read({
                             <option value="canceled">Đã hủy</option>
                             <option value="refund">Hoàn tiền</option>
                         </Select>
+
+                        {/* filter date */}
+                        <input
+                            type="date"
+                            name="filter-date"
+                            id="filter-date"
+                            className="w-full rounded-lg border border-gray-200 px-2 py-1.75 transition-colors duration-150 focus:outline-0 md:w-fit"
+                            min="2026-08-18"
+                            max="2030-12-31"
+
+                            onChange={(e) =>
+                                handleQueryFilter({
+                                    filter_date: e.target.value,
+                                })
+                            }
+                            value={filter_date ?? ''}
+                        />
                     </div>
 
                     {/* stats payment */}
@@ -158,15 +200,18 @@ export default function Read({
                                 <tr>
                                     <td className="px-4 py-2">Mã đơn</td>
                                     <td className="px-4 py-2">Khách hàng</td>
-                                    <td className="px-4 py-2">Tổng tiền</td>
                                     <td className="px-4 py-2">Ngày</td>
+
                                     <td className="px-4 py-2">
                                         <div className="ms-1.5">Đơn hàng</div>
                                     </td>
                                     <td className="px-4 py-2">
                                         <div className="ms-1.5">Thanh toán</div>
                                     </td>
-                                    <td className="px-4 py-2">Tùy chỉnh</td>
+                                    <td className="px-4 py-2">Chi tiết</td>
+                                    <td className="px-4 py-2 text-right">
+                                        Tổng tiền
+                                    </td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -178,7 +223,7 @@ export default function Read({
                                         {/* code */}
                                         <td className="px-4 py-3">
                                             <Link
-                                                className="rounded-lg text-xs font-medium text-blue-600 hover:underline w-35 truncate"
+                                                className="w-35 truncate rounded-lg text-xs font-medium text-blue-600 hover:underline"
                                                 href={`/admin/orders/${item.id}${queryString ? `?${queryString}` : ''}`}
                                             >
                                                 {item.code}
@@ -189,15 +234,6 @@ export default function Read({
                                         <td className="px-4 py-3">
                                             <div className="w-35 truncate">
                                                 {item.customer.name}
-                                            </div>
-                                        </td>
-
-                                        {/* total */}
-                                        <td className="px-4 py-3">
-                                            <div className="flex flex-col gap-0.5">
-                                                <div className="w-30 truncate font-medium">
-                                                    {vndFormat(item.total)}
-                                                </div>
                                             </div>
                                         </td>
 
@@ -236,6 +272,11 @@ export default function Read({
                                             >
                                                 Xem chi tiết
                                             </Link>
+                                        </td>
+
+                                        {/* total */}
+                                        <td className="px-4 py-3 text-right font-medium">
+                                            {vndFormat(item.total)}
                                         </td>
                                     </tr>
                                 ))}
