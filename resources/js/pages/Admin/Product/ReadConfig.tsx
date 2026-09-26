@@ -7,7 +7,6 @@ import Title from '@/components/Admin/TableManager/Title';
 import ButtonCreate from '@/components/Admin/TableManager/ButtonCreate';
 import ButtonEdit from '@/components/Admin/TableManager/ButtonEdit';
 import ButtonDelete from '@/components/Admin/TableManager/ButtonDelete';
-import ButtonQuickCreate from '@/components/Admin/TableManager/ButtonQuickCreate';
 import Select from '@/components/ui/Select';
 import Textarea from '@/components/ui/Textarea';
 import ShortCutHint from '@/components/Admin/TableManager/Hint';
@@ -25,8 +24,8 @@ import { useSearch } from '@/hooks/use-search';
 import {
     CreateProductConfigType,
     EditProductConfigType,
+    ReadProductConfigType,
 } from '@/types/module/product_config';
-import { ReadProductConfigType } from '@/types/module/product_config';
 
 export default function ReadConfig({
     configs,
@@ -214,10 +213,7 @@ export default function ReadConfig({
                 </form>
             </Modal>
 
-            {/* quick create */}
-            <ButtonQuickCreate onOpenModal={handleOpenModal} />
-
-            <section>
+            <section className='pb-4 md:pb-0'>
                 {/* title */}
                 <div className="flex items-center justify-between">
                     <Title heading={`Thông tin cấu hình (${total})`} />
@@ -293,7 +289,7 @@ export default function ReadConfig({
 
                 {/* data */}
                 {configs.data?.length > 0 && (
-                    <div className="mt-4 h-full overflow-hidden rounded-xl border border-gray-200">
+                    <div className="mt-4 h-full overflow-hidden rounded-xl md:border md:border-gray-200">
                         {/* desktop */}
                         <table className="hidden w-full md:table">
                             <thead className="border-b border-gray-200 bg-gray-100 font-medium text-gray-800">
@@ -345,19 +341,19 @@ export default function ReadConfig({
                         </table>
 
                         {/* modile */}
-                        <div className="block p-3 md:hidden">
+                        <div className="md:hidden space-y-4">
                             {configs.data.map((item) => (
                                 <div
                                     key={item.id}
-                                    className="mt-4 flex h-20 justify-between border-b border-gray-200 px-1 first-of-type:mt-0"
+                                    className="flex items-center justify-between border border-gray-300 p-4 rounded-xl"
                                 >
-                                    <div className="mt-6">
+                                    <div>
                                         <div className="w-50 truncate">
                                             {item.name}
                                         </div>
                                     </div>
 
-                                    <div className="flex h-6.75 flex-col gap-2">
+                                    <div className="flex flex-col gap-2">
                                         <ButtonEdit
                                             onEdit={() => handleEdit(item)}
                                         />

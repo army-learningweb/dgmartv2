@@ -6,18 +6,21 @@ import CardDate from "./CardDate";
 
 interface CardProps {
     dataItem: any;
+    className?:string;
 }
 
-export default function Card({ dataItem }: CardProps) {
+export default function Card({ dataItem, className }: CardProps) {
 
     const { url } = usePage();
     const path = url.split("?")[0];
 
     return (
-        <div className="relative h-fit w-60 shrink-0 overflow-hidden rounded-3xl bg-white p-2.5 shadow transition-all duration-250 ease-out select-none hover:-translate-y-1 hover:shadow-lg">
+        <div
+            className={`relative h-fit w-60 shrink-0 overflow-hidden rounded-3xl bg-white p-2.5 shadow transition-all duration-250 ease-out select-none last-of-type:mr-4 hover:-translate-y-1 hover:shadow-lg md:last-of-type:mr-0 ${className}`}
+        >
             {/* date */}
             <CardDate date={dataItem.created_at} />
-            
+
             {/* image */}
             <CardImage
                 src={dataItem.image}

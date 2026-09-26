@@ -55,87 +55,169 @@ export default function CartItem({ dataItem }: CartItemProps) {
     };
 
     return (
-        <div className="flex items-center justify-between pr-1 pb-2">
-            <div className="flex items-center gap-4">
-                {/* Ảnh */}
-                <div className="relative flex h-20 w-30 items-center justify-center overflow-hidden rounded-xl border border-gray-200 bg-white p-1">
-                    <img
-                        src={dataItem.image}
-                        alt={dataItem.image_alt}
-                        className="h-full w-full object-contain"
-                    />
+        <>
+            {/* desktop */}
+            <div className="hidden items-center justify-between pr-1 pb-2 md:flex">
+                <div className="flex items-center gap-4">
+                    {/* Ảnh */}
+                    <div className="relative flex h-20 w-30 items-center justify-center overflow-hidden rounded-xl border border-gray-300 bg-white p-1">
+                        <img
+                            src={dataItem.image}
+                            alt={dataItem.image_alt}
+                            className="h-full w-full object-contain"
+                        />
 
-                    {dataItem.discount > 0 && (
-                        <div className="absolute top-0 left-0 z-40 rounded-br-xl bg-red-600 px-2 py-0.75 text-[10px] font-medium text-white">
-                            Giảm {dataItem.discount}%
-                        </div>
+                        {dataItem.discount > 0 && (
+                            <div className="absolute top-0 left-0 z-40 rounded-br-xl bg-red-600 px-2 py-0.75 text-[10px] font-medium text-white">
+                                Giảm {dataItem.discount}%
+                            </div>
+                        )}
+                    </div>
+
+                    {/* tên */}
+                    <div className="">
+                        <Link
+                            href={dataItem.slug}
+                            className="inline-block w-50 truncate font-medium hover:underline"
+                        >
+                            {dataItem.name}
+                        </Link>
+                        <p className="text-xs text-gray-500">
+                            ({dataItem.variant_code})
+                        </p>
+                    </div>
+                </div>
+
+                {/* giá */}
+                <div className="w-25">
+                    <p
+                        className={`${dataItem.price_discount ? 'text-gray-500 line-through' : 'font-semibold'}`}
+                    >
+                        {vndFormat(dataItem.price)}
+                    </p>
+
+                    {dataItem.price_discount > 0 && (
+                        <p className="font-medium">
+                            {vndFormat(dataItem.price_discount)}
+                        </p>
                     )}
                 </div>
 
-                {/* tên */}
-                <div className="">
-                    <Link
-                        href={dataItem.slug}
-                        className="inline-block w-50 truncate font-medium hover:underline"
-                    >
-                        {dataItem.name}
-                    </Link>
-                    <p className="text-xs text-gray-500">
-                        ({dataItem.variant_code})
-                    </p>
-                </div>
-            </div>
+                {/* tăng giảm số lượng */}
+                <div className="flex items-center gap-1">
+                    <MinusButton
+                        onClick={() =>
+                            handleDecrease(dataItem.key, dataItem.qty)
+                        }
+                        className={`${isDisableButton && 'pointer-events-none opacity-50'}`}
+                    />
 
-            {/* giá */}
-            <div className="w-25">
-                <p
-                    className={`${dataItem.price_discount ? 'text-gray-500 line-through' : 'font-semibold'}`}
-                >
-                    {vndFormat(dataItem.price)}
-                </p>
+                    <div className="rounded-md border border-gray-200 px-4 py-0.75">
+                        <input
+                            type="number"
+                            name="number"
+                            id={`number-${dataItem.variant_id}`}
+                            value={dataItem.qty}
+                            readOnly
+                            className="w-5 text-center select-none focus:ring-0 focus:outline-none"
+                        />
+                    </div>
 
-                {dataItem.price_discount > 0 && (
-                    <p className="font-medium">
-                        {vndFormat(dataItem.price_discount)}
-                    </p>
-                )}
-            </div>
-
-            {/* tăng giảm số lượng */}
-            <div className="flex items-center gap-1">
-                <MinusButton
-                    onClick={() => handleDecrease(dataItem.key, dataItem.qty)}
-                    className={`${isDisableButton && 'pointer-events-none opacity-50'}`}
-                />
-
-                <div className="rounded-md border border-gray-200 px-4 py-0.75">
-                    <input
-                        type="number"
-                        name="number"
-                        id={`number-${dataItem.variant_id}`}
-                        value={dataItem.qty}
-                        readOnly
-                        className="w-5 text-center select-none focus:ring-0 focus:outline-none"
+                    <PlusButton
+                        onClick={() => handleIncrease(dataItem.key)}
+                        className={`${isDisableButton && 'pointer-events-none opacity-50'}`}
                     />
                 </div>
 
-                <PlusButton
-                    onClick={() => handleIncrease(dataItem.key)}
-                    className={`${isDisableButton && 'pointer-events-none opacity-50'}`}
+                {/* Tổng tiền của sản phẩm  */}
+                <div className="w-30 font-medium select-none">
+                    {vndFormat(dataItem.total)}
+                </div>
+
+                {/* Xóa */}
+                <Trash
+                    size={18}
+                    onClick={() => handleRemove(dataItem.key)}
+                    className="mr-0.5 text-gray-500 hover:text-red-600"
                 />
             </div>
 
-            {/* Tổng tiền của sản phẩm  */}
-            <div className="w-30 font-medium select-none">
-                {vndFormat(dataItem.total)}
-            </div>
+            {/* mobile */}
+            <div className="rounded-2xl border border-gray-300 p-4 md:hidden">
+                <div className="flex items-center gap-4">
+                    {/* image */}
+                    <div className="relative ms-1 flex h-17 w-27 items-center justify-center overflow-hidden rounded-xl bg-white p-1">
+                        <img
+                            src={dataItem.image}
+                            alt={dataItem.image_alt}
+                            className="h-full w-full object-contain"
+                        />
 
-            {/* Xóa */}
-            <Trash
-                size={18}
-                onClick={() => handleRemove(dataItem.key)}
-                className="mr-0.5 text-gray-500 hover:text-red-600"
-            />
-        </div>
+                        {dataItem.discount > 0 && (
+                            <div className="absolute top-0 left-0 z-40 rounded-br-xl bg-red-600 px-2 py-0.75 text-[10px] font-medium text-white">
+                                Giảm {dataItem.discount}%
+                            </div>
+                        )}
+                    </div>
+
+                    {/* name */}
+                    <div className="text-right">
+                        <Link
+                            href={dataItem.slug}
+                            className="inline-block w-50 truncate font-medium hover:underline"
+                        >
+                            {dataItem.name}
+                        </Link>
+
+                        <div className="flex items-center justify-end gap-2">
+                            <p className="text-xs text-gray-500">
+                                ({dataItem.variant_code})
+                            </p>
+                            <p className="font-medium">
+                                {vndFormat(
+                                    dataItem.price_discount > 0
+                                        ? dataItem.price_discount
+                                        : dataItem.price,
+                                )}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex items-end justify-between">
+                    {/* tăng giảm số lượng */}
+                    <div className="flex items-center gap-1">
+                        <MinusButton
+                            onClick={() =>
+                                handleDecrease(dataItem.key, dataItem.qty)
+                            }
+                            className={`${isDisableButton && 'pointer-events-none opacity-50'}`}
+                        />
+
+                        <div className="rounded-md border border-gray-200 px-4 py-0.75">
+                            <input
+                                type="number"
+                                name="number"
+                                id={`number-${dataItem.variant_id}`}
+                                value={dataItem.qty}
+                                readOnly
+                                className="w-5 text-center select-none focus:ring-0 focus:outline-none"
+                            />
+                        </div>
+
+                        <PlusButton
+                            onClick={() => handleIncrease(dataItem.key)}
+                            className={`${isDisableButton && 'pointer-events-none opacity-50'}`}
+                        />
+                    </div>
+
+                    {/* tổng tiền */}
+                    <div className="font-medium select-none">
+                        <span>Tổng: </span>
+                        <span className='text-lg'>{vndFormat(dataItem.total)}</span>
+                    </div>
+                </div>
+            </div>
+        </>
     );
 }

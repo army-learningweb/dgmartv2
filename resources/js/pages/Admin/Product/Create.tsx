@@ -49,7 +49,7 @@ export default function Create({ product_categories }: ReadProductType) {
     return (
         <>
             <Head title="Thêm mới sản phẩm" />
-            <section>
+            <section className="pb-4 md:pb-0">
                 {/* title */}
                 <div className="flex items-center justify-between">
                     <SimpleBreadcrum

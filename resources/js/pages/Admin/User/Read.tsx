@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import Badge from '@/components/ui/Badge';
 import Select from '@/components/ui/Select';
 import Input from '@/components/ui/Input';
-
+import ShortCutHint from '@/components/Admin/TableManager/Hint';
 import Title from '@/components/Admin/TableManager/Title';
 import RoleBadge from '@/components/Admin/TableManager/RoleBadge';
 import ButtonEdit from '@/components/Admin/TableManager/ButtonEdit';
@@ -22,11 +22,13 @@ import FilterTabGroup from '@/components/Admin/TableManager/FilterTabGroup';
 import { useSearch } from '@/hooks/use-search';
 import { useFilter } from '@/hooks/use-filter';
 import { useModal } from '@/hooks/use-modal';
+import { useShortCut } from '@/hooks/use-shortcut';
 
 import { UsersReadType } from '@/types/module/user';
 import { CreateUserType } from '@/types/module/user';
 import { EditUserType } from '@/types/module/user';
 import { Auth } from '@/types';
+
 
 export default function Read({
     users,
@@ -38,6 +40,7 @@ export default function Read({
     inactive,
     roles,
 }: UsersReadType) {
+
     const {
         data,
         setData,
@@ -72,6 +75,9 @@ export default function Read({
         handleOpenModal,
         handleCloseModal,
     } = useModal({ reset, clearErrors });
+
+    // Shortcut hooks
+    useShortCut({ openModal, handleCloseModal, handleOpenModal });
 
     // Bộ lọc tổng hợp
     const { handleQueryFilter } = useFilter({
@@ -350,15 +356,19 @@ export default function Read({
                 </form>
             </Modal>
 
-            <section>
+            <section className='pb-4 md:pb-0'>
                 {/* title */}
                 <div className="flex items-center justify-between">
                     <Title heading="Danh sách thành viên" />
-                    <ButtonCreate onOpenModal={handleOpenModal} />
+
+                    <div className="flex items-center gap-2">
+                        <ShortCutHint />
+                        <ButtonCreate onOpenModal={handleOpenModal} />
+                    </div>
                 </div>
 
                 {/* filter & search */}
-                <div className="mt-4 flex flex-col md:flex-row items-center justify-between">
+                <div className="mt-4 flex flex-col items-center justify-between md:flex-row">
                     {/* filter & search */}
 
                     <SearchBar
@@ -382,7 +392,7 @@ export default function Read({
 
                 {/* data */}
                 {users.data?.length > 0 && (
-                    <div className="mt-4 h-full overflow-hidden rounded-xl border border-gray-200">
+                    <div className="mt-4 h-full overflow-hidden rounded-xl md:border md:border-gray-200">
                         {/* desktop */}
                         <table className="hidden w-full md:table">
                             <thead className="border-b border-gray-200 bg-gray-100 font-medium text-gray-800">
@@ -492,11 +502,11 @@ export default function Read({
                         </table>
 
                         {/* mobile */}
-                        <div className="inline-flex w-full flex-col gap-1 md:hidden">
+                        <div className="md:hidden space-y-4">
                             {users.data.map((item) => (
                                 <div
                                     key={item.id}
-                                    className="border-b border-gray-200 p-3"
+                                    className="border border-gray-300 p-4 rounded-xl"
                                 >
                                     <div className="flex items-center justify-between">
                                         <div className="relative flex items-center gap-3">

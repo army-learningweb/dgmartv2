@@ -12,13 +12,14 @@ import Title from '@/components/Admin/TableManager/Title';
 import ShortCutHint from '@/components/Admin/TableManager/Hint';
 
 import { useModal } from '@/hooks/use-modal';
+import { useShortCut } from '@/hooks/use-shortcut';
+import { useInputFocus } from '@/hooks/use-inputFocus';
 
 import { ReadProductConfigTypeS } from '@/types/module/product_config_type';
 import { CreateProductConfigTypeS } from '@/types/module/product_config_type';
 import { EditProductConfigTypeS } from '@/types/module/product_config_type';
 import { ConfigType } from '@/types/module/product_config_type';
-import { useShortCut } from '@/hooks/use-shortcut';
-import { useInputFocus } from '@/hooks/use-inputFocus';
+
 
 export default function ReadConfigType({ types, configs, total }: ReadProductConfigTypeS) {
     const { data, setData, post, patch, errors, processing, reset, clearErrors, } = useForm<CreateProductConfigTypeS>({
@@ -256,7 +257,7 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
                 </form>
             </Modal>
 
-            <section>
+            <section className='pb-4 md:pb-0'>
                 {/* title */}
                 <div className="flex items-center justify-between">
                     <Title heading={`Loại cấu hình (${total})`} />
@@ -269,7 +270,7 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
 
                 {/* data */}
                 {types?.length > 0 && (
-                    <div className="mt-4 h-full overflow-hidden rounded-xl border border-gray-200">
+                    <div className="mt-4 h-full overflow-hidden rounded-xl md:border md:border-gray-200">
                         {/* desktop */}
                         <table className="hidden w-full md:table">
                             <thead className="border-b border-gray-200 bg-gray-100 font-medium text-gray-800">
@@ -323,13 +324,13 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
                         </table>
 
                         {/* mobile */}
-                        <div className="inline-flex w-full flex-col gap-2 md:hidden">
+                        <div className="md:hidden space-y-4">
                             {types.map((item) => (
                                 <div
                                     key={item.id}
-                                    className="flex h-22 w-full justify-between border-b border-gray-200 p-3"
+                                    className="flex items-center justify-between border border-gray-300 p-4 rounded-xl"
                                 >
-                                    <div className="mt-3">
+                                    <div>
                                         <p className="w-30 truncate">
                                             {item.name}
                                         </p>
@@ -338,7 +339,7 @@ export default function ReadConfigType({ types, configs, total }: ReadProductCon
                                         </p>
                                     </div>
 
-                                    <div className="flex h-6.75 flex-col gap-2">
+                                    <div className="flex flex-col gap-2">
                                         <ButtonEdit
                                             onEdit={() => handleEdit(item)}
                                         />

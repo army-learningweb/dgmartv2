@@ -10,7 +10,7 @@ export default function ProgressItem({num, children} : ProgressItemProps) {
                 {num}
             </div>
 
-            <p className="font-medium text-xs">{children}</p>
+            <p className="font-medium text-xs text-center md:text-left">{children}</p>
         </div>
     );
 }

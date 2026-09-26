@@ -225,7 +225,7 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
 
             <Head title="Danh mục sản phẩm" />
 
-            <section>
+            <section className='pb-4 md:pb-0'>
                 {/* title */}
                 <div className="flex items-center justify-between">
                     <Title heading={`Danh mục sản phẩm (${total})`} />
@@ -238,7 +238,7 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
 
                 {/* data */}
                 {categories?.length > 0 && (
-                    <div className="mt-4 h-full overflow-hidden rounded-xl border border-gray-200">
+                    <div className="mt-4 h-full overflow-hidden rounded-xl md:border md:border-gray-200">
                         {/* desktop */}
                         <table className="hidden w-full md:table">
                             <thead className="border-b border-gray-200 bg-gray-100 font-medium text-gray-800">
@@ -377,10 +377,10 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
                         </table>
 
                         {/* mobile */}
-                        <div className="inline-flex w-full flex-col gap-2 p-3 md:hidden">
+                        <div className="md:hidden space-y-4">
                             {categories.map((category) => (
                                 <Fragment key={category.id}>
-                                    <div className="flex h-22.5 gap-2 border-b border-gray-200 py-2">
+                                    <div className="flex items-center gap-2 border border-gray-300 p-4 rounded-xl">
                                         <div className="relative flex flex-1 items-center gap-2 truncate">
                                             <Folder
                                                 className="fill-amber-500"
@@ -398,7 +398,7 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
                                                 <div className="absolute bottom-6 left-3 h-3 w-3 rounded-full bg-red-600"></div>
                                             )}
                                         </div>
-                                        <div className="flex h-6.75 w-24 flex-col gap-2">
+                                        <div className="flex flex-col gap-2">
                                             <ButtonEdit
                                                 onEdit={() =>
                                                     handleEdit(category)
@@ -415,12 +415,12 @@ export default function ReadCategoriesProduct({ categories, parent_categories, t
                                     {category.childs.map((item) => (
                                         <div
                                             key={item.id}
-                                            className="flex h-22.5 gap-2 border-b border-gray-200 py-2"
+                                            className="flex gap-2 border border-gray-300 p-4 rounded-xl"
                                         >
-                                            <div className="relative ms-2 mt-5.5 flex h-5 flex-1 items-center gap-2 truncate border-l border-gray-300 pl-6">
+                                            <div className="relative ms-2 mt-5.5 flex h-5 flex-1 items-center gap-2 truncate border-l border-gray-500 pl-6">
                                                 {item.name}
                                             </div>
-                                            <div className="flex h-6.75 w-24 flex-col gap-2">
+                                            <div className="flex flex-col gap-2">
                                                 <ButtonEdit
                                                     onEdit={() =>
                                                         handleEdit(item)

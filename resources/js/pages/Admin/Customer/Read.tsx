@@ -52,7 +52,7 @@ export default function Read({
     return (
         <>
             <Head title="Khách hàng" />
-            <section>
+            <section className='pb-6 md:pb-0'>
                 {/* title */}
 
                 <Title heading={`Khách mua hàng (${total})`} />
@@ -79,7 +79,7 @@ export default function Read({
 
                 {/* data */}
                 {customers.data?.length > 0 && (
-                    <div className="mt-4 h-full overflow-hidden rounded-xl border border-gray-200">
+                    <div className="mt-4 h-full overflow-hidden rounded-xl md:border md:border-gray-200">
                         {/* desktop */}
                         <table className="hidden w-full md:table">
                             <thead className="border-b border-gray-200 bg-gray-100 font-medium text-gray-800">
@@ -134,21 +134,24 @@ export default function Read({
                         </table>
 
                         {/* mobile */}
-                        <div className="inline-flex w-full flex-col gap-1 md:hidden">
+                        <div className="md:hidden space-y-4">
                             {customers.data.map((item) => (
                                 <div
                                     key={item.id}
-                                    className="border-b border-gray-200 p-3"
+                                    className="border border-gray-300 p-4 rounded-xl"
                                 >
                                     <div className="flex items-center justify-between">
-                                        <div className="relative flex items-center gap-3">
+                                        <div className="relative flex items-center gap-6">
                                             <UserAvatar name={item.name} />
                                             <div className="flex flex-col">
-                                                <div className="w-30 truncate">
+                                                <div className="truncate">
                                                     {item.name}
                                                 </div>
-                                                <div className="w-30 truncate text-gray-500">
+                                                <div className="truncate text-gray-500">
                                                     {item.email}
+                                                </div>
+                                                <div>
+                                                    {item.tel}
                                                 </div>
                                             </div>
                                         </div>

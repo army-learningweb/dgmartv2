@@ -10,15 +10,26 @@ import ButtonCreate from '@/components/Admin/TableManager/ButtonCreate';
 import ButtonEdit from '@/components/Admin/TableManager/ButtonEdit';
 import ButtonDelete from '@/components/Admin/TableManager/ButtonDelete';
 import Title from '@/components/Admin/TableManager/Title';
+import ShortCutHint from '@/components/Admin/TableManager/Hint';
 
 import { useModal } from '@/hooks/use-modal';
+import { useShortCut } from '@/hooks/use-shortcut';
 
 import { ReadPermissionType } from '@/types/module/permission';
 import { CreatePermissionType } from '@/types/module/permission';
 import { EditPermissionType } from '@/types/module/permission';
 
 export default function Read({ permissions, total }: ReadPermissionType) {
-    const { data, setData, post, patch, errors, processing, reset, clearErrors, } = useForm<CreatePermissionType>({
+    const {
+        data,
+        setData,
+        post,
+        patch,
+        errors,
+        processing,
+        reset,
+        clearErrors,
+    } = useForm<CreatePermissionType>({
         id: '',
         name: '',
         slug: '',
@@ -26,7 +37,18 @@ export default function Read({ permissions, total }: ReadPermissionType) {
         module: '',
     });
 
-    const { openModal, isEditModal, setOpenModal, setIsEditModal, handleOpenModal, handleCloseModal } = useModal({ reset, clearErrors });
+    // Modal hooks
+    const {
+        openModal,
+        isEditModal,
+        setOpenModal,
+        setIsEditModal,
+        handleOpenModal,
+        handleCloseModal,
+    } = useModal({ reset, clearErrors });
+
+    /// Shortcut hooks
+    useShortCut({ openModal, handleCloseModal, handleOpenModal });
 
     // Modal Edit Mode
     const handleEdit = (permission: EditPermissionType) => {
@@ -80,7 +102,7 @@ export default function Read({ permissions, total }: ReadPermissionType) {
                 onSuccess: () => {
                     toast.success('Xóa thành công', { id: toastID });
                 },
-            })
+            });
         }
     };
 
@@ -167,11 +189,15 @@ export default function Read({ permissions, total }: ReadPermissionType) {
                 </form>
             </Modal>
 
-            <section>
+            <section className='pb-4 md:pb-0'>
                 {/* title */}
                 <div className="flex items-center justify-between">
                     <Title heading={`Quản lí quyền (${total})`} />
-                    <ButtonCreate onOpenModal={handleOpenModal} />
+
+                    <div className="flex items-center gap-2">
+                        <ShortCutHint />
+                        <ButtonCreate onOpenModal={handleOpenModal} />
+                    </div>
                 </div>
 
                 {/* data */}

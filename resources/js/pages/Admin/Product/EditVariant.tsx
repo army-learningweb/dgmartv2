@@ -92,7 +92,7 @@ export default function EditVariant({ products, productConFigTypes, variant, dat
     return (
         <>
             <Head title="Chỉnh sửa cấu hình và biến thể" />
-            <section>
+            <section className="pb-4 md:pb-0">
                 {/* title */}
                 <div className="flex items-center justify-between">
                     <SimpleBreadcrum

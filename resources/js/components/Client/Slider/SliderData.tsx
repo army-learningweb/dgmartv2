@@ -17,7 +17,7 @@ export default function SliderData({
                 style={{
                     transform: `translateX(-${mobilityIndex * index}px)`,
                 }}
-                className={`mx-auto flex max-w-312 flex-nowrap gap-4 transition-transform duration-500 ease-out select-none ${height}`}
+                className={`pl-4 py-3 md:pl-0 overflow-x-auto md:overflow-visible scrollbar-thin scrollbar-track-transparent mx-auto flex max-w-312 flex-nowrap gap-4 transition-transform duration-500 ease-out select-none ${height}`}
             >
                 {children}
             </div>

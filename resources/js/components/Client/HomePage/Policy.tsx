@@ -28,7 +28,7 @@ export default function Policy() {
     return (
         <>
             {PolicyData?.length > 0 && (
-                <div className="grid grid-cols-2 gap-4 md:grid-cols-4 py-10 max-w-312 mx-auto">
+                <div className="grid md:gap-4 grid-cols-2 md:grid-cols-4 md:py-10 max-w-312 mx-auto">
                     {PolicyData.map((item) => (
                         <div key={item.title} className="flex flex-col items-center justify-center gap-4 p-5 text-center border-r border-gray-100 last-of-type:border-0">
                             <div className='text-blue-600'>{item.icon}</div>

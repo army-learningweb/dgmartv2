@@ -9,7 +9,7 @@ export default function ModalFooter(){
                 <h2 className="text-lg font-medium tracking-tight select-none">
                     Danh mục sản phẩm
                 </h2>
-                <div className="mt-2 grid grid-cols-3 gap-2">
+                <div className="mt-2 grid md:grid-cols-3 gap-2">
                     {CategoriesData.map((item, index) => (
                         <Link
                             href={item.route}

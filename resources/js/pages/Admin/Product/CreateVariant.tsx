@@ -89,7 +89,7 @@ export default function CreateVariant({
     return (
         <>
             <Head title="Thêm cấu hình và biến thể" />
-            <section>
+            <section className='pb-4 md:pb-0'>
                 {/* title */}
                 <div className="flex items-center justify-between">
                     <SimpleBreadcrum

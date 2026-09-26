@@ -21,7 +21,7 @@ export default function Read() {
         <>
             <Head title="Thanh toán Online" />
 
-            <div className="mx-auto mt-10 flex max-w-312 flex-col items-center justify-center">
+            <div className="mx-auto mt-10 flex max-w-312 flex-col items-center justify-center px-5 md:px-0">
                 {/* Khung QR code */}
                 <div className="mx-auto mb-6 flex h-65 w-70 items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-50">
                     <span className="text-sm text-gray-400">
@@ -29,7 +29,7 @@ export default function Read() {
                     </span>
                 </div>
 
-                <p className="mb-6 text-sm text-gray-500">
+                <p className="mb-6 text-sm text-gray-500 text-center md:text-left">
                     Mã QR mang tính chất giả định, bấm vào nút bên dưới để xác
                     nhận đã thanh toán
                 </p>
@@ -40,7 +40,9 @@ export default function Read() {
                     disabled={isLoading}
                 >
                     {isLoading && <LoadingCircle />}
-                    <span>Đã thanh toán</span>
+                    <span>
+                        {isLoading ? 'Đang xử lí' : 'Đã thanh toán'}
+                    </span>
                 </Button>
             </div>
         </>

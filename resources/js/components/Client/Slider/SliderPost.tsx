@@ -26,7 +26,7 @@ export default function SliderPost({ data, title, desc }: SliderPostProps) {
         <>
             {data?.length > 0 && (
                 <section className="relative">
-                    <div className="mx-auto max-w-312">
+                    <div className="mx-auto max-w-312 px-5 md:px-0">
                         {/* title */}
                         <SliderTitle title={title} />
 

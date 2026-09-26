@@ -20,10 +20,10 @@ export default function Read({ posts, categories, category }: PostDataProps) {
     return (
         <SectionPage head="Bài viết & tin tức" title="Bài viết & tin tức">
             <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
+                <div className="flex-1 overflow-x-auto scrollbar-thin scrollbar-track-transparent">
                     {/* filter category */}
                     {categories?.length > 0 && (
-                        <div className="mt-2 flex w-fit gap-1 text-[13px]">
+                        <div className="ms-4 mt-2 flex w-max gap-1 text-[13px] md:ms-0 py-1">
                             <FilterTab
                                 active={!category}
                                 onFilter={() =>
@@ -52,9 +52,13 @@ export default function Read({ posts, categories, category }: PostDataProps) {
 
             <div className="mt-6 flex-1">
                 {/* posts */}
-                <div className={`grid grid-cols-5 gap-3`}>
+                <div className={`grid grid-cols-2 gap-3 md:grid-cols-5 px-4 md:px-0`}>
                     {posts.data.map((item) => (
-                        <Card key={item.id} dataItem={item} />
+                        <Card
+                            key={item.id}
+                            dataItem={item}
+                            className="w-full!"
+                        />
                     ))}
                 </div>
 

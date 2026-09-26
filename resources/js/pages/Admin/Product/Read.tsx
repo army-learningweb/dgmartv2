@@ -1,8 +1,9 @@
 import { Head, router } from '@inertiajs/react';
-import toast from 'react-hot-toast';
+import { useState } from 'react';
 import { SlidersHorizontal, X, ChevronsDown } from 'lucide-react';
+import toast from 'react-hot-toast';
 import clsx from 'clsx';
-import { vndFormat } from '@/lib/currency_format';
+import axios from 'axios';
 
 import Badge from '@/components/ui/Badge';
 import SearchBar from '@/components/Admin/TableManager/SearchBar';
@@ -24,8 +25,8 @@ import { useFilter } from '@/hooks/use-filter';
 import { usePrevPage } from '@/hooks/use-prevPage';
 
 import { ReadProductType } from '@/types/module/products';
-import { useState } from 'react';
-import axios from 'axios';
+
+import { vndFormat } from '@/lib/currency_format';
 
 export default function Read({
     products,
@@ -38,7 +39,7 @@ export default function Read({
     filter_category,
     search,
 }: ReadProductType) {
-
+    
     // Bộ lọc tổng hợp
     const { handleQueryFilter } = useFilter({
         route: '/admin/products',
@@ -46,6 +47,7 @@ export default function Read({
         onlyLoad: ['products', 'filter_status', 'filter_category'],
     });
 
+    // Lưu chuỗi query ,đường dẫn trước đó
     const { queryString } = usePrevPage();
 
     // Xóa
@@ -163,6 +165,7 @@ export default function Read({
             setProductName(null);
         }, 300);
     };
+
     return (
         <>
             <Head title="Danh sách sản phẩm" />
@@ -433,7 +436,7 @@ export default function Read({
                 </div>
             </div>
 
-            <section>
+            <section className="pb-4 md:pb-0">
                 {/* title */}
                 <div className="flex items-center justify-between">
                     <Title heading="Danh sách sản phẩm" />
@@ -450,8 +453,8 @@ export default function Read({
 
                 {/* filter & search */}
                 <div className="mt-4 flex flex-col items-center justify-between md:flex-row">
-                    {/* filter & search */}
                     <div className="flex w-full flex-1 flex-col gap-2 md:flex-row">
+                        {/* search */}
                         <SearchBar
                             onChange={handleQuerySearch}
                             onClearQuery={handleClearQuerySearch}
@@ -469,7 +472,7 @@ export default function Read({
 
                         {/* filter */}
                         <Select
-                            className="w-70!"
+                            className="md:w-70!"
                             name="filter-category"
                             onChange={(e) =>
                                 handleQueryFilter({
@@ -510,7 +513,7 @@ export default function Read({
                 </div>
 
                 {products.data?.length > 0 && (
-                    <div className="mt-4 h-full overflow-hidden rounded-xl border border-gray-200">
+                    <div className="mt-4 h-full overflow-hidden rounded-xl md:border md:border-gray-200">
                         {/* desktop */}
                         <table className="hidden w-full md:table">
                             <thead className="border-b border-gray-200 bg-gray-100 font-medium text-gray-800">
@@ -611,84 +614,61 @@ export default function Read({
                         </table>
 
                         {/* mobile */}
-                        <div className="inline-flex w-full flex-col gap-2 md:hidden">
+                        <div className="space-y-4 md:hidden">
                             {products.data.map((item) => (
                                 <div
                                     key={item.id}
-                                    className="flex h-fit w-full justify-between border-b border-gray-200 p-3"
+                                    className="relative flex justify-between items-center rounded-xl border border-gray-300 p-4"
                                 >
-                                    <div className="relative flex justify-between">
-                                        {item.status === 'active' && (
-                                            <div className="absolute bottom-5 left-15 h-3 w-3 rounded-full bg-green-600"></div>
-                                        )}
-                                        {item.status === 'inactive' && (
-                                            <div className="absolute bottom-5 left-15 h-3 w-3 rounded-full bg-red-600"></div>
-                                        )}
+                                    {item.status === 'active' && (
+                                        <div className="absolute top-8 left-18 h-3 w-3 rounded-full bg-green-600"></div>
+                                    )}
+                                    {item.status === 'inactive' && (
+                                        <div className="absolute top-8 left-18 h-3 w-3 rounded-full bg-red-600"></div>
+                                    )}
 
-                                        <div className="flex w-full items-center gap-3">
-                                            <a
-                                                target="blank"
-                                                href={item.main_image?.file_url}
-                                                className="h-18 w-18"
-                                            >
-                                                <img
-                                                    src={
-                                                        item.main_image
-                                                            ?.file_url
-                                                    }
-                                                    alt={
-                                                        item.main_image
-                                                            ?.file_name
-                                                    }
-                                                    className="h-full w-full rounded-lg object-cover"
-                                                />
-                                            </a>
-                                            <div className="flex flex-col gap-1.5">
-                                                <p className="w-40 truncate font-medium">
-                                                    {item.name}
-                                                </p>
-                                                <p className="w-fit truncate rounded-md bg-blue-50 px-3 py-1 text-xs font-medium text-blue-600">
-                                                    {item.category?.name}
-                                                </p>
-                                            </div>
-                                        </div>
+                                    <div className="space-y-2 w-[65%]">
+                                        <img
+                                            src={item.main_image?.file_url}
+                                            alt={item.main_image?.file_name}
+                                            className="h-17 w-17 rounded-lg object-cover"
+                                        />
+                                        <p className="w-50 truncate font-medium">
+                                            {item.name}
+                                        </p>
+                                        <p className="w-fit truncate rounded-md bg-blue-50 px-3 py-1 text-xs font-medium text-blue-600">
+                                            {item.category?.name}
+                                        </p>
+                                    </div>
 
-                                        <div className="flex w-full flex-col gap-1.5">
-                                            <Button
-                                                variant="outline"
-                                                className="text-xs!"
-                                                animatePress={true}
-                                                onClick={() =>
-                                                    handleOpenModal(item.id)
-                                                }
-                                            >
-                                                <SlidersHorizontal
-                                                    size={15}
-                                                    className="text-gray-500"
-                                                />
-                                                Cấu hình & Giá
-                                            </Button>
-                                            <ButtonEditLink
-                                                route={`/admin/products/${item.id}/edit${queryString ? `?${queryString}` : ''}`}
+                                    <div className="flex flex-1 flex-col gap-2">
+                                        <Button
+                                            variant="outline"
+                                            className="text-xs!"
+                                            animatePress={true}
+                                            onClick={() =>
+                                                handleOpenModal(item.id)
+                                            }
+                                        >
+                                            <SlidersHorizontal
+                                                size={15}
+                                                className="text-gray-500"
                                             />
-                                            <ButtonDelete
-                                                onDelete={() =>
-                                                    handleDelete(item.id)
-                                                }
-                                            />
-                                        </div>
+                                            Cấu hình & Giá
+                                        </Button>
+                                        <ButtonEditLink
+                                            route={`/admin/products/${item.id}/edit${queryString ? `?${queryString}` : ''}`}
+                                        />
+                                        <ButtonDelete
+                                            onDelete={() =>
+                                                handleDelete(item.id)
+                                            }
+                                        />
                                     </div>
                                 </div>
                             ))}
                         </div>
                     </div>
-                )}
-
-                {/* empty */}
-                {products?.data.length === 0 && (
-                    <EmptyData>
-                        <ButtonCreateLink route="/admin/products/create" />
-                    </EmptyData>
                 )}
 
                 {/* pagination */}
@@ -701,6 +681,13 @@ export default function Read({
                         currentPage={products.current_page}
                         lastPage={products.last_page}
                     />
+                )}
+
+                {/* empty */}
+                {products?.data.length === 0 && (
+                    <EmptyData>
+                        <ButtonCreateLink route="/admin/products/create" />
+                    </EmptyData>
                 )}
             </section>
         </>

@@ -4,7 +4,7 @@ interface TitlePage {
 
 export default function TitlePage({title} : TitlePage){
     return (
-        <h1 className="my-10 inline-block text-5xl font-bold tracking-tight select-none">
+        <h1 className="px-5 md:px-0 md:my-10 my-5 inline-block md:text-5xl text-4xl font-bold tracking-tight select-none">
             {title}
         </h1>
     );

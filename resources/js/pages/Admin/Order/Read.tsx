@@ -1,5 +1,8 @@
 import { Head, usePage } from '@inertiajs/react';
 import { Link } from '@inertiajs/react';
+import { vndFormat } from '@/lib/currency_format';
+import toast from 'react-hot-toast';
+import { useEffect } from 'react';
 
 import SearchBar from '@/components/Admin/TableManager/SearchBar';
 import Pagination from '@/components/Admin/Pagination/Pagination';
@@ -13,10 +16,8 @@ import StatisOrderItem from '@/components/Admin/Statis/StatisOrderItem';
 import { usePrevPage } from '@/hooks/use-prevPage';
 import { useSearch } from '@/hooks/use-search';
 import { useFilter } from '@/hooks/use-filter';
+
 import { OrdersReadType } from '@/types/module/orders';
-import { vndFormat } from '@/lib/currency_format';
-import toast from 'react-hot-toast';
-import { useEffect } from 'react';
 
 export default function Read({
     orders,
@@ -103,11 +104,8 @@ export default function Read({
         <>
             <Head title="Đơn hàng" />
 
-            <section>
-                {/* title */}
-                {/* <Title heading="Danh sách đơn hàng" /> */}
-
-                <div className="grid grid-cols-4 gap-2 font-medium">
+            <section className="pb-8 md:pb-0">
+                <div className="grid gap-2 font-medium md:grid-cols-4">
                     <StatisOrderItem
                         title="Đơn hàng hôm nay"
                         value={orders_today}
@@ -127,7 +125,7 @@ export default function Read({
                 </div>
 
                 <div className="mt-4 flex justify-between">
-                    <div className="flex gap-2">
+                    <div className="flex w-full flex-col gap-2 md:flex-row">
                         {/* filter & search */}
                         <SearchBar
                             onChange={handleQuerySearch}
@@ -146,7 +144,7 @@ export default function Read({
 
                         {/* filter */}
                         <Select
-                            className="w-70!"
+                            className="md:w-70!"
                             name="filter-category"
                             onChange={(e) =>
                                 handleQueryFilter({
@@ -193,7 +191,7 @@ export default function Read({
 
                 {/* data */}
                 {orders.data?.length > 0 && (
-                    <div className="mt-4 h-full overflow-hidden rounded-xl border border-gray-200">
+                    <div className="mt-4 h-full overflow-hidden rounded-xl md:border md:border-gray-200">
                         {/* desktop */}
                         <table className="hidden w-full md:table">
                             <thead className="border-b border-gray-200 bg-gray-100 font-medium text-gray-800">
@@ -284,40 +282,40 @@ export default function Read({
                         </table>
 
                         {/* mobile */}
-                        <div className="inline-flex w-full flex-col gap-1 md:hidden">
+                        <div className="space-y-4 pb-4 md:hidden">
                             {orders.data.map((item) => (
-                                <div
-                                    key={item.id}
-                                    className="border-b border-gray-200 p-3"
-                                >
-                                    <div className="flex items-center justify-between">
-                                        <div className="relative flex items-center gap-3">
-                                            {/* {item.status === 'active' && (
-                                                <div className="absolute -bottom-0.5 left-8 h-3 w-3 rounded-full bg-green-600"></div>
-                                            )}
-                                            {item.status === 'inactive' && (
-                                                <div className="absolute -bottom-0.5 left-8 h-3 w-3 rounded-full bg-red-600"></div>
-                                            )}
-                                            <UserAvatar name={item.name} />
-                                            <div className="flex flex-col">
-                                                <div className="w-30 truncate">
-                                                    {item.name}
-                                                </div>
-                                                <div className="w-30 truncate text-gray-500">
-                                                    {item.email}
-                                                </div>
-                                            </div> */}
+                                <div className="flex justify-between rounded-xl border border-gray-300 p-4">
+                                    <div className="space-y-1">
+                                        <Link
+                                            href={`/admin/orders/${item.id}`}
+                                            className="inline-block w-50 truncate font-medium text-blue-600 hover:underline"
+                                        >
+                                            Đơn hàng: {item.code}
+                                        </Link>
+                                        <p className="w-40 truncate">
+                                            Khách hàng: Lưu Đức Vỹ
+                                        </p>
+                                        <p>Ngày: {item.created_at}</p>
+                                        <p className="font-medium">
+                                            {vndFormat(item.total)}
+                                        </p>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <div>
+                                            <p>Trạng thái thanh toán</p>
+                                            <BadgePayment
+                                                status={item.status_payment}
+                                                className="mt-1"
+                                            />
                                         </div>
-                                        {/* <div className="flex flex-col gap-2 md:flex-row">
-                                            <ButtonEdit
-                                                onEdit={() => handleEdit(item)}
+                                        <div>
+                                            <p>Trạng thái đơn hàng</p>
+                                            <BadgeShipping
+                                                status={item.status_shipping}
+                                                className="mt-1"
                                             />
-                                            <ButtonDelete
-                                                onDelete={() =>
-                                                    handleDelete(item.id)
-                                                }
-                                            />
-                                        </div> */}
+                                        </div>
                                     </div>
                                 </div>
                             ))}

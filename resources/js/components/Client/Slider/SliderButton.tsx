@@ -30,7 +30,7 @@ export default function SliderButton({ data, onClick, itemVisible, index, slider
         <>
             {data?.length > itemVisible && (
                 <div
-                    className={`pointer-events-none absolute z-50 mt-3 flex w-full items-center justify-between gap-2 px-15 top-1/2`}
+                    className={`pointer-events-none absolute top-1/2 z-50 mt-3 hidden w-full items-center justify-between gap-2 px-15 md:flex`}
                 >
                     <ButtonAction
                         className={clsx('', {

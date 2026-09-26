@@ -50,7 +50,7 @@ export default function Edit({ product_categories, product }: ReadEditProductTyp
     return (
         <>
             <Head title="Chỉnh sửa sản phẩm" />
-            <section>
+            <section className="pb-4 md:pb-0">
                 {/* title */}
                 <div className="flex items-center justify-between">
                     <SimpleBreadcrum prevRoute="/admin/products" prevPage="Danh sách sản phẩm" currentPage="Chỉnh sửa sản phẩm" />

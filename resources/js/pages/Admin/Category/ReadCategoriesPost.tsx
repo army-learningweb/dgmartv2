@@ -5,30 +5,54 @@ import toast from 'react-hot-toast';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
 import Badge from '@/components/ui/Badge';
-
 import EmptyData from '@/components/Admin/Empty/EmptyData';
 import Modal from '@/components/Admin/Modal/Modal';
 import ButtonCreate from '@/components/Admin/TableManager/ButtonCreate';
 import ButtonDelete from '@/components/Admin/TableManager/ButtonDelete';
 import ButtonEdit from '@/components/Admin/TableManager/ButtonEdit';
 import Title from '@/components/Admin/TableManager/Title';
-
-import { useModal } from '@/hooks/use-modal';
+import ShortCutHint from '@/components/Admin/TableManager/Hint';
 
 import { ReadCategoriesPostType } from '@/types/module/post_category';
 import { CreateCategoriesPostType } from '@/types/module/post_category';
 import { EditCategoriesPost } from '@/types/module/post_category';
 
-export default function ReadCategoriesPost({ categories, total, }: ReadCategoriesPostType) {
-    const { data, setData, post, patch, errors, processing, reset, clearErrors, } = useForm<CreateCategoriesPostType>({
+import { useShortCut } from '@/hooks/use-shortcut';
+import { useModal } from '@/hooks/use-modal';
+
+export default function ReadCategoriesPost({
+    categories,
+    total,
+}: ReadCategoriesPostType) {
+
+    const {
+        data,
+        setData,
+        post,
+        patch,
+        errors,
+        processing,
+        reset,
+        clearErrors,
+    } = useForm<CreateCategoriesPostType>({
         id: '',
         name: '',
-        status: 'active'
+        status: 'active',
     });
 
     // Modal hooks
-    const { openModal, isEditModal, setOpenModal, setIsEditModal, handleOpenModal, handleCloseModal, } = useModal({ reset, clearErrors });
+    const {
+        openModal,
+        isEditModal,
+        setOpenModal,
+        setIsEditModal,
+        handleOpenModal,
+        handleCloseModal,
+    } = useModal({ reset, clearErrors });
 
+    // Shortcut hooks
+    useShortCut({ openModal, handleCloseModal, handleOpenModal });
+    
     // Modal edit mode
     const handleEdit = async (category: EditCategoriesPost) => {
         setData({
@@ -90,17 +114,41 @@ export default function ReadCategoriesPost({ categories, total, }: ReadCategorie
                 onClose={handleCloseModal}
                 isOpen={openModal}
                 customSize="w-[90%] md:w-[30%] min-h-[20%]"
-                title={!isEditModal ? 'Thêm mới danh mục' : 'Chỉnh sửa thông tin'}
+                title={
+                    !isEditModal ? 'Thêm mới danh mục' : 'Chỉnh sửa thông tin'
+                }
                 labelSubmit={!isEditModal ? 'Thêm mới' : 'Cập nhật'}
                 formSubmitId="createCategory"
                 processing={processing}
             >
-                <form onSubmit={!isEditModal ? handleCreate : handleUpdate} id="createCategory" >
+                <form
+                    onSubmit={!isEditModal ? handleCreate : handleUpdate}
+                    id="createCategory"
+                >
                     <div className="mt-1">
-                        <Input type="text" name="name" label="Tên danh mục" error={errors.name} value={data.name} onChange={(e) => setData('name', e.target.value)} onBlur={() => clearErrors("name")} autoComplete="on" />
+                        <Input
+                            type="text"
+                            name="name"
+                            label="Tên danh mục"
+                            error={errors.name}
+                            value={data.name}
+                            onChange={(e) => setData('name', e.target.value)}
+                            onBlur={() => clearErrors('name')}
+                            autoComplete="on"
+                        />
                     </div>
                     <div className="mt-2">
-                        <Select label="Trạng thái" name="status" value={data.status} onChange={(e) => setData('status', e.target.value as 'active' | 'inactive',)}>
+                        <Select
+                            label="Trạng thái"
+                            name="status"
+                            value={data.status}
+                            onChange={(e) =>
+                                setData(
+                                    'status',
+                                    e.target.value as 'active' | 'inactive',
+                                )
+                            }
+                        >
                             <option value="active">Hoạt động</option>
                             <option value="inactive">Vô hiệu hóa</option>
                         </Select>
@@ -110,26 +158,32 @@ export default function ReadCategoriesPost({ categories, total, }: ReadCategorie
                         danh mục.
                     </p>
                 </form>
-
             </Modal>
 
             <Head title="Danh mục bài viết" />
-            <section>
+            <section className='pb-8 md:pb-0'>
                 {/* title */}
                 <div className="flex items-center justify-between">
                     <Title heading={`Danh mục bài viết (${total})`} />
-                    <ButtonCreate onOpenModal={handleOpenModal} />
+
+                    <div className="flex items-center gap-2">
+                        <ShortCutHint />
+                        <ButtonCreate onOpenModal={handleOpenModal} />
+                    </div>
                 </div>
 
                 {/* data */}
                 {categories?.length > 0 && (
-                    <div className="mt-4 h-full overflow-hidden rounded-xl border border-gray-200">
+                    <div className="mt-4 h-full overflow-hidden rounded-xl md:border md:border-gray-200">
                         {/* desktop */}
                         <table className="hidden w-full md:table">
                             <thead className="border-b border-gray-200 bg-gray-100 font-medium text-gray-800">
                                 <tr>
                                     <td className="px-5 py-2">Danh mục</td>
-                                    <td className="px-5 py-2"> Slug (Friendly URL)</td>
+                                    <td className="px-5 py-2">
+                                        {' '}
+                                        Slug (Friendly URL)
+                                    </td>
                                     <td className="px-5 py-2">Ngày tạo</td>
                                     <td className="px-5 py-2">Cập nhật</td>
                                     <td className="px-5 py-2">Trạng thái</td>
@@ -138,10 +192,16 @@ export default function ReadCategoriesPost({ categories, total, }: ReadCategorie
                             </thead>
                             <tbody>
                                 {categories.map((item) => (
-                                    <tr key={item.id} className="border-b border-gray-200 last-of-type:border-0" >
+                                    <tr
+                                        key={item.id}
+                                        className="border-b border-gray-200 last-of-type:border-0"
+                                    >
                                         <td className="w-60 truncate px-5 py-3.5">
                                             <div className="flex items-center gap-2">
-                                                <FileText strokeWidth={1} className="fill-blue-500" />
+                                                <FileText
+                                                    strokeWidth={1}
+                                                    className="fill-blue-500"
+                                                />
                                                 <div>{item.name}</div>
                                             </div>
                                         </td>
@@ -161,8 +221,16 @@ export default function ReadCategoriesPost({ categories, total, }: ReadCategorie
                                         </td>
                                         <td className="px-5 py-3.5">
                                             <div className="flex h-6.75 gap-2">
-                                                <ButtonEdit onEdit={() => handleEdit(item)} />
-                                                <ButtonDelete onDelete={() => handleDelete(item.id)} />
+                                                <ButtonEdit
+                                                    onEdit={() =>
+                                                        handleEdit(item)
+                                                    }
+                                                />
+                                                <ButtonDelete
+                                                    onDelete={() =>
+                                                        handleDelete(item.id)
+                                                    }
+                                                />
                                             </div>
                                         </td>
                                     </tr>
@@ -171,12 +239,18 @@ export default function ReadCategoriesPost({ categories, total, }: ReadCategorie
                         </table>
 
                         {/* mobile */}
-                        <div className="inline-flex w-full flex-col gap-2 md:hidden">
+                        <div className="space-y-4 md:hidden">
                             {categories.map((item) => (
-                                <div key={item.id} className="flex h-22 w-full justify-between border-b border-gray-200 p-3" >
+                                <div
+                                    key={item.id}
+                                    className="flex justify-between border border-gray-300 p-4 rounded-xl"
+                                >
                                     <div className="relative mt-3">
                                         <div className="flex items-center gap-4">
-                                            <FileText strokeWidth={1} className="fill-blue-500" />
+                                            <FileText
+                                                strokeWidth={1}
+                                                className="fill-blue-500"
+                                            />
                                             <div>
                                                 <p className="w-30 truncate">
                                                     {item.name}
@@ -194,9 +268,15 @@ export default function ReadCategoriesPost({ categories, total, }: ReadCategorie
                                         )}
                                     </div>
 
-                                    <div className="flex h-6.75 flex-col gap-2">
-                                        <ButtonEdit onEdit={() => handleEdit(item)} />
-                                        <ButtonDelete onDelete={() => handleDelete(item.id)} />
+                                    <div className="flex flex-col gap-2">
+                                        <ButtonEdit
+                                            onEdit={() => handleEdit(item)}
+                                        />
+                                        <ButtonDelete
+                                            onDelete={() =>
+                                                handleDelete(item.id)
+                                            }
+                                        />
                                     </div>
                                 </div>
                             ))}

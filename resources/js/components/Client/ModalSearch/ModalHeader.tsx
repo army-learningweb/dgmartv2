@@ -27,7 +27,7 @@ const ModalHeader = forwardRef<HTMLInputElement, ModalHeaderProps>(({onClearSear
                             size={17}
                             className="text-gray-800 transition-colors duration-150"
                         />
-                        ESC
+                        <span className="hidden md:block">ESC</span>
                     </div>
                 </div>
 

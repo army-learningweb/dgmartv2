@@ -1,29 +1,19 @@
-import Sidebar from '@/components/Admin/Sidebar/Sidebar';
 import { Toaster } from 'react-hot-toast';
-import { useEffect, useState } from 'react';
-import clsx from 'clsx';
-import { Link, usePage } from '@inertiajs/react';
+import { SquareMenu } from 'lucide-react';
+import Sidebar from '@/components/Admin/Sidebar/Sidebar';
 import Logo from '@/components/ui/Logo';
-import { Menu } from 'lucide-react';
+import { useState } from 'react';
 
 interface DashboardLayoutProps {
     children: React.ReactNode;
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-    const { url } = usePage();
-    const [openOnMobbile, setOpenOnMobile] = useState(false);
-    const handleToggleMenu = () => {
-        setOpenOnMobile(!openOnMobbile);
-    };
-
-    useEffect(() => {
-        if (!openOnMobbile) return;
-        handleToggleMenu();
-    }, [url]);
+    const [openSideBar, setOpenSidebar] = useState<boolean>(false);
 
     return (
         <>
+            {/* toast */}
             <Toaster
                 toastOptions={{
                     className: '',
@@ -36,40 +26,39 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 }}
             />
 
+            {/* wrapper */}
             <div className="min-h-screen bg-gray-100 md:flex md:gap-2 md:p-4">
-                <aside
-                    className={clsx(
-                        'relative shrink-0 transition-all duration-250 ease-in-out md:left-0 md:w-60',
-                        {
-                            '-left-80': !openOnMobbile,
-                            'left-0': openOnMobbile,
-                        },
-                    )}
-                >
-                    <Sidebar onToggleMenu={handleToggleMenu} />
-                </aside>
+                {/* header mobile */}
+                <div className="fixed top-0 z-50 w-full flex items-center justify-between bg-white p-4 md:hidden">
+                    <Logo route="/" />
+                    <SquareMenu
+                        onClick={() => setOpenSidebar(true)}
+                        size={30}
+                        strokeWidth={1.7}
+                        className="transtion-all text-gray-500 duration-200 active:scale-95 active:text-black"
+                    />
+                </div>
+                <div className='h-17 md:hidden'></div>
 
-                {/* backdrop black when menu open */}
+                {/* dark overlay */}
                 <div
-                    className={clsx(
-                        'absolute top-0 left-0 z-40 h-full w-full bg-black/50 transition-all duration-150',
-                        {
-                            'pointer-events-none opacity-0': !openOnMobbile,
-                            'pointer-events-auto opacity-100': openOnMobbile,
-                        },
-                    )}
+                    className={`fixed z-50 top-0 left-0 h-full w-full bg-black/30 md:hidden transition-colors duration-200 ease-in-out
+                        ${openSideBar 
+                            ? 'pointer-events-auto opacity-100'
+                            : 'pointer-events-none opacity-0'
+                        }`}
                 ></div>
 
-                <div className="border border-gray-200 bg-white p-4 text-gray-800 shadow md:flex-1 md:rounded-2xl">
-                    <div className="mb-4 flex items-center justify-between md:hidden">
-                        {/* Logo */}
-                        <Logo route="/admin/dashboard" />
-                        <Menu
-                            className="text-gray-500 active:text-gray-700"
-                            onClick={handleToggleMenu}
-                        />
-                    </div>
-                    <hr className="mb-4 border-gray-100 md:hidden" />
+                {/* sidebar */}
+                <div className="w-60">
+                    <Sidebar
+                        onToggleSidebar={setOpenSidebar}
+                        statusSidebar={openSideBar}
+                    />
+                </div>
+
+                {/* content */}
+                <div className="flex-1 border border-gray-200 bg-white p-4 text-gray-800 shadow md:flex-1 md:rounded-2xl">
                     {children}
                 </div>
             </div>

@@ -23,17 +23,10 @@ export default function OrderSumary({total_price, className} : OrderSumaryProps)
 
             <div className="flex items-center justify-between">
                 <span>Tổng:</span>
-                <span className="text-lg font-medium">
+                <span className="md:text-lg text-2xl font-medium">
                     {vndFormat(total_price)}
                 </span>
             </div>
-
-            {/* <Link
-                href="/laptop"
-                className="inline-block w-full rounded-lg border border-gray-200 bg-gray-100 py-1.75 text-center transition-colors duration-150 hover:bg-gray-200 active:bg-gray-300"
-            >
-                Tiếp tục mua sắm
-            </Link> */}
 
             <Link
                 href="/thanh-toan?step=1"

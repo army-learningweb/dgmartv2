@@ -52,9 +52,12 @@ export default function Dashboad({
             {/* table */}
             <Title heading="Đơn hàng gần đây" className="mt-3!" />
 
+            {/* empty */}
             {orders.data?.length <= 0 && (
-                <div className="mt-4 min-h-122 rounded-xl bg-gray-100 flex flex-col gap-2 justify-center items-center">
-                    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-lg font-medium">!</div>
+                <div className="mt-4 flex min-h-122 flex-col items-center justify-center gap-2 rounded-xl bg-gray-100">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-lg font-medium">
+                        !
+                    </div>
 
                     <div className="text-gray-500">
                         Hiện chưa có đơn hàng nào
@@ -62,8 +65,9 @@ export default function Dashboad({
                 </div>
             )}
 
+            {/* data */}
             {orders.data?.length > 0 && (
-                <div className="mt-3 h-fit overflow-hidden rounded-xl border border-gray-200">
+                <div className="mt-3 h-fit overflow-hidden rounded-xl md:border md:border-gray-200">
                     {/* desktop */}
                     <table className="hidden w-full md:table">
                         <thead className="border-b border-gray-200 bg-gray-100 font-medium text-gray-800">
@@ -150,6 +154,41 @@ export default function Dashboad({
                             ))}
                         </tbody>
                     </table>
+
+                    {/* mobile */}
+                    <div className="space-y-4 md:hidden pb-4">
+                        {orders.data.map((item) => (
+                            <div className="flex justify-between rounded-xl border border-gray-300 p-4">
+                                <div className="space-y-1">
+                                    <Link href={`/admin/orders/${item.id}`} className="inline-block font-medium text-blue-600 hover:underline w-50 truncate">
+                                        Đơn hàng: {item.code}
+                                    </Link>
+                                    <p className="w-40 truncate">Khách hàng: Lưu Đức Vỹ</p>
+                                    <p>Ngày: {item.created_at}</p>
+                                    <p className="font-medium">
+                                        {vndFormat(item.total)}
+                                    </p>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <div>
+                                        <p>Trạng thái thanh toán</p>
+                                        <BadgePayment
+                                            status={item.status_payment}
+                                            className="mt-1"
+                                        />
+                                    </div>
+                                    <div>
+                                        <p>Trạng thái đơn hàng</p>
+                                        <BadgeShipping
+                                            status={item.status_shipping}
+                                            className="mt-1"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             )}
         </>

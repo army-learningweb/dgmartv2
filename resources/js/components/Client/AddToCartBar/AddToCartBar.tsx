@@ -14,10 +14,10 @@ interface AddtoCartBarProps {
 
 export default function AddToCartBar({ data, version, onChangeVersion, onAddToCart } : AddtoCartBarProps) {
     return (
-        <div className="fixed -bottom-5 z-50 w-full">
-            <div className="mx-auto w-220 rounded-2xl border border-gray-200 bg-gray-100 p-1 shadow-lg">
-                <div className="flex items-center justify-between rounded-xl bg-white px-4 shadow">
-                    <div className="flex items-center gap-4">
+        <div className="fixed inset-x-0 -bottom-5 z-50 w-full">
+            <div className="mx-auto w-[calc(95%-1rem)] rounded-2xl border border-gray-200 bg-gray-100 p-1 shadow-lg md:w-220">
+                <div className="flex flex-col items-center justify-between gap-3 rounded-xl bg-white p-3 shadow md:flex-row">
+                    <div className="hidden items-center gap-4 md:flex">
                         {/* Ảnh sản phẩm */}
                         <img
                             src={data.image.file_url}
@@ -32,10 +32,10 @@ export default function AddToCartBar({ data, version, onChangeVersion, onAddToCa
                     </div>
 
                     {/* Chọn phiên bản */}
-                    <div>
+                    <div className="flex gap-4 items-center w-full md:w-fit">
                         <Select
                             name="version"
-                            className="w-50!"
+                            className="md:w-50! w-full!"
                             onChange={(e) =>
                                 onChangeVersion(Number(e.target.value))
                             }
@@ -51,19 +51,19 @@ export default function AddToCartBar({ data, version, onChangeVersion, onAddToCa
                                     </option>
                                 ))}
                         </Select>
+
+                        {/* Giá sản phẩm */}
+                        <div className="text-lg font-medium">
+                            {vndFormat(version?.price)}
+                        </div>
                     </div>
 
-                    {/* Giá sản phẩm */}
-                    <div className="text-lg font-medium">
-                        {vndFormat(version?.price)}
-                    </div>
-
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 w-full md:w-fit">
                         <Button
                             onClick={onAddToCart}
                             size="small"
                             animatePress={true}
-                            className="cursor-pointer"
+                            className="cursor-pointer w-full! md:w-fit!"
                         >
                             <ShoppingBag size={17} />
                             Thêm vào giỏ hàng

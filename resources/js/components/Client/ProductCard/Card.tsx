@@ -6,15 +6,22 @@ import { Link } from '@inertiajs/react';
 
 interface CardProps {
     dataItem: any;
+    className?: string;
 }
 
 export default function Card({
     dataItem,
+    className
 }: CardProps) {
     return (
-        <div className="relative flex h-90 w-60 shrink-0 flex-col justify-between rounded-2xl bg-white p-5 shadow transition-all duration-250 ease-out select-none hover:-translate-y-1 hover:shadow-lg">
+        <div
+            className={`relative flex h-90 w-60 shrink-0 flex-col justify-between rounded-2xl bg-white p-5 shadow transition-all duration-250 ease-out select-none last-of-type:mr-4 hover:-translate-y-1 hover:shadow-lg md:last-of-type:mr-0 ${className}`}
+        >
             {/* image */}
-            <CardImage dataImage={dataItem.image.file_url}  dataUrl={dataItem.slug}/>
+            <CardImage
+                dataImage={dataItem.image.file_url}
+                dataUrl={dataItem.slug}
+            />
 
             <div className="space-y-2">
                 <div className="flex gap-1">

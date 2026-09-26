@@ -83,18 +83,19 @@ export default function Detail({
             />
 
             <Head title="Chi tiết sản phẩm" />
-            <div className="mx-auto mt-4 min-h-400 max-w-312">
+            <div className="mx-auto mt-4 min-h-400 max-w-312 px-5 md:px-0">
+
                 {/* name & desc */}
-                <div className="my-10 w-150 space-y-4">
+                <div className="my-10 md:w-150 space-y-4 pt-4 md:pt-0">
                     <h1 className="text-4xl font-bold">{product.data.name}</h1>
                     <h2 className="text-[15px] text-gray-500">
                         {product.data.desc}
                     </h2>
                 </div>
 
-                <div className="flex items-start gap-5">
+                <div className="flex flex-col md:flex-row items-start gap-5">
                     {/* image */}
-                    <div className="sticky top-19 flex w-[60%] flex-col items-center rounded-3xl bg-white shadow">
+                    <div className="md:sticky md:top-19 flex md:w-[60%] flex-col items-center rounded-3xl bg-white shadow">
                         <div className="relative w-full overflow-hidden rounded-3xl py-5">
                             {product.data.childs_image?.length > 0 ? (
                                 <ul
@@ -164,7 +165,7 @@ export default function Detail({
                     </div>
 
                     {/* info */}
-                    <div className="flex-1 space-y-4 select-none md:w-150">
+                    <div className="space-y-4 select-none md:w-[40%] w-full">
                         {/* versions */}
                         <div className="grid flex-1 grid-cols-1 gap-5">
                             {product.data.variants.map((item, index) => (
@@ -222,16 +223,16 @@ export default function Detail({
                 </div>
 
                 {/* content detail & other product */}
-                <div className="mt-5 flex items-start gap-5">
+                <div className="mt-5 flex flex-col md:flex-row items-start gap-5">
                     {/* content detail */}
-                    <div className="w-[60%]">
+                    <div className="md:w-[60%]">
                         <div className="tinymce-content rounded-3xl bg-white px-6 py-2 shadow">
                             {parse(product.data.content)}
                         </div>
                     </div>
 
                     {/* product suggest */}
-                    <div className="sticky top-5 flex-1 rounded-3xl bg-white p-4 shadow">
+                    <div className="md:sticky md:top-5 flex-1 rounded-3xl bg-white p-4 shadow">
                         <OtherProducts data={products_suggest.data} />
                     </div>
                 </div>

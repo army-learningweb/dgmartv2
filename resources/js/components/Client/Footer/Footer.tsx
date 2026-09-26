@@ -5,15 +5,15 @@ import { NavigationData } from '@/data/Navigation';
 export default function Footer() {
     return (
         <div className="border-t border-gray-200 bg-white">
-            <footer className="mx-auto max-w-312 py-4">
-                <div className="grid grid-cols-3 py-4">
-                    <div className="col-span-1">
-                        <Logo route="/"/>
+            <footer className="mx-auto max-w-312 px-5 py-4 md:px-0">
+                <div className="grid md:py-4 md:grid-cols-3 space-y-6 md:space-y-0">
+                    <div className="md:col-span-1">
+                        <Logo route="/" />
                         <p className="mt-2">Chuyên Laptop - Phụ kiện</p>
                     </div>
 
-                    <div className="col-span-2">
-                        <div className="flex justify-between">
+                    <div className="md:col-span-2">
+                        <div className="space-y-4 md:flex justify-between">
                             {/* Navigation */}
                             <div>
                                 {NavigationData?.length > 0 && (
@@ -26,8 +26,13 @@ export default function Footer() {
                                                 <div className="flex flex-col">
                                                     {NavigationData.map(
                                                         (item, index) => (
-                                                            <Link href={item.route} key={index}>
-                                                                <div className="inline-block py-1 hover:text-blue-600" >
+                                                            <Link
+                                                                href={
+                                                                    item.route
+                                                                }
+                                                                key={index}
+                                                            >
+                                                                <div className="inline-block py-1 hover:text-blue-600">
                                                                     {item.name}
                                                                 </div>
                                                             </Link>
@@ -95,9 +100,11 @@ export default function Footer() {
                     </div>
                 </div>
 
-                <div className="mt-8 text-gray-500">
+                <hr className='md:hidden my-3 border-gray-200'/>
+
+                <div className="md:mt-8 my-4 text-gray-500">
                     <p>
-                        Lưu Đức Vỹ - Website chỉ mang tính chất giả định - Không
+                        Website mang tính chất giả định - Không
                         có mục đích kinh doanh
                     </p>
                     <p>

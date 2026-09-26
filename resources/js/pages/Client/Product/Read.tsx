@@ -1,4 +1,4 @@
-import { Head, usePage } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 import { ArrowDownWideNarrow, ArrowUpNarrowWide, Funnel } from 'lucide-react';
 import Card from '@/components/Client/ProductCard/Card';
 import Pagination from '@/components/Admin/Pagination/Pagination';
@@ -36,12 +36,11 @@ export default function Read({
 
     return (
         <SectionPage head="Sản phẩm" title={title}>
-            <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                    
+            <div className="md:flex items-center justify-between gap-4">
+                <div className="min-w-0 flex-1 overflow-x-auto scrollbar-thin scrollbar-track-transparent pb-2 md:pb-0 ">
                     {/* filter category */}
                     {categories.childs?.length > 0 && (
-                        <div className="mt-2 flex w-fit gap-1 text-[13px]">
+                        <div className="ms-4 md:ms-0 mt-2 flex w-max gap-1 whitespace-nowrap text-[13px] py-1">
                             <FilterTab
                                 active={!category}
                                 onFilter={() =>
@@ -65,16 +64,9 @@ export default function Read({
                             ))}
                         </div>
                     )}
-
-                    {/* statis */}
-                    <div className="mt-2 flex items-center justify-between">
-                        <p className="font-medium text-gray-700">
-                            ({products.meta.total}) sản phẩm
-                        </p>
-                    </div>
                 </div>
 
-                <div className="mt-2 flex items-center gap-2">
+                <div className="ms-4 mt-2 flex items-center gap-2">
                     {/* order price */}
                     <div className="flex items-center gap-1 text-[13px] font-medium">
                         <FilterTab
@@ -107,9 +99,13 @@ export default function Read({
 
             <div className="mt-6 flex-1">
                 {/* product */}
-                <div className={`grid grid-cols-5 gap-3`}>
+                <div className={`grid grid-cols-2 md:grid-cols-5 gap-4 px-4`}>
                     {products.data.map((item) => (
-                        <Card key={item.id} dataItem={item} />
+                        <Card 
+                            key={item.id} 
+                            dataItem={item}
+                            className='w-full! h-80!' 
+                        />
                     ))}
                 </div>
 

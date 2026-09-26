@@ -18,9 +18,9 @@ import Button from '@/components/ui/Button';
 
 import { useSearch } from '@/hooks/use-search';
 import { useFilter } from '@/hooks/use-filter';
+import { usePrevPage } from '@/hooks/use-prevPage';
 
 import { ReadPostType } from '@/types/module/post';
-import { usePrevPage } from '@/hooks/use-prevPage';
 
 export default function Read({
     posts,
@@ -35,6 +35,7 @@ export default function Read({
     sort_date,
     search,
 }: ReadPostType) {
+
     // Bộ lọc tổng hợp
     const { handleQueryFilter } = useFilter({
         route: '/admin/posts',
@@ -123,7 +124,7 @@ export default function Read({
     return (
         <>
             <Head title="Danh sách bài viết" />
-            <section>
+            <section className='pb-6 md:pb-0'>
                 {/* title */}
                 <div className="flex items-center justify-between">
                     <Title heading="Danh sách bài viết" />
@@ -208,7 +209,7 @@ export default function Read({
                 </div>
 
                 {posts.data?.length > 0 && (
-                    <div className="mt-4 h-full overflow-hidden rounded-xl border border-gray-200">
+                    <div className="mt-4 h-full overflow-hidden rounded-xl md:border md:border-gray-200">
                         {/* desktop */}
                         <table className="hidden w-full md:table">
                             <thead className="border-b border-gray-200 bg-gray-100 font-medium text-gray-800">
@@ -357,11 +358,11 @@ export default function Read({
                         </table>
 
                         {/* mobile */}
-                        <div className="inline-flex w-full flex-col gap-2 md:hidden">
+                        <div className="md:hidden space-y-4">
                             {posts.data.map((item) => (
                                 <div
                                     key={item.id}
-                                    className="flex h-24 w-full justify-between border-b border-gray-200 p-3"
+                                    className="flex w-full justify-between border border-gray-300 p-4 rounded-xl"
                                 >
                                     <div className="relative">
                                         <div className="flex items-center gap-5">

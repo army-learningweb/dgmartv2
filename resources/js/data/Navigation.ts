@@ -19,10 +19,10 @@ const NavigationData = [
         name: 'Bài viết & Tin tức',
         route: '/bai-viet-tin-tuc',
     },
-    {
-        name: 'Liên hệ',
-        route: '/lien-he',
-    },
+    // {
+    //     name: 'Liên hệ',
+    //     route: '/lien-he',
+    // },
 ];
 
 export { NavigationData };

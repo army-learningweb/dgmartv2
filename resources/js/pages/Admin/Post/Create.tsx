@@ -40,7 +40,7 @@ export default function Create({ post_categories }: ReadPostCategoriesType) {
     return (
         <>
             <Head title="Thêm mới bài viết" />
-            <section>
+            <section className="pb-4 md:pb-0">
                 {/* title */}
                 <div>
                     <SimpleBreadcrum prevRoute="/admin/posts" prevPage="Danh sách bài viết" currentPage="Thêm mới bài viết" />

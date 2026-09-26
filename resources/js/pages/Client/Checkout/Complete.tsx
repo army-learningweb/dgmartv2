@@ -5,7 +5,7 @@ export default function Complete() {
     return (
         <>
             <div className="mx-auto mt-10 flex max-w-312 flex-col items-center justify-center gap-4">
-                <div className="flex w-[40%] flex-col items-center gap-4">
+                <div className="flex md:w-[40%] flex-col items-center gap-4 px-5 md:px-0">
                     <div className="rounded-full bg-green-50 p-5">
                         <PackageCheck
                             size={50}

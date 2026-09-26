@@ -100,12 +100,12 @@ export default function Read({
     };
 
     return (
-        <div className="mx-auto mt-10 flex max-w-312 flex-col items-center justify-center gap-4 pb-10">
+        <div className="mx-auto mt-10 flex max-w-312 flex-col items-center justify-center gap-4 md:pb-10 px-5">
             <Progress />
 
             {/* Xác nhận thông tin */}
             {step == 1 && (
-                <div className="h-fit w-140 rounded-3xl bg-white p-4 shadow">
+                <div className="h-fit md:w-140 w-100 rounded-3xl bg-white p-4 shadow">
                     {errorAction && (
                         <p className="text-red-600">{errorAction}</p>
                     )}
@@ -192,7 +192,7 @@ export default function Read({
 
             {/* Phương thức thanh toán */}
             {step == 2 && (
-                <div className="h-fit w-140 rounded-3xl bg-white p-4 shadow">
+                <div className="h-fit md:w-140 w-100 rounded-3xl bg-white p-4 shadow">
                     {errorAction && (
                         <p className="text-red-600">{errorAction}</p>
                     )}
@@ -274,7 +274,7 @@ export default function Read({
 
             {/* confirm order */}
             {step == 3 && (
-                <div className="h-fit w-140 space-y-2 rounded-3xl bg-white p-4 shadow">
+                <div className="h-fit md:w-140 w-100 space-y-2 rounded-3xl bg-white p-4 shadow">
                     {/* info */}
                     <div className="space-y-2">
                         <h1 className="text-lg font-medium tracking-tight">
@@ -352,7 +352,7 @@ export default function Read({
 
                         <div className="flex items-center justify-between">
                             <p>Tổng hóa đơn</p>
-                            <p className="text-lg font-medium">
+                            <p className="md:text-lg text-xl font-medium">
                                 {vndFormat(total.total_price)}
                             </p>
                         </div>
@@ -364,13 +364,15 @@ export default function Read({
                         disabled={isLoading}
                     >
                         {isLoading && <LoadingCircle/>}
-                        <span>Đặt hàng</span>
+                        <span>
+                            {isLoading ? 'Đang xử lí' : 'Đặt hàng'}
+                        </span>
                     </Button>
                 </div>
             )}
 
             {/* redirect */}
-            <div className="flex w-135 justify-between">
+            <div className="flex md:w-135 w-100 justify-between">
                 <div
                     onClick={handleLeave}
                     className="group flex cursor-pointer items-center gap-1 text-gray-600"

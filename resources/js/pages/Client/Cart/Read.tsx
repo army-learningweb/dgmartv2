@@ -6,11 +6,10 @@ import DestroyButton from '@/components/Client/CartPage/DestroyButton';
 import CartItem from '@/components/Client/CartPage/CartItem';
 
 import { CartPropTypes } from '@/types/module/client_cart';
-import toast from 'react-hot-toast';
 import OrderSumary from '@/components/Client/CartPage/OrderSumary';
 
 export default function Read({ cart, products_suggest }: CartPropTypes) {
-   
+
     // Tổng giỏ hàng
     const total: any = usePage().props.total;
 
@@ -26,15 +25,15 @@ export default function Read({ cart, products_suggest }: CartPropTypes) {
     };
 
     return (
-        <div className="mb-10">
+        <div>
             <SectionPage
                 head="Giỏ hàng"
                 title={Object.values(cart)?.length > 0 && 'Giỏ hàng'}
             >
                 {/* cart */}
                 {Object.values(cart)?.length > 0 && (
-                    <div className="flex items-start gap-4">
-                        <div className="w-[70%] space-y-1 rounded-3xl bg-white px-4 py-2 shadow">
+                    <div className="flex flex-col md:items-start gap-6 md:gap-4 px-5 md:flex-row md:px-0">
+                        <div className="space-y-2 md:space-y-1 rounded-3xl bg-white p-4 shadow md:w-[70%]">
                             <div className="flex items-center justify-between">
                                 <h2 className="my-2 text-lg font-medium tracking-tight">
                                     Sản phẩm trong giỏ ({total.count})
@@ -53,7 +52,7 @@ export default function Read({ cart, products_suggest }: CartPropTypes) {
                         </div>
 
                         {/* order sumary */}
-                        <div className="sticky top-5 flex-1">
+                        <div className="w-full flex-1 md:sticky md:top-5">
                             <OrderSumary total_price={total.total_price} />
                         </div>
                     </div>

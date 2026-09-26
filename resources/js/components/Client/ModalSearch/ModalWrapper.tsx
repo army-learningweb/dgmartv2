@@ -15,7 +15,7 @@ export default function ModalWrapper({children, openModal} : ModalWrapper){
                 }`}
             >
                 <div
-                    className={`mt-15 h-fit w-170 space-y-2 rounded-3xl border border-gray-300 bg-gray-100 p-1 shadow transition-all duration-150 ease-out ${
+                    className={`mt-15 h-fit md:w-170 w-[90%] space-y-2 rounded-3xl border border-gray-300 bg-gray-100 p-1 shadow transition-all duration-150 ease-out ${
                         openModal ? 'scale-100' : 'scale-95'
                     }`}
                 >

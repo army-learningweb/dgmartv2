@@ -46,7 +46,7 @@ export default function Edit({ post_info, post_categories }: ReadEditPostType) {
     return (
         <>
             <Head title="Chỉnh sửa bài viết" />
-            <section>
+            <section className="pb-4 md:pb-0">
                 {/* title */}
                 <div className="flex items-center justify-between">
                     <SimpleBreadcrum prevRoute="/admin/posts" prevPage="Danh sách bài viết" currentPage="Chỉnh sửa bài viết" />

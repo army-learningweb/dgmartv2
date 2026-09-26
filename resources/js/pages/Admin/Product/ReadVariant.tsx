@@ -113,8 +113,8 @@ export default function ReadVariant({
         <>
             <Head title="Cấu hình, biến thể" />
 
-            <section>
-                {/* heading */}
+            <section className='pb-4 md:pb-0'>
+                {/* title */}
                 <div className="flex items-center justify-between">
                     <Title heading="Cấu hình & biến thể" />
 
@@ -151,7 +151,7 @@ export default function ReadVariant({
 
                 {/* data */}
                 {variants.data?.length > 0 && (
-                    <div className="relative mt-4 h-full overflow-hidden rounded-xl border border-gray-200">
+                    <div className="relative mt-4 h-full overflow-hidden rounded-xl md:border md:border-gray-200">
                         {/* desktop */}
                         <table className="hidden w-full md:table">
                             <thead className="border-b border-gray-200 bg-gray-100 font-medium text-gray-800">
@@ -377,11 +377,11 @@ export default function ReadVariant({
                         </table>
 
                         {/* mobile */}
-                        <div className="inline-flex w-full flex-col gap-1 md:hidden">
+                        <div className="space-y-4 md:hidden">
                             {variants.data.map((item) => (
                                 <div
                                     key={item.id}
-                                    className="border-b border-gray-200 p-3"
+                                    className="rounded-xl border border-gray-300 p-4"
                                 >
                                     <div className="flex justify-between">
                                         <div className="flex items-center gap-5">
@@ -424,13 +424,6 @@ export default function ReadVariant({
                     </div>
                 )}
 
-                {/* empty */}
-                {variants.data?.length === 0 && (
-                    <EmptyData showFallBack={true}>
-                        <ButtonCreateLink route="/admin/products/variants/create" />
-                    </EmptyData>
-                )}
-
                 {/* pagination */}
                 {variants.data?.length > 0 && (
                     <Pagination
@@ -441,6 +434,13 @@ export default function ReadVariant({
                         currentPage={variants.current_page}
                         lastPage={variants.last_page}
                     />
+                )}
+
+                {/* empty */}
+                {variants.data?.length === 0 && (
+                    <EmptyData showFallBack={true}>
+                        <ButtonCreateLink route="/admin/products/variants/create" />
+                    </EmptyData>
                 )}
             </section>
         </>
