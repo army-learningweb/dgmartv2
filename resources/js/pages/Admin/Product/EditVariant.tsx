@@ -165,7 +165,7 @@ export default function EditVariant({ products, productConFigTypes, variant, dat
                                         error={errors.product_id}
                                         value={data.product_id ?? ''}
                                         disabled={true}
-                                        className="cursor-not-allowed bg-red-600/20"
+                                        className="cursor-not-allowed opacity-75"
                                     >
                                         <option value="">
                                             -Chọn sản phẩm-
@@ -313,7 +313,9 @@ export default function EditVariant({ products, productConFigTypes, variant, dat
 
                                 {/* button */}
                                 <div className="mt-4 flex justify-end gap-2">
-                                    <ButtonBackLink route="/admin/products/variants" />
+                                    <ButtonBackLink
+                                        route={`/admin/products/variants${queryString ? `?${queryString}` : ''}`}
+                                    />
 
                                     <Button
                                         size="small"
