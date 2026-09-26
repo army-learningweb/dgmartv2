@@ -18,6 +18,7 @@ class AdminCustomerController extends Controller
                         ->orWhere("tel", "like", "%{$value}%");
                 });
             })
+            ->latest()
             ->select(["id", "name", "email", "tel", "created_at"])
             ->paginate(7)
             ->withQueryString();

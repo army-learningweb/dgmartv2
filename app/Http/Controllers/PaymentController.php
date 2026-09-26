@@ -24,10 +24,10 @@ class PaymentController extends Controller
             $total = $request->session()->get('total', []);
             $checkout_info = $request->session()->get('checkout_info', []);
             $checkout_payment = $request->session()->get('checkout_payment', []);
-
             $new_order = CheckoutController::OrderAction($checkout_info, $checkout_payment, $cart, $total);
-            $new_order->update(['status_payment' => 'paid']);
-
+            $new_order->update([
+                'status_payment' => 'paid',
+            ]);
 
             $data = [
                 'code' => $new_order->code,
@@ -36,7 +36,7 @@ class PaymentController extends Controller
                 'checkout_info' => $checkout_info,
                 'checkout_payment' => $checkout_payment
             ];
-            
+
             Mail::to($checkout_info['email'])->send(new OrderMail($data));
 
             $request->session()->forget('checkout_info');

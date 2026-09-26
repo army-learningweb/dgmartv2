@@ -33,6 +33,7 @@ export default function Details({
         })
     };
 
+    // Nút quay về
     const handleMoveBack = () => {
         router.visit(`/admin/orders${queryString ? `?${queryString}` : ''}`);
     }
@@ -41,7 +42,6 @@ export default function Details({
         <>
             <Head title="Chi tiết đơn hàng"></Head>
             <section className="space-y-3">
-
                 {/* info */}
                 <Title heading={`Đơn hàng (${order_info.code})`} />
                 <div className="grid grid-cols-3 rounded-xl border border-gray-200 bg-gray-50 p-4">
@@ -70,7 +70,7 @@ export default function Details({
                                 : '(Online Payment) Thanh toán Online'}
                         </OrderInfoItem>
                     </div>
-                            
+
                     <div className="space-y-3">
                         <OrderInfoItem title="Trạng thái thanh toán">
                             <BadgePayment
@@ -86,7 +86,7 @@ export default function Details({
                         </OrderInfoItem>
                     </div>
                 </div>
-                
+
                 {/* product data */}
                 <div className="mt-3 h-full overflow-hidden rounded-xl border border-gray-200">
                     <table className="hidden w-full md:table">
@@ -113,11 +113,11 @@ export default function Details({
                                                 <img
                                                     src={item.product_image}
                                                     alt={item.product_image_alt}
-                                                    className="h-full w-full object-contain "
+                                                    className="h-full w-full object-contain"
                                                 />
                                             </div>
                                             <div>
-                                                <p className="font-medium w-72 truncate">
+                                                <p className="w-72 truncate font-medium">
                                                     {item.product_name}
                                                 </p>
                                                 <p className="text-gray-500">
@@ -154,7 +154,7 @@ export default function Details({
                         </tbody>
                     </table>
                 </div>
-                
+
                 {/* update */}
                 <div className="flex gap-4">
                     <div className="flex-1 rounded-xl border border-gray-200 bg-gray-50 p-4 text-xl font-medium tracking-tight">
@@ -173,7 +173,6 @@ export default function Details({
                             value={data.status_payment}
                             name="update-status-payment"
                             label="Trạng thái thanh toán"
-                            form="update-order"
                         >
                             <option value="paid">Đã thanh toán</option>
                             <option value="unpaid">Chưa thanh toán</option>
@@ -186,7 +185,6 @@ export default function Details({
                             value={data.status_shipping}
                             name="update-status-shipping"
                             label="Trang thái đơn hàng"
-                            form="update-order"
                         >
                             <option value="awaiting">Chờ xác nhận</option>
                             <option value="processing">Đang xử lý</option>
@@ -199,14 +197,24 @@ export default function Details({
                             <option value="canceled">Đã hủy</option>
                             <option value="refund">Hoàn trả</option>
                         </Select>
+
                     </form>
                 </div>
 
                 <div className="flex justify-end gap-2">
-                    <Button onClick={handleMoveBack} variant="secondary" className="text-xs!">
+                    <Button
+                        onClick={handleMoveBack}
+                        variant="secondary"
+                        className="text-xs!"
+                    >
                         Quay về danh sách
                     </Button>
-                    <Button processing={processing} processingLabel='Đang xử lí...' form="update-order" className="text-xs!">
+                    <Button
+                        processing={processing}
+                        processingLabel="Đang xử lí..."
+                        form="update-order"
+                        className="text-xs!"
+                    >
                         Cập nhật đơn hàng
                     </Button>
                 </div>

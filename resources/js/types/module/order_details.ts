@@ -26,6 +26,7 @@ interface OrderInfoProps {
     code: string;
     customer_id: number;
     qty: number;
+    qty_adjust: string;
     total: number;
     customer: { id: number; name: string; email: string; tel: string };
     payment_method: string;

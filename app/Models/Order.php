@@ -11,6 +11,7 @@ class Order extends Model
         'shipping_address',
         'shipping_note',
         'qty',
+        'qty_adjust',
         'total',
         'payment_method',
         'status_payment',

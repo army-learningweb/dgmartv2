@@ -30,8 +30,9 @@ export default function Read({
     unpaid,
     filter_date,
     revenue,
-    orders_today,
+    awaiting,
 }: OrdersReadType) {
+    
     // Thông báo cập nhật thành công
     const { props } = usePage<any>();
     useEffect(() => {
@@ -53,6 +54,7 @@ export default function Read({
             'status_shipping',
             'status_payment',
             'filter_date',
+            'awaiting',
         ],
     });
 
@@ -107,8 +109,8 @@ export default function Read({
             <section className="pb-8 md:pb-0">
                 <div className="grid gap-2 font-medium md:grid-cols-4">
                     <StatisOrderItem
-                        title="Đơn hàng hôm nay"
-                        value={orders_today}
+                        title="Đơn chờ xác nhận"
+                        value={awaiting}
                     />
                     <StatisOrderItem
                         title="Doanh thu"
@@ -125,7 +127,7 @@ export default function Read({
                 </div>
 
                 <div className="mt-4 flex justify-between">
-                    <div className="flex w-full flex-col gap-2 md:flex-row">
+                    <div className="flex w-full flex-col gap-2 md:w-fit md:flex-row">
                         {/* filter & search */}
                         <SearchBar
                             onChange={handleQuerySearch}
@@ -144,7 +146,7 @@ export default function Read({
 
                         {/* filter */}
                         <Select
-                            className="md:w-70!"
+                            className="md:w-50!"
                             name="filter-category"
                             onChange={(e) =>
                                 handleQueryFilter({
@@ -172,7 +174,7 @@ export default function Read({
                             type="date"
                             name="filter-date"
                             id="filter-date"
-                            className="w-full rounded-lg border border-gray-200 px-2 py-1.75 transition-colors duration-150 focus:outline-0 md:w-fit"
+                            className="rounded-lg border border-gray-200 px-2 py-1.75 transition-colors duration-150 focus:outline-0 md:w-fit"
                             min="2026-08-18"
                             max="2030-12-31"
 
@@ -284,7 +286,10 @@ export default function Read({
                         {/* mobile */}
                         <div className="space-y-4 pb-4 md:hidden">
                             {orders.data.map((item) => (
-                                <div className="flex justify-between rounded-xl border border-gray-300 p-4">
+                                <div
+                                    key={item.id}
+                                    className="flex justify-between rounded-xl border border-gray-300 p-4"
+                                >
                                     <div className="space-y-1">
                                         <Link
                                             href={`/admin/orders/${item.id}`}

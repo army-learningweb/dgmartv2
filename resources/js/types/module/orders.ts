@@ -36,13 +36,6 @@ export type OrdersReadType = {
     status_payment: string;
     total: string;
     awaiting: string;
-    processing: string;
-    shipped: string;
-    delivery: string;
-    deliveryfailed: string;
-    delivered: string;
-    canceled: string;
-    refund: string;
     paid: string;
     unpaid: string;
     filter_date: string | number;

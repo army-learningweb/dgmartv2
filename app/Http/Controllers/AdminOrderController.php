@@ -6,9 +6,9 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Order;
 use App\Models\OrderItem;
-use Illuminate\Support\Carbon;
 
 use App\Http\Resources\AdminProductOrderResource;
+use App\Models\ProductVariant;
 
 class AdminOrderController extends Controller
 {
@@ -33,28 +33,14 @@ class AdminOrderController extends Controller
             ->withQueryString();
         $suggest_orders = Order::latest()->take(5)->get(['id', 'code as name']);
         $revenue = Order::where('status_payment','paid')->sum('total');
-        $today = Carbon::today();
-        $orders_today = Order::query()
-        ->whereBetween('created_at', [$today->copy()->startOfDay(), $today->copy()->endOfDay()])
-        ->latest()
-        ->count();
 
         $total = Order::count();
         $awaiting = Order::where('status_shipping', 'awaiting')->count();
-        $processing = Order::where('status_shipping', 'processing')->count();
-        $shipped = Order::where('status_shipping', 'shipped')->count();
-        $delivery = Order::where('status_shipping', 'delivery')->count();
-        $deliveryfailed = Order::where('status_shipping', 'deliveryfailed')->count();
-        $delivered = Order::where('status_shipping', 'delivered')->count();
-        $canceled = Order::where('status_shipping', 'canceled')->count();
-        $refund = Order::where('status_shipping', 'refund')->count();
-
         $paid = Order::where('status_payment', 'paid')->count();
         $unpaid = Order::where('status_payment', 'unpaid')->count();
 
         return Inertia::render("Admin/Order/Read", [
             "revenue" => $revenue,
-            "orders_today" => $orders_today,
             "orders" => $orders,
             "suggest_orders" => $suggest_orders,
             "search" => $request->input("search"),
@@ -63,13 +49,6 @@ class AdminOrderController extends Controller
             "filter_date" => $request->input("filter_date"),
             "total" => $total,
             "awaiting" => $awaiting,
-            "processing" => $processing,
-            "shipped" => $shipped,
-            "delivery" => $delivery,
-            "deliveryfailed" => $deliveryfailed,
-            "delivered" => $delivered,
-            "canceled" => $canceled,
-            "refund" => $refund,
             "paid" => $paid,
             "unpaid" => $unpaid
         ]);
@@ -103,11 +82,40 @@ class AdminOrderController extends Controller
     public function update(Request $request,Order $order){
         $validated = $request->validate([
             'status_payment' => ['required'],
-            'status_shipping' => ['required']
+            'status_shipping' => ['required'],
         ]);
 
         $order->update($validated);
+
+        $minusQty = ['shipped', 'processing', 'delivery', 'delivered'];
+        $plusQty = ['refund', 'canceled', 'deliveryfailed'];
+
+        // Trừ kho
+        if (in_array($validated['status_shipping'], $minusQty) && $order->qty_adjust == 'false') {
+            $this->adjustQty($order, -1);
+            $order->update(['qty_adjust' => 'true']);
+        }
+
+        // Hoàn kho
+        if (in_array($validated['status_shipping'], $plusQty) && $order->qty_adjust == 'true') {
+            $this->adjustQty($order, +1);
+            $order->update(['qty_adjust' => 'false']);
+        }
+
         return redirect('admin/orders')->with('success','Cập nhật thành công');
+    }
+
+    // Xử lí số lượng sản phẩm trong kho
+    public function adjustQty($order, int $direction)
+    {
+        $order_items = OrderItem::where('order_id', $order->id)->get(['variant_id', 'qty']);
+
+        foreach ($order_items as $item) {
+            $variant_qty = ProductVariant::where('id', $item->variant_id)->value('qty');
+            ProductVariant::where('id', $item->variant_id)->update([
+                'qty' => $variant_qty + ($direction * $item->qty),
+            ]);
+        }
     }
 
     // Lấy thông tin đơn hàng ở gợi ý tìm kiếm
