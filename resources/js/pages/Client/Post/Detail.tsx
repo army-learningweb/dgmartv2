@@ -7,8 +7,8 @@ export default function Detail({ post, other_posts }: PostDetailProps) {
     return (
         <>
             <Head title="Chi tiết bài viết" />
-            <div className="mx-auto mt-4 md:flex max-w-312 gap-4 pb-4 px-5 md:px-0">
-                <div className="md:w-[65%] rounded-2xl bg-white px-6 py-4 shadow">
+            <div className="mx-auto mt-4 max-w-312 gap-4 px-5 pb-4 md:flex md:px-0">
+                <div className="rounded-2xl bg-white px-6 py-4 shadow md:w-[65%]">
                     {/* title */}
                     <div className="space-y-2 tracking-tight">
                         <h1 className="text-2xl font-medium">
@@ -20,16 +20,16 @@ export default function Detail({ post, other_posts }: PostDetailProps) {
                     </div>
 
                     {/* thumb */}
-                    <div className="mt-4 h-100 w-full overflow-hidden rounded-2xl bg-gray-200">
+                    <div className="mt-4 aspect-4/3 w-full overflow-hidden rounded-2xl bg-gray-200 md:aspect-video">
                         <img
                             src={post.data.image}
                             alt={post.data.image_alt}
-                            className="h-full w-full"
+                            className="h-full w-full object-cover"
                         />
                     </div>
 
                     {/* content */}
-                    <div className="tinymce-content mt-4 text-justify">
+                    <div className="tinymce-content mt-4">
                         {parse(post.data.content)}
                     </div>
 
@@ -40,7 +40,7 @@ export default function Detail({ post, other_posts }: PostDetailProps) {
                 </div>
 
                 {/* orther post */}
-                <OtherPosts data={other_posts?.data}/> 
+                <OtherPosts data={other_posts?.data} />
             </div>
         </>
     );
