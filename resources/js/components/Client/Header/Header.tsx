@@ -80,10 +80,10 @@ export default function Header() {
             <div className="h-15 md:hidden"></div>
 
             <Nav
-                className={`fixed z-50 w-full flex-1 border-b border-gray-300 transition-all duration-150 ease-out md:hidden ${
+                className={`fixed top-14 z-50 w-full flex-1 md:hidden ${
                     openNav
-                        ? 'pointer-events-auto top-14 opacity-100'
-                        : 'pointer-events-none top-16 opacity-0'
+                        ? 'pointer-events-auto opacity-100'
+                        : 'pointer-events-none opacity-0'
                 } `}
             />
 
