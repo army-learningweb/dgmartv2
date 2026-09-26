@@ -23,7 +23,7 @@ export default function Card({
                 dataUrl={dataItem.slug}
             />
 
-            <div className="space-y-2">
+            <div className="space-y-1">
                 <div className="flex gap-1">
                     {/* badge discount */}
                     {dataItem.variants?.[0]?.discount && (

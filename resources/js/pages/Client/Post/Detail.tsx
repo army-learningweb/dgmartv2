@@ -7,8 +7,8 @@ export default function Detail({ post, other_posts }: PostDetailProps) {
     return (
         <>
             <Head title="Chi tiết bài viết" />
-            <div className="mx-auto mt-4 flex max-w-312 gap-4 pb-4">
-                <div className="w-[65%] rounded-2xl bg-white px-6 py-4 shadow">
+            <div className="mx-auto mt-4 md:flex max-w-312 gap-4 pb-4 px-5 md:px-0">
+                <div className="md:w-[65%] rounded-2xl bg-white px-6 py-4 shadow">
                     {/* title */}
                     <div className="space-y-2 tracking-tight">
                         <h1 className="text-2xl font-medium">

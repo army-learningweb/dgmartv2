@@ -5,8 +5,8 @@ import { useClientSearch } from '@/hooks/use-client-search';
 import SearchButton from './SearchButton';
 import ShoppingBagButton from './ShoppingBagButton';
 import { SquareMenu, X } from 'lucide-react';
-import { useState } from 'react';
-import { useLockSscreen } from '@/hooks/use-lock-screen';
+import { useEffect, useState } from 'react';
+import { usePage } from '@inertiajs/react';
 
 export default function Header() {
     const {
@@ -22,6 +22,11 @@ export default function Header() {
     } = useClientSearch();
 
     const [openNav, setOpenNav] = useState<boolean>(false)
+    const {url} = usePage();
+
+    useEffect(() => {
+        setOpenNav(false);
+    },[url])
 
     return (
         <>

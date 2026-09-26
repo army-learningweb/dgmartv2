@@ -10,7 +10,7 @@ export default function OtherPosts({data} : OtherPostsProps){
     return (
         <>
             {data?.length > 0 && (
-                <div className="flex-1">
+                <div className="flex-1 mt-4 md:mt-0">
                     <div className="sticky top-3 rounded-2xl bg-white p-4 shadow">
                         <div className="flex items-center justify-between">
                             <h1 className="text-xl font-medium">
