@@ -52,10 +52,20 @@ export default function Detail({
 
     // Lấy chiều dài của ảnh
     useEffect(() => {
-        if (imageRef.current) {
-            setImageWidth(imageRef.current.getBoundingClientRect().width);
-        }
-    }, [product.data.id]);
+        const slider = imageRef.current;
+        if (!slider) return;
+
+        const updateImageWidth = () => {
+            setImageWidth(slider.getBoundingClientRect().width);
+        };
+
+        updateImageWidth();
+        const resizeObserver = new ResizeObserver(updateImageWidth);
+        resizeObserver.observe(slider);
+
+        return () => resizeObserver.disconnect();
+    }, [product.data.id, product.data.childs_image.length]);
+
 
     // Hành động Slider
     const handleSlide = (action: string) => {
@@ -75,7 +85,7 @@ export default function Detail({
     return (
         <>
             {/* add to cart */}
-            <AddToCartBar 
+            <AddToCartBar
                 data={product.data}
                 onAddToCart={handleAddCart}
                 onChangeVersion={handleChangeVersion}
@@ -84,18 +94,17 @@ export default function Detail({
 
             <Head title="Chi tiết sản phẩm" />
             <div className="mx-auto mt-4 min-h-400 max-w-312 px-5 md:px-0">
-
                 {/* name & desc */}
-                <div className="my-10 md:w-150 space-y-4 pt-4 md:pt-0">
+                <div className="my-10 space-y-4 pt-4 md:w-150 md:pt-0">
                     <h1 className="text-4xl font-bold">{product.data.name}</h1>
                     <h2 className="text-[15px] text-gray-500">
                         {product.data.desc}
                     </h2>
                 </div>
 
-                <div className="flex flex-col md:flex-row items-start gap-5">
+                <div className="flex flex-col items-start gap-5 md:flex-row">
                     {/* image */}
-                    <div className="md:sticky md:top-19 flex md:w-[60%] flex-col items-center rounded-3xl bg-white shadow">
+                    <div className="flex w-full flex-col items-center rounded-3xl bg-white shadow md:sticky md:top-19 md:w-[60%]">
                         <div className="relative w-full overflow-hidden rounded-3xl py-5">
                             {product.data.childs_image?.length > 0 ? (
                                 <ul
@@ -165,7 +174,7 @@ export default function Detail({
                     </div>
 
                     {/* info */}
-                    <div className="space-y-4 select-none md:w-[40%] w-full">
+                    <div className="w-full space-y-4 select-none md:w-[40%]">
                         {/* versions */}
                         <div className="grid flex-1 grid-cols-1 gap-5">
                             {product.data.variants.map((item, index) => (
@@ -223,7 +232,7 @@ export default function Detail({
                 </div>
 
                 {/* content detail & other product */}
-                <div className="mt-5 flex flex-col md:flex-row items-start gap-5">
+                <div className="mt-5 flex flex-col items-start gap-5 md:flex-row">
                     {/* content detail */}
                     <div className="md:w-[60%]">
                         <div className="tinymce-content rounded-3xl bg-white px-6 py-2 shadow">
@@ -232,7 +241,7 @@ export default function Detail({
                     </div>
 
                     {/* product suggest */}
-                    <div className="md:sticky md:top-5 flex-1 rounded-3xl bg-white p-4 shadow">
+                    <div className="flex-1 rounded-3xl bg-white p-4 shadow md:sticky md:top-5">
                         <OtherProducts data={products_suggest.data} />
                     </div>
                 </div>

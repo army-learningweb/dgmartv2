@@ -34,7 +34,7 @@ export default function Card({
                 </div>
 
                 {/* name */}
-                <CardTitle title={dataItem.name} />
+                <CardTitle route={dataItem.slug} title={dataItem.name} />
 
                 <div className="line-clamp-2 text-gray-500">
                     {dataItem.desc}
@@ -54,7 +54,7 @@ export default function Card({
 
             {/* link */}
             <Link
-                href={`/${dataItem.slug}`}
+                href={dataItem.slug}
                 className="mt-1 text-blue-600 hover:underline"
             >
                 Xem chi tiết...
